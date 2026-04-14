@@ -81,6 +81,8 @@ int main(void)
 		Beep(BEEP_ONCE);	
 		// printf("YST301C8T6 OK \n");
 		
+		  tx_kernel_enter(); 
+		
 		
     while(1)
     {
