@@ -114,25 +114,27 @@ void SVC_Handler(void)
   * @param  None
   * @retval None
   */
+#if 0
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_Handler */
 
   /* USER CODE END PendSV_Handler */
 }
-
+#endif 
 /**
   * @brief  This function handles SysTick Handler.
   * @param  None
   * @retval None
   */
+#if 0
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_Handler */
 
   /* USER CODE END SysTick_Handler */
 }
-
+#endif 
 
 
 /**
