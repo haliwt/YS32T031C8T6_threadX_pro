@@ -28,6 +28,18 @@
 
 #include "bsp.h"
 
+#include "tx_api.h"
+
+/* ThreadX 强制要求的应用定义入口 */
+void tx_application_define(void *first_unused_memory)
+{
+    /* 
+       此时硬件和内核已就绪。
+       你可以在这里调用 tx_thread_create 来创建你的 WiFi 或传感器线程。
+       暂时留空以通过编译。
+    */
+}
+
 
 /******************************************************
 函数名：main
