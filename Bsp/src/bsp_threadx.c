@@ -138,7 +138,7 @@ void threadx_handler(void)
 		LED_WIFI_ON() ;
 	    tx_thread_sleep(100);
         LED_WIFI_OFF() ;
-		tx_thread_sleep(100);
+		tx_thread_sleep(100);//100*10ms = 1000ms =1s.
 	
     } 
 }
