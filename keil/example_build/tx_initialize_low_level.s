@@ -24,11 +24,11 @@
     IMPORT  _tx_initialize_unused_memory
     IMPORT  _tx_timer_interrupt
     IMPORT  __main
-    IMPORT  |Image$$RO$$Limit|
-    IMPORT  |Image$$RW$$Base|
-    IMPORT  |Image$$ZI$$Base|
-    IMPORT  |Image$$ZI$$Limit|
+    IMPORT  |Image$$RW_IRAM1$$ZI$$Limit|
+    
+  
     IMPORT  __tx_PendSVHandler
+	 
 ;
 ;
 SYSTEM_CLOCK        EQU     6000000
@@ -53,7 +53,7 @@ HeapMem
 __heap_limit
 
 
-    AREA    RESET, CODE, READONLY
+    AREA ||.text||, CODE, READONLY ;AREA    RESET, CODE, READONLY
 ;
     EXPORT  __tx_vectors
 __tx_vectors
@@ -132,8 +132,9 @@ _tx_initialize_low_level
 ;
 ;    /* Set base of available memory to end of non-initialised RAM area.  */
 ;
-    LDR     r0, =_tx_initialize_unused_memory       ; Build address of unused memory pointer
-    LDR     r1, =|Image$$ZI$$Limit|                 ; Build first free address
+    
+	LDR     r0, =_tx_initialize_unused_memory       ; Build address of unused memory pointer
+    LDR     r1, =|Image$$RW_IRAM1$$ZI$$Limit|                ; Build first free address
     ADDS    r1, r1, #4                              ;
     STR     r1, [r0]                                ; Setup first unused memory pointer
 ;

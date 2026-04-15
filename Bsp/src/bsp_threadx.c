@@ -104,8 +104,15 @@ void threadx_handler(void)
 //              //}
                 
 //       }
-	    LED_POWER_TOGGLE() ;
-	    tx_thread_sleep(10);
+	    //LED_POWER_TOGGLE() ;
+	    LED_POWER_ON();
+	    tx_thread_sleep(500);
+	    LED_POWER_OFF();
+		tx_thread_sleep(500);
+		LED_POWER_ON();
+		tx_thread_sleep(500);
+	    LED_POWER_OFF();
+		tx_thread_sleep(500);//500*10ms= 5000ms = 5s 
 
 	}
       
