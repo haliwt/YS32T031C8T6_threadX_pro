@@ -302,6 +302,7 @@ void power_onoff_handler(void)
     break;
 
 	case 0:
+		power_off_handler();
 
 	break;
 
@@ -322,7 +323,7 @@ static void power_on_handler(void)
 	break;
 
 	case 1:
-		Update_LED_Display();
+		Update_onLED_Display();
 	    on_step = 1;
 
 	break;
@@ -352,6 +353,7 @@ static void power_off_handler(void)
 		 counter =0;
 		 LED_POWER_TOGGLE();
 		}
+		Update_offLED_Display();
 		off_step=1;
 
 	break;

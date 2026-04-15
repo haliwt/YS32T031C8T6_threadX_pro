@@ -325,7 +325,7 @@ volatile uint16_t gw_i=0;
  volatile uint16_t timing_diff_value_min;
 
 //¸üÐÂLEDÏÔÊ¾
-void Update_LED_Display(void)
+void Update_onLED_Display(void)
 {
 
   for(i=0;i<8;i++)
@@ -358,15 +358,7 @@ void Update_LED_Display(void)
 	}
 	break;
 
-	case 0://power off
-
-		all_led_off();
-
-		if(++counter > 12){//
-		counter =0;
-		LED_POWER_TOGGLE();
-		}
-    break;
+	
 	}
 
 
@@ -395,6 +387,45 @@ void Update_LED_Display(void)
 }
 
 
+void Update_offLED_Display(void)
+{
+
+  for(i=0;i<8;i++)
+	{
+		com_data_temp[i]=0x00;
+	}
+
+	//LED_AI_OFF();LED_PTC_OFF();LED_PLASMA_OFF();LED_MOUSE_OFF();
+	//LED_WIFI_OFF();LED_TEMP_OFF();LED_HUMI_OFF();//LED_WIFI_OFF();
+
+	
+
+	
+
+
+
+
+	com_data_buf[0]=(com_data_temp[0]&0x0f);
+	com_data_buf[1]=((com_data_temp[0]>>4)&0x0f);
+	com_data_buf[2]=(com_data_temp[1]&0x0f);
+	com_data_buf[3]=((com_data_temp[1]>>4)&0x0f);
+	com_data_buf[4]=(com_data_temp[2]&0x0f);
+	com_data_buf[5]=((com_data_temp[2]>>4)&0x0f);
+	com_data_buf[6]=(com_data_temp[3]&0x0f);
+	com_data_buf[7]=((com_data_temp[3]>>4)&0x0f);
+	com_data_buf[8]=(com_data_temp[4]&0x0f);
+	com_data_buf[9]=((com_data_temp[4]>>4)&0x0f);
+	com_data_buf[10]=(com_data_temp[5]&0x0f);
+	com_data_buf[11]=((com_data_temp[5]>>4)&0x0f);
+	com_data_buf[12]=(com_data_temp[6]&0x0f);
+	com_data_buf[13]=((com_data_temp[6]>>4)&0x0f);
+	com_data_buf[14]=(com_data_temp[7]&0x0f);
+	com_data_buf[15]=((com_data_temp[7]>>4)&0x0f);
+
+
+	TM1639_Write_Display_Data(com_data_buf,16);
+
+}
 
 
 /**

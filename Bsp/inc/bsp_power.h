@@ -307,7 +307,9 @@ void LED_Strip_Ctrl(void);
 ///extern void Relay_Ctrl(void);
 //extern void Heat_Process(void);
 //extern void Fan_Current_Det(void);
-void Update_LED_Display(void);
+void Update_onLED_Display(void);
+void Update_offLED_Display(void);
+
 
 
 
