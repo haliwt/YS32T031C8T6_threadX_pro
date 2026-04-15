@@ -23,7 +23,7 @@ void NVIC_Configuration(void);
 
 
 // RCC initialization configuration
-#if 0
+#if 1
 void RCC_Configuration(void)
 {
     FLASH_SetLatency(FLASH_Latency_3);
@@ -52,34 +52,30 @@ void RCC_Configuration(void)
 #else
 void RCC_Configuration(void)
 {
-    /* Flash 等待周期：64MHz 需要至少 3 个周期 */
-    FLASH_SetLatency(FLASH_Latency_3);
+    FLASH_SetLatency(FLASH_Latency_3);   // 64MHz 需要 3 个等待周期
 
-    /* 1. 启动内部晶振 HSI = 16MHz */
+    // 1. 启动内部晶振 HSI = 16MHz
     RCC_HSI_CLK(RCC_HSI_16M, RCC_HSI_CLK_Div1);
     RCC_HSICmd(ENABLE);
     while (RCC_GetFlagStatus(RCC_FLAG_HSIRDY) == RESET);
 
-    /* 2. 配置 PLL：16MHz × 4 = 64MHz */
+    // 2. 配置 PLL：16MHz × 4 = 64MHz
     RCC_PLLConfig(RCC_PLLSource_HSI, RCC_PLLMul_4);
     RCC_PLLCmd(ENABLE);
     while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);
 
-    /* 3. 切换系统时钟到 PLL 输出 */
+    // 3. 切换系统时钟到 PLL 输出
     RCC_SYSCLKConfig(RCC_SOURCE_PLL);
     while (RCC_GetSYSCLKSource() != RCC_SOURCE_PLL);
 
-    /* 4. HCLK = SYSCLK = 64MHz */
+    // 4. HCLK = SYSCLK = 64MHz
     RCC_HCLKConfig(RCC_SYSCLK_Div1);
 
-    /* 5. PCLK = HCLK = 64MHz */
+    // 5. PCLK = HCLK = 64MHz
     RCC_PCLKConfig(RCC_HCLK_Div1);
 
-    /* 6. 更新 SystemCoreClock 变量 */
     SystemCoreClockUpdate();
 }
-
-
 
 
 #endif 
