@@ -324,8 +324,13 @@ static void power_on_handler(void)
 
 	case 1:
 		Update_onLED_Display();
-	    on_step = 1;
+	    on_step = 2;
 
+	break;
+
+	case  2:
+      peripheral_fun_handler();
+      on_step = 1;
 	break;
 
 

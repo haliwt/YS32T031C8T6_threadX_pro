@@ -450,10 +450,7 @@ void peripheral_fun_handler(void)
 
 
    }
-   else{
-
-
-   }
+  
 }
 
 
