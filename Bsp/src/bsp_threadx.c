@@ -5,7 +5,7 @@
 ***********************************************************************************************************/
 #define STACK_SIZE_ONE  512//1792//3072//2048//1024//896//768
 #define STACK_SIZE_TWO  512//256
-#define STACK_SIZE_THREE  1024//256
+#define STACK_SIZE_THREE  1536//256
 
 
 static TX_THREAD thread_msg;
@@ -65,8 +65,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                           /* 传递给任务的参数 */
                        stack_msg_pro,           /* 堆栈基地址 */
                        STACK_SIZE_ONE,    /* 堆栈空间大小 */  
-                       0,        /* 任务优先级*/
-                       0,        /* 任务抢占阀值 */
+                       2,        /* 任务优先级*/
+                       2,        /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,             /* 不开启时间片 */
                        TX_AUTO_START);               /* 创建后立即启动 */
 
@@ -79,8 +79,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                           /* 传递给任务的参数 */
                        stack_ui_pro,           /* 堆栈基地址 */
                        STACK_SIZE_THREE,    /* 堆栈空间大小 */  
-                       2,        /* 任务优先级*/
-                       2,        /* 任务抢占阀值 */
+                       3,        /* 任务优先级*/
+                       3,        /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,             /* 不开启时间片 */
                        TX_AUTO_START);               /* 创建后立即启动 */
 
@@ -151,7 +151,7 @@ void tx_application_define(void *first_unused_memory)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
-  
+ 
    while(1){
    	
 
@@ -163,6 +163,7 @@ void tx_application_define(void *first_unused_memory)
 	}
 
 	Key_Scan();
+
 
 	tx_thread_sleep(3);//1*10ms 
 	

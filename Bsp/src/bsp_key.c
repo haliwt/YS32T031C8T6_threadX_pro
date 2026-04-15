@@ -1,6 +1,6 @@
 #include "bsp.h"
 
-#define KEY_TICKS_SHORT    1    // 40ms 消抖
+#define KEY_TICKS_SHORT    0    // 40ms 消抖
 #define KEY_TICKS_LONG_P   250  // 2.5s 电源键长按
 #define KEY_TICKS_LONG_M   200  // 2s 模式/下键长按
 
@@ -11,6 +11,7 @@ uint8_t key_long_f;
 uint16_t key_data;
 uint16_t key_time;
 uint8_t  on_step,off_step ;
+uint8_t  on_dsht11_counter, on_read_adc_counter;
 
 
 static void power_on_handler(void);
@@ -315,10 +316,13 @@ void power_onoff_handler(void)
 
 static void power_on_handler(void)
 {
-    switch(on_step){
+   
+
+	switch(on_step){
 
     case 0:
 		System_Status_PowerOn();
+	    on_dsht11_counter=100, 
         on_step = 1;
 	break;
 
@@ -328,11 +332,50 @@ static void power_on_handler(void)
 
 	break;
 
-	case  2:
+	case 2:
+	  // on_dsht11_counter++;
+	   //if(on_dsht11_counter > 99){//10ms * 100 = 1000ms = 1s
+	   //  on_dsht11_counter=0;
+	    // dht11_read_temp_humidity_value();
+	   //
+	   on_step = 3;
+
+	break;
+
+	case  3:
       peripheral_fun_handler();
 	  wifi_led_state();
-      on_step = 1;
+      on_step = 4;
 	break;
+
+	case 4:
+		
+        on_read_adc_counter++;
+		if(on_read_adc_counter >100 ){ //10ms * 100
+			on_read_adc_counter=0;
+			AD_Filter();
+				
+			Adc_Channel_Sample();
+		}
+
+	    on_step = 5;
+
+	break;
+
+
+	case 5:
+	  on_dsht11_counter++;
+
+	  if(on_dsht11_counter > 100){
+	  	on_dsht11_counter=0;
+        dht11_read_temp_humidity_value();
+	  }
+	   tx_thread_sleep(50);
+	   on_step = 1;
+
+	break;
+
+	
 
 
 
@@ -349,6 +392,7 @@ static void power_off_handler(void)
 
     case 0:
        System_Status_PowerOff() ;
+   
        off_step=1;
     break;
 

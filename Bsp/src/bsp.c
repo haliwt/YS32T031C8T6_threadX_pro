@@ -25,7 +25,7 @@ uint8_t counter_2s,tim_2s_f;
   {
    
    discharge_f =0;
-
+   SET_DHT11_DATA_IN_MODE();
 	
 #if(Enable_EventRecorder == 1)  
 	/* 0…60‹10‡80†40†30…4EventRecorder0…50„40†70„90‡40‹0 */
@@ -77,7 +77,7 @@ void task_scheduler(void)
 		
 	     temp_counter_flag ++;
 
-		 Read_DHT11_Data(); 
+		// Read_DHT11_Data(); 
 		
 	}
 
@@ -206,7 +206,7 @@ void task_scheduler(void)
        wifi_default_handler();
 	 	
 	   if(time_3s_flag > 3 && discharge_f ==1){
-			Read_DHT11_Data(); 
+			//Read_DHT11_Data(); 
 			AD_Filter();
 			
 		    Adc_Channel_Sample();
