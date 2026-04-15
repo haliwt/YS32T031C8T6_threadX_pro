@@ -5,10 +5,9 @@
 
 void all_led_off(void);
 
-void wifi_fast_led_state(void);
 
+void wifi_led_state(void);
 
-void wifi_normal_led_state(void);
 
 #endif 
 

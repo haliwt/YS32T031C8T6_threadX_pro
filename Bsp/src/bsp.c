@@ -110,7 +110,7 @@ void task_scheduler(void)
 		tim_200ms_counter++;
 		if(tim_200ms_counter ==5)time_200ms_run_flag=1;
 		Update_onLED_Display();
-		wifi_fast_led_state();
+		//wifi_fast_led_state();
 		
 
 		
@@ -121,7 +121,7 @@ void task_scheduler(void)
 
 	if(time_300ms_f==1){
 		 time_300ms_f =0;  
-		 wifi_normal_led_state();
+		// wifi_normal_led_state();
 	     set_temp_compare();
 		 peripheral_fun_handler();
 	     Fan_Ctrl_Process();

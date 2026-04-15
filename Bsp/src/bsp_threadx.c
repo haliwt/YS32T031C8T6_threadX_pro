@@ -164,7 +164,7 @@ void tx_application_define(void *first_unused_memory)
 
 	Key_Scan();
 
-	tx_thread_sleep(1);//1*10ms 
+	tx_thread_sleep(3);//1*10ms 
 	
     } 
 }

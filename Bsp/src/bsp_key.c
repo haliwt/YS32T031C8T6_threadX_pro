@@ -1,6 +1,6 @@
 #include "bsp.h"
 
-#define KEY_TICKS_SHORT    4    // 40ms 消抖
+#define KEY_TICKS_SHORT    1    // 40ms 消抖
 #define KEY_TICKS_LONG_P   250  // 2.5s 电源键长按
 #define KEY_TICKS_LONG_M   200  // 2s 模式/下键长按
 
@@ -330,6 +330,7 @@ static void power_on_handler(void)
 
 	case  2:
       peripheral_fun_handler();
+	  wifi_led_state();
       on_step = 1;
 	break;
 
