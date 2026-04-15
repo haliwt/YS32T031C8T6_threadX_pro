@@ -102,6 +102,7 @@ void HardFault_Handler(void)
   * @param  None
   * @retval None
   */
+
 void SVC_Handler(void)
 {
   /* USER CODE BEGIN SVC_Handler */
@@ -118,7 +119,7 @@ void SVC_Handler(void)
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_Handler */
-
+    _tx_thread_context_switch();
   /* USER CODE END PendSV_Handler */
 }
 #endif 
@@ -131,7 +132,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_Handler */
-
+    _tx_timer_interrupt();
   /* USER CODE END SysTick_Handler */
 }
 #endif 

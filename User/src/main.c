@@ -38,6 +38,7 @@ void tx_application_define(void *first_unused_memory)
        你可以在这里调用 tx_thread_create 来创建你的 WiFi 或传感器线程。
        暂时留空以通过编译。
     */
+    threadx_handler();
 }
 
 
@@ -87,6 +88,7 @@ int main(void)
     while(1)
     {
         //IWDG->KR = 0xAAAA;
+        #if 0
 			
 			  if(TSC_GetFlagStatus(TSC_Flag_TimeSlot) == SET)
 				{
@@ -98,7 +100,7 @@ int main(void)
 
 			  task_scheduler();
 
-			    // 异步通信处理（USART1显示板、USART2 WiFi）
+			#endif     // 异步通信处理（USART1显示板、USART2 WiFi）
               //USART1_xdpProcess_Received();
               //USART2_wifiProcess_Received();
 			  

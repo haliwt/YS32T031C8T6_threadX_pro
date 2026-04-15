@@ -7,7 +7,9 @@
 
 
 
+
 #include "ys32t031.h"
+
 
 #include "tim.h"
 
@@ -16,6 +18,8 @@
 #include "tm1639.h"
 #include "key.h"
 #include "system_init.h"
+#include "tx_api.h"
+
 
 //
 #include "bsp_power.h"
@@ -29,6 +33,7 @@
 #include "bsp_mqtt_iot.h"
 #include "bsp_esp8266.h"
 #include "bsp_mqtt_iot.h"
+#include "bsp_threadx.h"
 
 #define Enable_EventRecorder  0
 
