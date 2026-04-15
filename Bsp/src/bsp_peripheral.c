@@ -101,7 +101,9 @@ void Fan_Ctrl_Process(void)
 //·äÃùÆ÷ÉùÒôÀà±ğ
 void Beep(Beep_TypeDef music)
 {
-    switch (music)
+
+   #if 0
+	switch (music)
 	  {
 		    case BEEP_ONCE:
 			     beep_times=1;
@@ -139,6 +141,9 @@ void Beep(Beep_TypeDef music)
 			     non_beep_length=0;	
            break;		
     }
+
+	#endif 
+	BEEP_ON();
 } 
 
 

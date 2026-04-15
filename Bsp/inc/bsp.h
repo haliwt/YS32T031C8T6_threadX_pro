@@ -56,6 +56,7 @@ void delay_ms(uint16_t ms);
 uint32_t Get_Unique_ID_32bit(void);
 uint8_t bcc_check(const unsigned char *data, int len) ;
 
+void wifi_rx_run_handler(void);
 
 
 #endif 

@@ -4,7 +4,7 @@
 
 
 
-void threadx_handler(void);
+void wifi_semaphore_xtask(void);
 
 
 

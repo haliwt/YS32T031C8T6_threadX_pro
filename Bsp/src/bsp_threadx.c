@@ -10,7 +10,7 @@
 static TX_THREAD thread_msg;
 static TX_THREAD thread_key;
 /* 定义信号量 */
-TX_SEMAPHORE decoder_semaphore;
+TX_SEMAPHORE wifi_semaphore;
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
@@ -31,9 +31,11 @@ static void vTaskKeyPro(ULONG thread_input);
 *	返 回 值: 无
 *********************************************************************************************************
 */
-void threadx_handler(void)
+void tx_application_define(void *first_unused_memory)
 {
-  
+
+      /* 创建信号量 */
+       tx_semaphore_create(&wifi_semaphore, "WifiSemaphore", 0);
 /*
 	   如果实现任务CPU利用率统计的话，此函数仅用于实现启动任务，统计任务和空闲任务，其它任务在函数
 	   AppTaskCreate里面创建。
@@ -93,26 +95,21 @@ void threadx_handler(void)
 	while(1)
     {
 
-//       // 阻塞等待 ISR 投递
-//      if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
-//      {
-//              // 或者直接调用解码器
-//             // if(gpro_t.decoder_success_flag==1){
-//			  	 /// gpro_t.decoder_success_flag =0;
-//                 decoder_handler();
+       // 阻塞等待 ISR 投递
+      if(tx_semaphore_get(&wifi_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
+      {
+           if(wifi_linking_tencent_f==1 ){
+			 Wifi_Rx_InputInfo_Handler();
 
-//              //}
+		    }
+		    else{ //if( wifi_t.rx_data_success==1){
+				wifi_rx_run_handler();
+
+			}
                 
-//       }
-	    //LED_POWER_TOGGLE() ;
-	    LED_POWER_ON();
-	    tx_thread_sleep(500);
-	    LED_POWER_OFF();
-		tx_thread_sleep(500);
-		LED_POWER_ON();
-		tx_thread_sleep(500);
-	    LED_POWER_OFF();
-		tx_thread_sleep(500);//500*10ms= 5000ms = 5s 
+       }
+	 
+	   
 
 	}
       
@@ -131,15 +128,34 @@ void threadx_handler(void)
   
    while(1){
    	
-		LED_WIFI_ON() ;
-	    tx_thread_sleep(100);
-        LED_WIFI_OFF() ;
-		tx_thread_sleep(100);
-		LED_WIFI_ON() ;
-	    tx_thread_sleep(100);
-        LED_WIFI_OFF() ;
-		tx_thread_sleep(100);//100*10ms = 1000ms =1s.
+
+	if(TSC_GetFlagStatus(TSC_Flag_TimeSlot) == SET){
+		TSC_ClearFlagStatus(TSC_Flag_TimeSlot);
+		TSC_StartCmd(DISABLE); //停止扫描
+		TSC_Handle();		   //触摸处理
+		TSC_StartCmd(ENABLE);  //开始扫描;	tk enable
+	}
+
+	Key_Scan();
+
+	tx_thread_sleep(1);//1*10ms 
 	
     } 
+}
+/********************************************************************************
+	**
+	*Function Name:
+	*Function :
+	*Input Ref: 
+	*Return Ref:NO
+	*
+*******************************************************************************/
+void wifi_semaphore_xtask(void)
+{
+
+  tx_semaphore_put(&wifi_semaphore);
+    // 投递到队列
+   // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
+
 }
 
