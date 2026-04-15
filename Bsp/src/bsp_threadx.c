@@ -4,11 +4,13 @@
 											函数声明
 ***********************************************************************************************************/
 #define STACK_SIZE_ONE  512//1792//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  512//256
+#define STACK_SIZE_TWO  512//256
+#define STACK_SIZE_THREE  1024//256
 
 
 static TX_THREAD thread_msg;
 static TX_THREAD thread_key;
+static TX_THREAD thread_ui;
 /* 定义信号量 */
 TX_SEMAPHORE wifi_semaphore;
 /*队列*/
@@ -17,10 +19,14 @@ TX_SEMAPHORE wifi_semaphore;
 
 
 static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-static UCHAR stack_key_pro[STATC_SIZE_TWO];
+static UCHAR stack_key_pro[STACK_SIZE_TWO];
+static UCHAR stack_ui_pro[STACK_SIZE_THREE];
+
 
 static void vTaskMsgPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
+static void vTaskUiPro(ULONG thread_input);
+
 
 
 /*
@@ -46,7 +52,7 @@ void tx_application_define(void *first_unused_memory)
                        vTaskKeyPro,                  /* 启动任务函数地址 */
                        0,                             /* 传递给任务的参数 */
                        stack_key_pro,            /* 堆栈基地址 */
-                       STATC_SIZE_TWO,    /* 堆栈空间大小 */  
+                       STACK_SIZE_TWO,    /* 堆栈空间大小 */  
                        1,        /* 任务优先级*/
                        1,        /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,               /* 不开启时间片 */
@@ -59,26 +65,26 @@ void tx_application_define(void *first_unused_memory)
                        0,                           /* 传递给任务的参数 */
                        stack_msg_pro,           /* 堆栈基地址 */
                        STACK_SIZE_ONE,    /* 堆栈空间大小 */  
+                       0,        /* 任务优先级*/
+                       0,        /* 任务抢占阀值 */
+                       TX_NO_TIME_SLICE,             /* 不开启时间片 */
+                       TX_AUTO_START);               /* 创建后立即启动 */
+
+
+				   
+
+    tx_thread_create(&thread_ui,               /* 任务控制块地址 */    
+                       "UiPro",              /* 任务名 */
+                       vTaskUiPro,                  /* 启动任务函数地址 */
+                       0,                           /* 传递给任务的参数 */
+                       stack_ui_pro,           /* 堆栈基地址 */
+                       STACK_SIZE_THREE,    /* 堆栈空间大小 */  
                        2,        /* 任务优先级*/
                        2,        /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,             /* 不开启时间片 */
                        TX_AUTO_START);               /* 创建后立即启动 */
 
-	#if 0
-				   
-	/**************创建空闲任务*********************/
-    tx_thread_create(&AppTaskIdleTCB,               /* 任务控制块地址 */    
-                       "App Task IDLE",              /* 任务名 */
-                       AppTaskIDLE,                  /* 启动任务函数地址 */
-                       0,                           /* 传递给任务的参数 */
-                       &AppTaskIdleStk[0],           /* 堆栈基地址 */
-                       APP_CFG_TASK_IDLE_STK_SIZE,    /* 堆栈空间大小 */  
-                       APP_CFG_TASK_IDLE_PRIO,        /* 任务优先级*/
-                       APP_CFG_TASK_IDLE_PRIO,        /* 任务抢占阀值 */
-                       TX_NO_TIME_SLICE,             /* 不开启时间片 */
-                       TX_AUTO_START);               /* 创建后立即启动 */
-
-		#endif 
+	
 			   
 }
 
@@ -114,6 +120,26 @@ void tx_application_define(void *first_unused_memory)
 	}
       
  }
+ /**
+  * @brief	:  static void vTaskStart(void *pvParameters
+  * @note	 
+  * @param	 None
+  * @retval  None
+  */
+ static void vTaskUiPro(ULONG thread_input)
+ {
+   (void)thread_input;  /* 消除未使用的参数警告 */
+  
+  
+   while(1){
+
+    power_onoff_handler();
+
+	
+	tx_thread_sleep(1);//1*10ms 
+	
+    } 
+}
 
 /**
   * @brief	:  static void vTaskStart(void *pvParameters

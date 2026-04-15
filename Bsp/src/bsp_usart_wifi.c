@@ -732,13 +732,13 @@ static void Json_Parse_Command_Fun(void)
 	       
 
 			MqttData_Publish_Init();//MqttData_Publish_SetOpen(1);  
-			//delay_ms(200);//delay_ms(200);//HAL_Delay(100);//delay_ms(100);//HAL_Delay(100);
+			//tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(100);//tx_thread_sleep(100);//HAL_Delay(100);
 
 	        Publish_Data_ToTencent_Initial_Data();
-		    //delay_ms(200);//delay_ms(200);//HAL_Delay(200);
+		    //tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(200);
 		    SendWifiData_To_Cmd(0x20,0x01); //smart phone is power on
 		
-			delay_ms(100);//delay_ms(100);
+			tx_thread_sleep(100);//tx_thread_sleep(100);
 
 	       
 
@@ -758,10 +758,10 @@ static void Json_Parse_Command_Fun(void)
 			
 	
              SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
-             delay_ms(100);//delay_ms(100);
+             tx_thread_sleep(100);//tx_thread_sleep(100);
              MqttData_Publish_PowerOff_Ref(); 
 			 MqttData_Publish_SetOpen(0); 
-		     //delay_ms(200);
+		     //tx_thread_sleep(200);
 			
 	
          
@@ -781,9 +781,9 @@ static void Json_Parse_Command_Fun(void)
 
 	
            SendWifiData_To_Cmd(0x02,0x01);
-		   delay_ms(100);//HAL_Delay(5);
+		   tx_thread_sleep(100);//HAL_Delay(5);
 		   MqttData_Publish_SetPtc(0x01);
-		   //delay_ms(200);
+		   //tx_thread_sleep(200);
          
 		
          
@@ -808,11 +808,11 @@ static void Json_Parse_Command_Fun(void)
 		
 		 
 	     SendWifiData_To_Cmd(0x02,0x0);
-         delay_ms(100);//HAL_Delay(5);
+         tx_thread_sleep(100);//HAL_Delay(5);
 
 		 MqttData_Publish_SetPtc(0);
 
-		 //delay_ms(200);
+		 //tx_thread_sleep(200);
          }
 	
 	     wifi_t.response_wifi_signal_label = 0xfe;
@@ -827,9 +827,9 @@ static void Json_Parse_Command_Fun(void)
             plasma_open_f = 0; //esp_t.gPlasma=0;
 			//esp_t.gTimer_senddata_panel=8;
 			SendWifiData_To_Cmd(0x03,0x0);
-	  	   delay_ms(100);//HAL_Delay(5);
+	  	   tx_thread_sleep(100);//HAL_Delay(5);
 	  	    MqttData_Publish_SetPlasma(0);
-			 ///delay_ms(200);
+			 ///tx_thread_sleep(200);
 	  	}
       
 	
@@ -845,9 +845,9 @@ static void Json_Parse_Command_Fun(void)
             //  esp_t.gTimer_senddata_panel=8;
 			
 			SendWifiData_To_Cmd(0x03,0x01);
-	  	   delay_ms(100);//HAL_Delay(5);
+	  	   tx_thread_sleep(100);//HAL_Delay(5);
 	  	    MqttData_Publish_SetPlasma(1);
-		    // delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+		    // tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
 	  	}
   
 
@@ -863,9 +863,9 @@ static void Json_Parse_Command_Fun(void)
              //esp_t.gTimer_senddata_panel=8; 
 	
 			SendWifiData_To_Cmd(0x04,0x0);
-			delay_ms(100);//HAL_Delay(5);
+			tx_thread_sleep(100);//HAL_Delay(5);
 			 MqttData_Publish_SetUltrasonic(0);
-			//delay_ms(200);//delay_ms(100);	//HAL_Delay(350);
+			//tx_thread_sleep(200);//tx_thread_sleep(100);	//HAL_Delay(350);
 			
         }
 	
@@ -882,9 +882,9 @@ static void Json_Parse_Command_Fun(void)
         
 		
 			SendWifiData_To_Cmd(0x04,0x01);
-			delay_ms(100);//HAL_Delay(5);
+			tx_thread_sleep(100);//HAL_Delay(5);
 			 MqttData_Publish_SetUltrasonic(1);
-			//delay_ms(200);//delay_ms(100);	//HAL_Delay(350);
+			//tx_thread_sleep(200);//tx_thread_sleep(100);	//HAL_Delay(350);
         }
         
 
@@ -899,9 +899,9 @@ static void Json_Parse_Command_Fun(void)
        
              
     	    SendWifiData_To_Cmd(0x27,0x02);
-		   delay_ms(100);
+		   tx_thread_sleep(100);
 		    MqttData_Publish_AitState(2);
-    	    /// delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+    	    /// tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
 
            
         }
@@ -918,9 +918,9 @@ static void Json_Parse_Command_Fun(void)
              
             
     		   SendWifiData_To_Cmd(0x27,0x01);
-               delay_ms(100);
+               tx_thread_sleep(100);
 			    MqttData_Publish_AitState(1);
-    		 // delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+    		 // tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
             
         }
      
@@ -945,12 +945,12 @@ static void Json_Parse_Command_Fun(void)
 			
 		
 			SendWifiData_To_Data(0x2A, setting_temperature); //smart phone set temperature value .
-			delay_ms(100);//delay_ms(10);//HAL_Delay(10);
+			tx_thread_sleep(100);//tx_thread_sleep(10);//HAL_Delay(10);
 			
 	
 
 			 MqttData_Publis_SetTemp(setting_temperature);
-             //delay_ms(200);
+             //tx_thread_sleep(200);
        }
      
 
@@ -974,11 +974,11 @@ static void Json_Parse_Command_Fun(void)
 			
          
 		
-			//delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+			//tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
     	//	SendWifiData_To_PanelWindSpeed(fan_speed_level);
-			delay_ms(100);//HAL_Delay(10);
+			tx_thread_sleep(100);//HAL_Delay(10);
 			MqttData_Publis_SetFan(fan_speed_level);
-			//delay_ms(200);
+			//tx_thread_sleep(200);
           
 		    }
 			else{
@@ -986,7 +986,7 @@ static void Json_Parse_Command_Fun(void)
 				fan_speed_level=0;
 
 			    MqttData_Publis_SetFan(fan_speed_level);
-				//delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+				//tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
 
 
 			}
@@ -1014,10 +1014,10 @@ static void Json_Parse_Command_Fun(void)
 			   //gpro_t.gpower_on = power_on;
 			   ///gpro_t.process_run_step=0;
 			   SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
-			   delay_ms(100);//HAL_Delay(10);
+			   tx_thread_sleep(100);//HAL_Delay(10);
 			    Beep(BEEP_ONCE);
                MqttData_Publish_SetOpen(1);  
-			   //delay_ms(200);//delay_ms(100);//HAL_Delay(350);
+			   //tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
     
 		    }
 		    else if(strstr((char *)TCMQTTRCVPUB,"open\":0")){
@@ -1030,11 +1030,11 @@ static void Json_Parse_Command_Fun(void)
 
 	
             SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
-			delay_ms(100);//HAL_Delay(5);
+			tx_thread_sleep(100);//HAL_Delay(5);
 			  Beep(BEEP_ONCE);
 			  
             MqttData_Publish_SetOpen(0);  
-			//delay_ms(200);//delay_ms(100);
+			//tx_thread_sleep(200);//tx_thread_sleep(100);
 			
 	        //phone_power_flag=2;
          

@@ -293,12 +293,12 @@ extern const uint8_t LED_TAB[11];
 #define _LED_DOWN        ((1<<6)|(1<<7))
 
 
-extern void Clear_Ram(void);
-extern void Real_Time(void);
-extern void Adc_Channel_Sample(void);
-extern void AD_Filter(void);
+void Clear_Ram(void);
+void Real_Time(void);
+void Adc_Channel_Sample(void);
+void AD_Filter(void);
 //extern void Key_Scan(void);
-extern void LED_Strip_Ctrl(void);
+void LED_Strip_Ctrl(void);
 //extern void Plasma_Ctrl(void);
 //extern void Fan_Ctrl_Process(void);
 //extern void Beep(Beep_TypeDef music);   
@@ -307,7 +307,7 @@ extern void LED_Strip_Ctrl(void);
 ///extern void Relay_Ctrl(void);
 //extern void Heat_Process(void);
 //extern void Fan_Current_Det(void);
-extern void Update_LED_Display(void);
+void Update_LED_Display(void);
 
 
 

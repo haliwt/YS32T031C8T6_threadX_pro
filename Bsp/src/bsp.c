@@ -24,7 +24,7 @@ uint8_t counter_2s,tim_2s_f;
   void bsp_init(void)
   {
    
-
+   discharge_f =0;
 
 	
 #if(Enable_EventRecorder == 1)  
@@ -40,24 +40,24 @@ uint8_t counter_2s,tim_2s_f;
 
 
 
-void delay_ms(uint16_t ms)
-{
-    // 假设你在 TIM6 中断里已经有 time_10ms_f 标志
-    // 如果是 100ms/200ms 这种大延时，直接判断标志位是最安全的
-    uint16_t target_10ms_units = ms / 10;
-    uint8_t count = 0;
-    
-    while (count < target_10ms_units)
-    {
-        if (time_wifi_10ms_f)
-        {
-            time_wifi_10ms_f = 0;
-            count++;
-        }
-        // 裸机运行，这里可以顺便喂狗
-        // IWDG_ReloadCounter(); 
-    }
-}
+//void tx_thread_sleep(uint16_t ms)
+//{
+//    // 假设你在 TIM6 中断里已经有 time_10ms_f 标志
+//    // 如果是 100ms/200ms 这种大延时，直接判断标志位是最安全的
+//    uint16_t target_10ms_units = ms / 10;
+//    uint8_t count = 0;
+//    
+//    while (count < target_10ms_units)
+//    {
+//        if (time_wifi_10ms_f)
+//        {
+//            time_wifi_10ms_f = 0;
+//            count++;
+//        }
+//        // 裸机运行，这里可以顺便喂狗
+//        // IWDG_ReloadCounter(); 
+//    }
+//}
 
 
 
@@ -447,7 +447,6 @@ void Task_beep_called_100ms(void)
 		    BEEP_OFF();
 	  }
 } 
-
 
 
 

@@ -10,8 +10,11 @@ uint8_t key_worked_f;
 uint8_t key_long_f;
 uint16_t key_data;
 uint16_t key_time;
+uint8_t  on_step,off_step ;
 
 
+static void power_on_handler(void);
+static void power_off_handler(void);
 
 void Process_Short_Key(uint16_t key) ;
 void Process_Short_Key(uint16_t key);
@@ -59,8 +62,17 @@ void Key_Scan(void)
 void Process_Short_Key(uint16_t key) 
 {
     if (key == _POWER_KEY_DOWN) {
-        if (discharge_f) System_Status_PowerOff();
-        else System_Status_PowerOn();
+        if (discharge_f ==1){
+			discharge_f =0;
+			Beep(BEEP_ONCE);
+			off_step = 0;
+		}//System_Status_PowerOff();
+        else{
+		 discharge_f =1;
+		 Beep(BEEP_ONCE);
+		 on_step=0;
+			//System_Status_PowerOn();
+        }
         return;
     }
 
@@ -223,7 +235,7 @@ void System_Status_PowerOn(void)
     fan_delay_time_off = 0;     // 清除风扇延时关闭倒计时
     
     // 6. 执行开机提示音
-    Beep(BEEP_ONCE);
+   // Beep(BEEP_ONCE);
 }
 
 
@@ -266,10 +278,88 @@ void System_Status_PowerOff(void)
     fan_delay_time_off = 600; // 开启风扇延时关闭倒计时
     
     // 5. 提示音
-    Beep(BEEP_ONCE);
+    //Beep(BEEP_ONCE);
 }
 
 
 
 
+/**
+*@brief:  totall task
+*@param:
+#@notice
+
+**/
+void power_onoff_handler(void)
+{
+   switch(discharge_f){
+
+    case 1:
+
+       power_on_handler();
+
+
+    break;
+
+	case 0:
+
+	break;
+
+
+
+   } 
+
+}
+
+
+static void power_on_handler(void)
+{
+    switch(on_step){
+
+    case 0:
+		System_Status_PowerOn();
+        on_step = 1;
+	break;
+
+	case 1:
+		Update_LED_Display();
+	    on_step = 1;
+
+	break;
+
+
+
+
+	}
+
+
+}
+
+static void power_off_handler(void)
+{
+   static uint8_t counter; 
+   switch(off_step){
+
+    case 0:
+       System_Status_PowerOff() ;
+       off_step=1;
+    break;
+
+	case 1:
+		all_led_off();
+        
+		if(++counter > 150){//
+		 counter =0;
+		 LED_POWER_TOGGLE();
+		}
+		off_step=1;
+
+	break;
+
+
+
+   }
+
+
+}
 
