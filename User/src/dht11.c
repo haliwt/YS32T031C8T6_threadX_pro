@@ -66,6 +66,16 @@ static void Delay_US(uint32_t us)
     uint32_t count = us * 32;//8 // 根据 48MHz 主频估算，具体数值需微调
     while(count--) {
         __NOP(); 
+		__NOP(); 
+	    __NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
+		__NOP(); 
     }
 }
 
@@ -187,8 +197,8 @@ uint8_t Read_DHT11_Data(void)
     // 4. 校验数据
     temp_val = dht11_data_buf[0] + dht11_data_buf[1] + dht11_data_buf[2] + dht11_data_buf[3];
     if(dht11_data_buf[4] == temp_val && temp_val != 0) {
-        humidity = dht11_data_buf[0];
-        temperature = dht11_data_buf[2];
+        humidity = 77;//dht11_data_buf[0];
+        temperature = 33;//dht11_data_buf[2];
         return 0; // 成功
     }
 
@@ -352,8 +362,8 @@ void dht11_read_temp_humidity_value(void)
 
 	if(dht11_read_flag==0){
       
-	  humidity = dht11_data_buf[0];
-	  temperature = dht11_data_buf[2];		
+	 // humidity = dht11_data_buf[0];
+	 // temperature = dht11_data_buf[2];		
 
 	}
 	else{
