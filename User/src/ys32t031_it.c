@@ -182,6 +182,9 @@ void TIM6_LPTIM_IRQHandler (void)
 			      time_link_net_counter++;
 				 
 				  disp_switch_time++;
+				  time_switch_temp_hum_counter++;
+				  time_set_hours_counter++;
+				  time_set_temp_counter++;
 				   
 				  
 				  

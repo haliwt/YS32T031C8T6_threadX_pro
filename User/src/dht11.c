@@ -141,6 +141,11 @@ static uint8_t DHT11_Read_Byte(void)
 				  if(++timeout > 10000) break;
 			  }
 		  }
+		  else{
+
+		     dat &= (uint8_t)~(0x01 << (7 - i));
+
+		  }
 	  }
 	  return dat;
 
@@ -197,8 +202,9 @@ uint8_t Read_DHT11_Data(void)
     // 4. 校验数据
     temp_val = dht11_data_buf[0] + dht11_data_buf[1] + dht11_data_buf[2] + dht11_data_buf[3];
     if(dht11_data_buf[4] == temp_val && temp_val != 0) {
-        humidity = 77;//dht11_data_buf[0];
-        temperature = 33;//dht11_data_buf[2];
+        humidity = dht11_data_buf[0];
+        temperature = dht11_data_buf[2];
+      
         return 0; // 成功
     }
 
@@ -354,7 +360,7 @@ uint8_t Read_DHT11_Data(void)
 
 
 
-void dht11_read_temp_humidity_value(void)
+uint8_t dht11_read_temp_humidity_value(void)
 {
     uint8_t dht11_read_flag;
 	
@@ -363,8 +369,9 @@ void dht11_read_temp_humidity_value(void)
 	if(dht11_read_flag==0){
       
 	 // humidity = dht11_data_buf[0];
-	 // temperature = dht11_data_buf[2];		
-
+	 // temperature = dht11_data_buf[2];
+	   LED_PLASMA_ON();
+       return 0;
 	}
 	else{
 
@@ -372,8 +379,9 @@ void dht11_read_temp_humidity_value(void)
 	   tx_thread_sleep(20);
 	   LED_PLASMA_ON();
 	   tx_thread_sleep(20);
-	    humidity = dht11_data_buf[0];
-	     temperature = dht11_data_buf[2];	
+	   LED_PLASMA_OFF();
+	   return 1;
+		
 	}
 
 

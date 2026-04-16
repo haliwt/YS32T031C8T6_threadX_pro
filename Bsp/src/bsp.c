@@ -146,7 +146,7 @@ void task_scheduler(void)
 	if(time_1s_f == 1){
 	 
 	   counter_2s ++;
-	   time_1s_set_temp_f++;
+	   time_set_temp_counter++;
 	   time_3s_flag++;
 
 	  Heat_Process();	

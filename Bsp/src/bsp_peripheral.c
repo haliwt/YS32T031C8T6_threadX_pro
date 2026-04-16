@@ -359,7 +359,7 @@ void Heat_Process(void)
 
 void set_temp_compare(void)
 {
-   if(discharge_f == 1 && set_temperature_value_f ==1 && time_1s_set_temp_f > 2){
+   if(discharge_f == 1 && set_temperature_value_f ==1 && time_set_temp_counter > 2){
 	    set_temperature_value_f ++;
 
     if(temperature >= setting_temperature){
@@ -444,7 +444,7 @@ void peripheral_fun_handler(void)
 
 	  }
       LED_Strip_Ctrl();
-      Plasma_Ctrl();
+     // Plasma_Ctrl();
       Ultra_Sound_Ctrl();
 	  Relay_Ctrl();
 

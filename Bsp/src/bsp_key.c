@@ -59,49 +59,6 @@ void Key_Scan(void)
     }
 }
 
-// 短按处理子函数
-void Process_Short_Key(uint16_t key) 
-{
-    if (key == _POWER_KEY_DOWN) {
-        if (discharge_f ==1){
-			discharge_f =0;
-			Beep(BEEP_ONCE);
-			off_step = 0;
-		}//System_Status_PowerOff();
-        else{
-		 discharge_f =1;
-		 Beep(BEEP_ONCE);
-		 on_step=0;
-			//System_Status_PowerOn();
-        }
-        return;
-    }
-
-    // 仅在开机且无负载故障时允许操作
-    if (!discharge_f || no_fan_load_f) return;
-
-    switch (key) {
-        case _MODE_KEY_DOWN:
-            Is_timing_hour_disp_f = 1;
-            Is_time_setting_f = 0;
-            Is_temp_setting_f = 0;
-            key_flash_time = 30;//300
-            if (setting_timing_hour == 0) AI_timing_open_f = 0;
-            Beep(BEEP_ONCE);
-            break;
-
-        case _UP_KEY_DOWN:
-            Handle_Value_Adjustment(1);
-            Beep(BEEP_ONCE);
-            break;
-
-        case _DOWN_KEY_DOWN:
-            Handle_Value_Adjustment(0);
-            Beep(BEEP_ONCE);
-            break;
-    }
-}
-
 // 长按处理子函数
 void Process_Long_Key(uint16_t key) {
     if (key_long_f) return; // 已处理过长按则退出
@@ -121,14 +78,16 @@ void Process_Long_Key(uint16_t key) {
             }
             break;
 
-        case _MODE_KEY_DOWN:
+        case _MODE_KEY_DOWN: //modke key long 
             if (key_time >= KEY_TICKS_LONG_M) {
                 key_long_f = 1;
                 if (discharge_f && !no_fan_load_f) {
+					
                     Is_time_setting_f = 1;
                     Is_temp_setting_f = 0;
-                    Is_timing_hour_disp_f = 0;
-                    key_flash_time = 30;//300
+                    key_be_pressed_f = 0;//Is_timing_hour_disp_f = 0;
+					disp_set_hours_time_f = 0;
+                    //key_flash_time = 30;//300
                     Beep(BEEP_ONCE);
                 }
             }
@@ -145,6 +104,51 @@ void Process_Long_Key(uint16_t key) {
             break;
     }
 }
+
+// 短按处理子函数
+void Process_Short_Key(uint16_t key) 
+{
+    if (key == _POWER_KEY_DOWN) {
+        if (discharge_f ==1){
+			discharge_f =0;
+			Beep(BEEP_ONCE);
+			off_step = 0;
+		}//System_Status_PowerOff();
+        else{
+		 discharge_f =1;
+		 Beep(BEEP_ONCE);
+		 on_step=0;
+			//System_Status_PowerOn();
+        }
+        return;
+    }
+
+    // 仅在开机且无负载故障时允许操作
+     if (!discharge_f || no_fan_load_f) return;
+
+    switch (key) {
+        case _MODE_KEY_DOWN://short key only display timer timing how many ?
+            disp_set_hours_time_f = 1;
+            Is_time_setting_f = 0;
+            Is_temp_setting_f = 0;
+            time_set_hours_counter=0 ;//key_flash_time = 30;//300
+            key_be_pressed_f = 0;
+            if (setting_timing_hour == 0) AI_timing_open_f = 0;
+            Beep(BEEP_ONCE);
+            break;
+
+        case _UP_KEY_DOWN:
+            Handle_Value_Adjustment(1);
+            Beep(BEEP_ONCE);
+            break;
+
+        case _DOWN_KEY_DOWN:
+            Handle_Value_Adjustment(0);
+            Beep(BEEP_ONCE);
+            break;
+    }
+}
+
 
 /**
   * @brief  数值调节处理函数
@@ -165,9 +169,13 @@ void Handle_Value_Adjustment(uint8_t is_up)
         AI_timing_open_f = (setting_timing_hour > 0) ? 1 : 0;
         
         // 只要动了时间，秒和分计数值都要清零重新开始
+        set_temperature_value_f = 0;
         timing_min_cnt = 0;
         timing_hour_cnt = 0;
         Cacl_time_sec = 0;
+		time_set_hours_counter=0 ;
+		key_be_pressed_f = 1;
+		//Is_timing_hour_disp_f = 1;
     } 
     // 情况 B: 正在设置温度
     else if (Is_temp_setting_f) 
@@ -177,9 +185,11 @@ void Handle_Value_Adjustment(uint8_t is_up)
         } else {
             if (setting_temperature > 20) setting_temperature--;
         }
+		disp_set_hours_time_f = 0;
+		Is_time_setting_f=0;
 		set_temperature_value_f = 1;
 		first_temp_compare_f = 0; 
-		time_1s_set_temp_f =0;
+		time_set_temp_counter =0;
     } 
     // 情况 C: 当前没在任何设置界面，按下加减键默认进入“温度设置”状态
     else 
@@ -230,6 +240,7 @@ void System_Status_PowerOn(void)
     device_rest_f = 0;          // 退出休息模式
     device_rest_time = 0;
 	key_net_config_f =0;
+	key_be_pressed_f =0;        //按键设置温度值 清零
     
     // 5. 清除异常标志
     no_fan_load_f = 0;          // 清除负载异常
@@ -323,11 +334,12 @@ static void power_on_handler(void)
     case 0:
 		System_Status_PowerOn();
 	    on_dsht11_counter=100, 
+	    Update_onLED_Display();
         on_step = 1;
 	break;
 
 	case 1:
-		Update_onLED_Display();
+		//display_digital_3_numbers();//Update_onLED_Display();
 	    on_step = 2;
 
 	break;
@@ -338,11 +350,16 @@ static void power_on_handler(void)
 	   //  on_dsht11_counter=0;
 	    // dht11_read_temp_humidity_value();
 	   //
+	  // temperature = 33;
+	   //dht11_read_temp_humidity_value();
+       //TM1639_Display_Temperature(temperature);
+	   //TM1639_Display_Temperature(temperature);
 	   on_step = 3;
 
 	break;
 
 	case  3:
+	 
       peripheral_fun_handler();
 	  wifi_led_state();
       on_step = 4;
@@ -354,6 +371,7 @@ static void power_on_handler(void)
 		if(on_read_adc_counter >100 ){ //10ms * 100
 			on_read_adc_counter=0;
 			AD_Filter();
+		   
 				
 			Adc_Channel_Sample();
 		}
@@ -366,11 +384,12 @@ static void power_on_handler(void)
 	case 5:
 	  on_dsht11_counter++;
 
-	  if(on_dsht11_counter > 100){
+	  if(on_dsht11_counter > 3){
 	  	on_dsht11_counter=0;
-        dht11_read_temp_humidity_value();
+         dht11_read_temp_humidity_value();
+         TM1639_Display_Temperature(temperature);
 	  }
-	   tx_thread_sleep(50);
+	   //tx_thread_sleep(50);
 	   on_step = 1;
 
 	break;

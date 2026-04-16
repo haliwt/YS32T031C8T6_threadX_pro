@@ -60,6 +60,7 @@ extern uint16_t work_time;
 
 #define _DEVICE_REST_TIME            10
 
+#define DEBUG_ENABLE            0
 
 
 
@@ -86,7 +87,8 @@ extern uint8_t Is_time_setting_f;
 extern uint8_t Is_temp_setting_f;
 extern uint8_t Is_timing_hour_disp_f;
 extern uint8_t set_temperature_value_f;
-extern uint8_t time_1s_set_temp_f;
+extern uint8_t time_set_temp_counter;
+extern uint8_t disp_set_hours_time_f;
 
 
 extern uint16_t timing_hour_disp_time;
@@ -128,6 +130,10 @@ extern uint16_t beep_interval_time;
 
 //
 extern uint8_t soft_version;
+
+extern uint8_t time_switch_temp_hum_counter;
+extern uint8_t  key_be_pressed_f;
+extern uint8_t  time_set_hours_counter;
 
 
 

@@ -37,7 +37,7 @@ void SET_DHT11_DATA_IN_MODE(void);
 void SET_DHT11_DATA_OUT_MODE(void);
 
 
-void dht11_read_temp_humidity_value(void);
+uint8_t dht11_read_temp_humidity_value(void);
 
 
 

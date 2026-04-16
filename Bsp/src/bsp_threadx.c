@@ -79,8 +79,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                           /* 传递给任务的参数 */
                        stack_ui_pro,           /* 堆栈基地址 */
                        STACK_SIZE_THREE,    /* 堆栈空间大小 */  
-                       3,        /* 任务优先级*/
-                       3,        /* 任务抢占阀值 */
+                       0,        /* 任务优先级*/
+                       0,        /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,             /* 不开启时间片 */
                        TX_AUTO_START);               /* 创建后立即启动 */
 
@@ -136,7 +136,7 @@ void tx_application_define(void *first_unused_memory)
     power_onoff_handler();
 
 	
-	tx_thread_sleep(1);//1*10ms 
+	tx_thread_sleep(10);//1*10ms 
 	
     } 
 }

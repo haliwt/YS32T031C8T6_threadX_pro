@@ -45,6 +45,10 @@ uint8_t time_100ms_f;
 uint8_t time_300ms_f;
 uint8_t time_wifi_10ms_f;
 
+uint8_t time_switch_temp_hum_counter;
+uint8_t  key_be_pressed_f;
+uint8_t  time_set_hours_counter;
+
 
 
 uint8_t time_1s_f;
@@ -84,7 +88,10 @@ uint8_t Is_time_setting_f;
 uint8_t Is_temp_setting_f;
 uint8_t Is_timing_hour_disp_f;
 uint8_t set_temperature_value_f;
-uint8_t time_1s_set_temp_f;
+uint8_t time_set_temp_counter;
+uint8_t disp_set_hours_time_f;
+
+
 
 
 uint16_t timing_hour_disp_time;
