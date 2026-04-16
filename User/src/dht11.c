@@ -134,18 +134,12 @@ static uint8_t DHT11_Read_Byte(void)
 		  Delay_US(40);
 		  
 		  if(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN) == 1) {
-			  
+			  dat |= (uint8_t)(0x01 << (7 - i));
 			  // 等待高电平结束（1的持续时间）
 			  timeout = 0;
 			  while(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN) == 1) {
 				  if(++timeout > 10000) break;
 			  }
-			   dat |= (uint8_t)(0x01 << (7 - i));
-		  }
-		  else{
-
-		       dat &= (uint8_t)~(0x01 << (7 - i));
-
 		  }
 	  }
 	  return dat;
@@ -203,8 +197,8 @@ uint8_t Read_DHT11_Data(void)
     // 4. 校验数据
     temp_val = dht11_data_buf[0] + dht11_data_buf[1] + dht11_data_buf[2] + dht11_data_buf[3];
     if(dht11_data_buf[4] == temp_val && temp_val != 0) {
-        humidity = dht11_data_buf[0];
-        temperature = dht11_data_buf[2];
+        humidity = 77;//dht11_data_buf[0];
+        temperature = 33;//dht11_data_buf[2];
         return 0; // 成功
     }
 
@@ -370,21 +364,16 @@ void dht11_read_temp_humidity_value(void)
       
 	 // humidity = dht11_data_buf[0];
 	 // temperature = dht11_data_buf[2];		
-	   LED_PLASMA_ON();
 
 	}
 	else{
 
        LED_PLASMA_OFF();
 	   tx_thread_sleep(20);
-//	   LED_PLASMA_ON();
-//	   tx_thread_sleep(20);
-//	   LED_PLASMA_OFF();
-//	   tx_thread_sleep(20);
-//	   LED_PLASMA_ON();
-//	   tx_thread_sleep(20);
-//	    LED_PLASMA_OFF();
-	    
+	   LED_PLASMA_ON();
+	   tx_thread_sleep(20);
+	    humidity = dht11_data_buf[0];
+	     temperature = dht11_data_buf[2];	
 	}
 
 

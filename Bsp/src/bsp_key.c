@@ -366,11 +366,9 @@ static void power_on_handler(void)
 	case 5:
 	  on_dsht11_counter++;
 
-	  if(on_dsht11_counter > 2){
+	  if(on_dsht11_counter > 100){
 	  	on_dsht11_counter=0;
         dht11_read_temp_humidity_value();
-	    temperature =33;
-	    Update_onLED_Display();
 	  }
 	   tx_thread_sleep(50);
 	   on_step = 1;
