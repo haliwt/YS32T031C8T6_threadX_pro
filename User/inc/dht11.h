@@ -24,12 +24,13 @@ extern "C" {
 
 extern uint8_t Data_Read_Finish_f;
 extern uint16_t data_read_interval;
-extern uint16_t humidity;
-extern uint16_t temperature;
+extern uint8_t humidity;
+extern uint8_t temperature;
 
 
 #define DHT11_DATA_PIN              GPIO_Pin_4
 #define DHT11_DATA_GPIO_PORT        GPIOA
+
 
 
 

@@ -3,9 +3,15 @@
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
+//#define DEMO_BYTE_POOL_SIZE 4096
+
+//unsigned char free_memory[DEMO_BYTE_POOL_SIZE];
+
+
+
 #define STACK_SIZE_ONE  512//1792//3072//2048//1024//896//768
 #define STACK_SIZE_TWO  512//256
-#define STACK_SIZE_THREE  1536//256
+#define STACK_SIZE_THREE  1024//256
 
 
 static TX_THREAD thread_msg;
@@ -13,6 +19,9 @@ static TX_THREAD thread_key;
 static TX_THREAD thread_ui;
 /* 定义信号量 */
 TX_SEMAPHORE wifi_semaphore;
+
+
+
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
@@ -39,7 +48,16 @@ static void vTaskUiPro(ULONG thread_input);
 */
 void tx_application_define(void *first_unused_memory)
 {
+     // 创建内存池
+   /// tx_byte_pool_create(&my_pool, "my_pool", free_memory, DEMO_BYTE_POOL_SIZE);
 
+	 // 从池中分配堆栈并创建线程
+    ///void *stack_ptr;
+
+	// tx_byte_allocate(&my_pool, &stack_ptr, DEMO_STACK_SIZE, TX_NO_WAIT);
+
+
+	
       /* 创建信号量 */
        tx_semaphore_create(&wifi_semaphore, "WifiSemaphore", 0);
 /*

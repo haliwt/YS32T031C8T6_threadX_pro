@@ -309,6 +309,11 @@ void power_onoff_handler(void)
     case 1:
 
        power_on_handler();
+       if(discharge_f ==1){
+	        dht11_read_temp_humidity_value();
+			TM1639_Display_Temperature(temperature);
+
+       	}
 
 
     break;
@@ -386,8 +391,8 @@ static void power_on_handler(void)
 
 	  if(on_dsht11_counter > 3){
 	  	on_dsht11_counter=0;
-         dht11_read_temp_humidity_value();
-         TM1639_Display_Temperature(temperature);
+         //dht11_read_temp_humidity_value();
+        /// TM1639_Display_Temperature(temperature);
 	  }
 	   //tx_thread_sleep(50);
 	   on_step = 1;
