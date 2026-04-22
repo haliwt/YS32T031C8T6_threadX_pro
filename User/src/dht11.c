@@ -14,8 +14,9 @@
 #include "bsp.h"
 
 
-uint8_t Data_Read_Finish_f;
-uint16_t data_read_interval;
+
+//uint8_t Data_Read_Finish_f;
+//uint16_t data_read_interval;
 uint8_t humidity;
 uint8_t temperature;
 
@@ -31,17 +32,40 @@ uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value);
  * @retval      �??
  */
 
+#if 0
+static void Delay_US(uint32_t us)
+{
+    uint32_t start = DWT->CYCCNT;
+    uint32_t ticks = us * 48;   // 48MHz → 48 cycles = 1us
+
+    while ((DWT->CYCCNT - start) < ticks);
+}
+
+#else 
 static void Delay_US(uint32_t us) 
 {
-    uint32_t count = us * 32;//8 // 根据 48MHz 主频估算，具体数值需微调
+   #if 0
+	uint32_t count = us * 8;//8 // 根据 48MHz 主频估算，具体数值需微调
     while(count--) {
         __NOP();
-		__NOP();
-	    __NOP();
-		__NOP();
 	
     }
+   #else
+    while (us--)
+    {
+        // 48MHz 下，1us 约为 48 个周期
+        // 除去 while 循环自身的减法、比较、跳转（约 6~9 个周期）
+        // 剩余约 40 个周期左右用 NOP 填充
+        __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+        __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+        __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+        __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
+    }
+
+   #endif 
+	
 }
+#endif 
 #if 0
 /**
  * @brief       等待DHT11的回�??
@@ -355,7 +379,7 @@ static uint8_t DHT11_Read_Byte(void)
 static uint8_t dht11_data_buf[5];
 
 
-
+#if 0
 //��DHT11�϶�ȡ��ʪ������
 uint8_t Read_DHT11_Data(void)
 {
@@ -562,38 +586,8 @@ uint8_t Read_DHT11_Data(void)
 
 
 
-
-#if 1
-uint8_t dht11_read_temp_humidity_value(void)
-{
-    uint8_t dht11_read_flag;
-	
-	dht11_read_flag = DHT11_Read(humidity,temperature);
-
-	if(dht11_read_flag==0){
-      
-	 // humidity = dht11_data_buf[0];
-	 // temperature = dht11_data_buf[2];
-	   LED_PLASMA_ON();
-       return 0;
-	}
-	else{
-
-       LED_PLASMA_OFF();
-	   tx_thread_sleep(20);
-	   LED_PLASMA_ON();
-	   tx_thread_sleep(20);
-	   LED_PLASMA_OFF();
-	  
-	   return 1;
-		
-	}
-
-
-}
-
-
 #endif 
+
 
 
 
@@ -620,7 +614,7 @@ static uint8_t DHT11_ReadPin(void)
     return GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN);//LL_GPIO_IsInputPinSet(DHT11_PORT, DHT11_PIN);
 }
 
-#if 1
+#if 0
 uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value)
 {
     uint8_t data[5] = {0};
@@ -719,4 +713,138 @@ uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value)
 #endif 
 
 
+
+static uint8_t DHT11_ReadBit(void)
+{
+    uint32_t timeout = 0;
+
+    // 等待低电平结束
+    while (!DHT11_ReadPin())
+    {
+        if (++timeout > 200) return 0xFF;
+        Delay_US(1);
+    }
+
+    // 等待 40us 判断 0/1
+    Delay_US(40);
+
+    return DHT11_ReadPin() ? 1 : 0;
+}
+
+
+static uint8_t DHT11_ReadByte(void)
+{
+    uint8_t i, val = 0;
+
+    for (i = 0; i < 8; i++)
+    {
+        uint8_t bit = DHT11_ReadBit();
+        if (bit == 0xFF) return 0xFF;
+
+        val <<= 1;
+        val |= bit;
+    }
+    return val;
+}
+
+uint8_t DHT11_Read(uint8_t humi, uint8_t temp)
+{
+    uint8_t data[5] = {0};
+    uint32_t timeout;
+    UINT old_post;
+
+    /* 1. 禁止 ThreadX 调度（关键） */
+    old_post = tx_interrupt_control(TX_INT_DISABLE);
+	__disable_irq();
+
+    /* 2. 主机拉低 18ms */
+    DHT11_SetOutput();
+    DHT11_Write(0);
+    Delay_US(18000);
+
+    /* 3. 拉高 20~40us */
+    DHT11_Write(1);
+    Delay_US(30);
+
+    /* 4. 切换输入 */
+    DHT11_SetInput();
+
+    /* 5. 等待 DHT11 响应 */
+    timeout = 0;
+    while (DHT11_ReadPin())
+    {
+        if (++timeout > 200) goto error;
+        Delay_US(1);
+    }
+
+    timeout = 0;
+    while (!DHT11_ReadPin())
+    {
+        if (++timeout > 200) goto error;
+        Delay_US(1);
+    }
+
+    timeout = 0;
+    while (DHT11_ReadPin())
+    {
+        if (++timeout > 200) goto error;
+        Delay_US(1);
+    }
+
+    /* 6. 读取 5 字节（40bit） */
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        data[i] = DHT11_ReadByte();
+        if (data[i] == 0xFF) goto error;
+    }
+
+    /* 7. 恢复 ThreadX 调度 */
+	__enable_irq();
+    tx_interrupt_control(old_post);
+
+    /* 8. 校验 */
+    if ((data[0] + data[1] + data[2] + data[3]) != data[4])
+        return 1;
+
+    humi = data[0];
+    temp = data[2];
+
+    return 0;
+
+error:
+    tx_interrupt_control(old_post);
+    return 1;
+}
+
+#if 1
+uint8_t dht11_read_temp_humidity_value(void)
+{
+    uint8_t dht11_read_flag;
+	
+	dht11_read_flag = DHT11_Read(humidity,temperature);
+
+	if(dht11_read_flag==0){
+      
+	 // humidity = dht11_data_buf[0];
+	 // temperature = dht11_data_buf[2];
+	   LED_PLASMA_ON();
+       return 0;
+	}
+	else{
+
+       LED_PLASMA_OFF();
+	   tx_thread_sleep(20);
+	   LED_PLASMA_ON();
+	   tx_thread_sleep(20);
+	   LED_PLASMA_OFF();
+	  
+	   return 1;
+		
+	}
+
+
+}
+
+
+#endif 
 

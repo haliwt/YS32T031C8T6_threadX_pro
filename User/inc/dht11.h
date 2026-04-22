@@ -22,8 +22,8 @@ extern "C" {
 
 
 
-extern uint8_t Data_Read_Finish_f;
-extern uint16_t data_read_interval;
+//extern uint8_t Data_Read_Finish_f;
+//extern uint16_t data_read_interval;
 extern uint8_t humidity;
 extern uint8_t temperature;
 
@@ -36,6 +36,7 @@ extern uint8_t temperature;
 
 void SET_DHT11_DATA_IN_MODE(void);
 void SET_DHT11_DATA_OUT_MODE(void);
+
 
 
 uint8_t dht11_read_temp_humidity_value(void);

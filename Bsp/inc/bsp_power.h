@@ -110,6 +110,9 @@ extern uint8_t timing_hour_cnt;
 
 extern uint8_t fan_open_f;
 extern uint8_t fan_speed_level;
+extern uint8_t temperature;
+extern  uint8_t humidity;
+
 
 
 extern uint16_t fan_delay_time_off;

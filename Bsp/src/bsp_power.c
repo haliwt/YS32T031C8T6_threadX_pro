@@ -148,7 +148,9 @@ uint8_t  wifi_run_step ;
 uint8_t  wifi_first_connectoed_cloud_f;
 uint8_t  wifi_read_net_data_f;
 
+uint8_t temperature;
 
+uint8_t humidity;
 
 
 
@@ -208,8 +210,8 @@ void Clear_Ram(void)
 	  Times1minCnt = 0;
 	  Cacl_time_sec = 0;
 	
-	  Data_Read_Finish_f = 1;
-	  data_read_interval = 0;
+	 // Data_Read_Finish_f = 1;
+	  //data_read_interval = 0;
 	
 	  key_worked_f = 0;
 	  key_long_f = 0;

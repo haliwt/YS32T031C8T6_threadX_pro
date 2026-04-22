@@ -25,7 +25,7 @@ uint8_t counter_2s,tim_2s_f;
   {
    
    discharge_f =0;
-  SET_DHT11_DATA_OUT_MODE();//SET_DHT11_DATA_IN_MODE();
+  //SET_DHT11_DATA_OUT_MODE();//SET_DHT11_DATA_IN_MODE();
    //SET_DHT11_DATA_IN_MODE();
 #if(Enable_EventRecorder == 1)  
 	/* 0…60‹10‡80†40†30…4EventRecorder0…50„40†70„90‡40‹0 */

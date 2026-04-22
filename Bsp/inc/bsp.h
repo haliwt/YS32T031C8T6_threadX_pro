@@ -14,7 +14,7 @@
 #include "tim.h"
 
 
-#include "dht11.h" 
+//#include "dht11.h" 
 #include "tm1639.h"
 #include "key.h"
 #include "system_init.h"
@@ -29,6 +29,7 @@
 #include "bsp_cmd_link.h"
 #include "bsp_smg.h"
 #include "bsp_tm1639.h"
+#include "bsp_sensor.h"
 
 //wifi
 #include "bsp_usart_wifi.h"
