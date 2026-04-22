@@ -224,17 +224,13 @@ RESERVED3                            ;	31	RESERVED
 ;*******************************************************************************
 ; User Stack and Heap initialization
 ;*******************************************************************************
-                IF       :LNOT::DEF:__MICROLIB
-                IMPORT   __use_two_region_memory
-                ENDIF
+              EXPORT   __initial_sp
 
-                EXPORT   __stack_limit
-                EXPORT   __initial_sp
-                IF       Heap_Size != 0                      ; Heap is provided
+                IF       Heap_Size != 0
                 EXPORT   __heap_base
                 EXPORT   __heap_limit
                 ENDIF
 
-                 END
+                END
 
 ;*****************************END OF FILE***************************************

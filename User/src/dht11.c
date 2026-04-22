@@ -620,7 +620,7 @@ static uint8_t DHT11_ReadPin(void)
     return GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN);//LL_GPIO_IsInputPinSet(DHT11_PORT, DHT11_PIN);
 }
 
-
+#if 1
 uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value)
 {
     uint8_t data[5] = {0};
@@ -700,9 +700,9 @@ uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value)
 	
    // 4. 恢复中断
     tx_interrupt_control(interrupt_save);
-	   /* 4. 开始读取 40bit
+	   /* 4. 开始读取 40bit*/
 
-    /* 5. 校验 */
+   
     if (data[0] + data[1] + data[2] + data[3] != data[4]){
 		__enable_irq();
 
@@ -716,7 +716,7 @@ uint8_t DHT11_Read(uint8_t humidity_value, uint8_t temperature_value)
     return 0;   // 成功
 }
 
-
+#endif 
 
 
 

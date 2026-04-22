@@ -717,8 +717,8 @@ static void Tencent_Cloud_Rx_Handler(void)
 static void Json_Parse_Command_Fun(void)
 {
  
-    static uint8_t wind_hundred, wind_decade,wind_unit,temp_decade,temp_unit;
-	//static uint8_t buzzer_temp_on,phone_power_flag;
+    static uint8_t wind_hundred, wind_decade,wind_unit;
+
     
 
    switch(wifi_t.response_wifi_signal_label){

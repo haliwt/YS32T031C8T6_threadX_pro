@@ -65,42 +65,42 @@ void tx_application_define(void *first_unused_memory)
 	   AppTaskCreate里面创建。
 	*/
 	/**************创建启动任务*********************/
-    tx_thread_create(&thread_key,              /* 任务控制块地址 */   
-                       "KeyPro",              /* 任务名 */
-                       vTaskKeyPro,                  /* 启动任务函数地址 */
+    tx_thread_create(&thread_key,                     /* 任务控制块地址 */   
+                       "KeyPro",                      /* 任务名 */
+                       vTaskKeyPro,                   /* 启动任务函数地址 */
                        0,                             /* 传递给任务的参数 */
-                       stack_key_pro,            /* 堆栈基地址 */
-                       STACK_SIZE_TWO,    /* 堆栈空间大小 */  
-                       1,        /* 任务优先级*/
-                       1,        /* 任务抢占阀值 */
-                       TX_NO_TIME_SLICE,               /* 不开启时间片 */
-                       TX_AUTO_START);                 /* 创建后立即启动 */
+                       stack_key_pro,                 /* 堆栈基地址 */
+                       STACK_SIZE_TWO,                /* 堆栈空间大小 */  
+                       1,                             /* 任务优先级*/
+                       1,                             /* 任务抢占阀值 */
+                       TX_NO_TIME_SLICE,              /* 不开启时间片 */
+                       TX_AUTO_START);                /* 创建后立即启动 */
    	   
 	/**************创建统计任务*********************/
-    tx_thread_create(&thread_msg,               /* 任务控制块地址 */    
-                       "MsgPro",              /* 任务名 */
-                        vTaskMsgPro,                  /* 启动任务函数地址 */
-                       0,                           /* 传递给任务的参数 */
-                       stack_msg_pro,           /* 堆栈基地址 */
-                       STACK_SIZE_ONE,    /* 堆栈空间大小 */  
-                       2,        /* 任务优先级*/
-                       2,        /* 任务抢占阀值 */
-                       TX_NO_TIME_SLICE,             /* 不开启时间片 */
-                       TX_AUTO_START);               /* 创建后立即启动 */
+    tx_thread_create(&thread_msg,                       /* 任务控制块地址 */    
+                       "MsgPro",                        /* 任务名 */
+                        vTaskMsgPro,                    /* 启动任务函数地址 */
+                       0,                               /* 传递给任务的参数 */
+                       stack_msg_pro,                   /* 堆栈基地址 */
+                       STACK_SIZE_ONE,                  /* 堆栈空间大小 */  
+                       2,                               /* 任务优先级*/
+                       2,                               /* 任务抢占阀值 */
+                       TX_NO_TIME_SLICE,                /* 不开启时间片 */
+                       TX_AUTO_START);                  /* 创建后立即启动 */
 
 
 				   
 
-    tx_thread_create(&thread_ui,               /* 任务控制块地址 */    
-                       "UiPro",              /* 任务名 */
+    tx_thread_create(&thread_ui,                    /* 任务控制块地址 */    
+                       "UiPro",                     /* 任务名 */
                        vTaskUiPro,                  /* 启动任务函数地址 */
                        0,                           /* 传递给任务的参数 */
-                       stack_ui_pro,           /* 堆栈基地址 */
-                       STACK_SIZE_THREE,    /* 堆栈空间大小 */  
-                       0,        /* 任务优先级*/
-                       0,        /* 任务抢占阀值 */
-                       TX_NO_TIME_SLICE,             /* 不开启时间片 */
-                       TX_AUTO_START);               /* 创建后立即启动 */
+                       stack_ui_pro,                /* 堆栈基地址 */
+                       STACK_SIZE_THREE,            /* 堆栈空间大小 */  
+                       0,                           /* 任务优先级*/
+                       0,                           /* 任务抢占阀值 */
+                       TX_NO_TIME_SLICE,            /* 不开启时间片 */
+                       TX_AUTO_START);              /* 创建后立即启动 */
 
 	
 			   
