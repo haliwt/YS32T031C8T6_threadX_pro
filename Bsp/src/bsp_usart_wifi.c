@@ -1322,7 +1322,7 @@ void Reconnection_Wifi_Order(void)
     wifi_check_net_f = 1;
 	rx_wifi_data_counter =0;
 	send_usart2_data((const uint8_t*)"AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"));
-    
+    tx_thread_sleep(20);//10ms*20 = 200ms
   
 }
 

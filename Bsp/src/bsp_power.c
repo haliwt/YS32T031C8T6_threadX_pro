@@ -511,6 +511,9 @@ static void power_on_handler(void)
    case 12:
      if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 0){
 	   	   gpro_t.time_1m_wifi_f =0;
+		   #if DEBUG_ENABLE
+		     printf("reconnection wifi ! \n\r");
+		   #endif 
 		   Reconnection_Wifi_Order();
 
 	 }
