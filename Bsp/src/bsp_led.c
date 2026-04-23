@@ -43,8 +43,8 @@ void  wifi_normal_led_state(void)
 		}
 		else{
 			//led_scan_time++;
-			if(gpro_t.time_2s_f > 0){//if(led_scan_time>1)
-			  gpro_t.time_2s_f =0; 
+			if(gpro_t.time_200ms_f > 700){//if(led_scan_time>1)
+			   gpro_t.time_200ms_f =0; 
 			 // led_scan_time =0;
 	          LED_WIFI_TOGGLE();
 			}

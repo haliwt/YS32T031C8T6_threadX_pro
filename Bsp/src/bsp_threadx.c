@@ -149,7 +149,7 @@ void tx_application_define(void *first_unused_memory)
 
     power_onoff_handler();
     
-	
+	IWDG_ReloadCounter();
 	tx_thread_sleep(1);//10ms * 10 = 100ms  
 	
     } 

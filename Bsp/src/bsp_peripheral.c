@@ -286,8 +286,56 @@ void Relay_Ctrl(void)
 		
 }	
 
-
+/**
+*
+*@brief environment temperature value compare set temperater value
+*@notice
+*@param
+*@retrval 
+*
+**/
 void workd_interval_time_peripheral_handle(void)
+{
+	if(discharge_f){
+
+		if((PTC_heat_open_f)&& ptc_prohibit_off_f == 0)
+		{
+			LED_PTC_ON();
+        }
+		else if(PTC_heat_open_f ==0)
+		{
+			LED_PTC_OFF();
+
+
+		}
+		
+		if(Ultra_Sound_open_f)
+		{
+
+			LED_MOUSE_ON();
+		}
+		else
+		{
+
+			LED_MOUSE_OFF();
+		}
+		if(plasma_open_f)
+		{
+
+		LED_PLASMA_ON();
+		}
+			else
+		{
+
+		LED_PLASMA_OFF();
+		}
+	}
+ 
+}
+
+
+
+void workd_interval_turn_off_handle(void)
 {
 	RELAY_OFF();
 	ultra_sound_off();
@@ -412,6 +460,8 @@ void peripheral_fun_handler(void)
 	case 1: //have a rest 10 minutes 
 	   LED_Strip_Ctrl();
        workd_interval_time_peripheral_handle();
+	   workd_interval_turn_off_handle();
+	   
 	   if(disp_set_hours_time_f == 1 || Is_time_setting_f ==1) return ;
 	   if(AI_timing_open_f==1){
 	  	LED_AI_ON();
@@ -428,6 +478,13 @@ void peripheral_fun_handler(void)
 
 }
 
+/**
+*
+*@brief 
+*@notice
+*@param
+*
+**/
 
 void power_off_peripheral_handler(void)
 {
@@ -439,6 +496,13 @@ void power_off_peripheral_handler(void)
 
 }
 
+/**
+*
+*@brief 
+*@notice
+*@param
+*
+**/
 
 void power_on_peripheral_handler(void)
 {

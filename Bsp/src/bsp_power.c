@@ -53,7 +53,7 @@ uint8_t Ultra_Sound_open_f;
 uint8_t plasma_open_f;
 
 uint16_t timing_is_reach_disptime;
-uint8_t time_beep_counter;
+
 
 
 
@@ -384,10 +384,7 @@ static void power_on_handler(void)
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
       gon_t.on_step =1;
-	   #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+	
 
    break;
 
@@ -395,10 +392,7 @@ static void power_on_handler(void)
     dht11_read_temp_humidity_value();
     display_digital_3_numbers();
     gon_t.on_step =2;
-	 #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
 
-	   #endif 
 
    break;
 
@@ -407,10 +401,6 @@ static void power_on_handler(void)
        dht11_read_temp_humidity_value();
 	   display_digital_3_numbers();
 	   gon_t.on_step =3;
-	    #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
 
    break;
 
@@ -423,10 +413,7 @@ static void power_on_handler(void)
 
         }
         gon_t.on_step =4;
-       #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+     
    break;
 
    case 4:
@@ -436,10 +423,7 @@ static void power_on_handler(void)
 		   wifi_default_handler();
          }
         gon_t.on_step =5;
-	   #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+	
    break;
 
    case 5:
@@ -459,11 +443,7 @@ static void power_on_handler(void)
 		}
 	} 
       gon_t.on_step =6;
-	 #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
-
+	
    break;
 
 
@@ -475,10 +455,7 @@ static void power_on_handler(void)
 
    	   }
        gon_t.on_step =7;
-	    #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+	
 
    break;
 
@@ -488,10 +465,7 @@ static void power_on_handler(void)
       	dht11_read_temp_humidity_value();
    	}
    gon_t.on_step =8;
-	 #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
 
-	   #endif 
 
    break;
 
@@ -500,10 +474,7 @@ static void power_on_handler(void)
              Countdown_timer_Handler();
 	   	}
       gon_t.on_step =9;
-	    #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+	   
 
    break;
 
@@ -515,10 +486,7 @@ static void power_on_handler(void)
 	    works_nomal_run_time_handler();
 		
 	    gon_t.on_step =10;
-    #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
 
-	   #endif 
 
    break;
 
@@ -543,10 +511,6 @@ static void power_on_handler(void)
 		}
     
       gon_t.on_step =12;
-	 #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
 
    break;
 
@@ -559,12 +523,14 @@ static void power_on_handler(void)
 	   	   	}
 		
 	}
-     gon_t.on_step =3;
+     gon_t.on_step =13;
 
-	  #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
+	
+   break;
 
-	   #endif 
+   case 13:
+       wifi_normal_led_state();
+       gon_t.on_step =3;
 
    break;
 
@@ -766,23 +732,7 @@ void Trigger_Simple_Beep(uint8_t ms_10)
   * @param: 
   *
 **/
-void Task_Beep_Simple_10ms(void) 
-{
 
-  if (time_beep_counter > 0 && beep_sound_f == 1) {
-		 beep_sound_f ++;
-
-	     BEEP_OFF();
-//        time_beep_counter--;
-//        if (time_beep_counter == 0) {
-//           BEEP_OFF(); //BEEP_PWM_OFF(); // 时间到，关掉
-//        }
-  }
-  else if(beep_sound_f == 1){
-
-	    BEEP_ON();
-
- }
 
 //  if( beep_sound_f ==2){
 
@@ -790,7 +740,7 @@ void Task_Beep_Simple_10ms(void)
 //	    beep_sound_f ++;
 
 //  }
-}
+
 /**
 	*
 	*@brief environment temperature value compare set temperater value
@@ -904,7 +854,9 @@ void Heat_Process(void)
 
 void power_onoff_handler(void)
 {
-     switch(discharge_f){
+
+  static uint8_t dc_power_f = 0;
+	 switch(discharge_f){
 
       case 1:
            power_on_handler();
@@ -917,11 +869,12 @@ void power_onoff_handler(void)
       }
 
 	if(discharge_f == 1){
+	  
 
        display_digital_3_numbers();
 	   set_temp_compare();
-	   wifi_normal_led_state();
 	 
+	   wifi_fast_led_state();
 	  
 	}
 
@@ -931,8 +884,13 @@ void power_onoff_handler(void)
        
     }
 
-	
-    wifi_fast_led_state();
+	if(dc_power_f ==0){
+	   dc_power_f++;
+
+	   beep_power_sound();
+
+	}
+    
 }
 /**
   * @brief  

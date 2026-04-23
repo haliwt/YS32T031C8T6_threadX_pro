@@ -19,11 +19,12 @@ void IWDG_Configuration(void);
 // IWDG ≥ı ºªØ≈‰÷√
 void IWDG_Configuration(void)
 {
+  /*set up time is 5s */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_IWDG, ENABLE);
   IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable); 
   while (IWDG_GetFlagStatus(IWDG_FLAG_PVU) != 0x00); 
-  IWDG_SetPrescaler(IWDG_Prescaler_32);
-  IWDG_SetReload(1024);
+  IWDG_SetPrescaler(IWDG_Prescaler_64);
+  IWDG_SetReload(3125);
   IWDG_SetWindowValue(4095);           
   IWDG_ReloadCounter();
   IWDG_Enable();

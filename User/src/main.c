@@ -68,7 +68,7 @@ int main(void)
 	
     TIM14_Configuration();         //TIM14-PWM输出配置
 	
-    //IWDG_Configuration();          //独立看门狗配置
+    IWDG_Configuration();          //独立看门狗配置
 
 	
 	  TSC_Lib_Init();                //触摸初始化

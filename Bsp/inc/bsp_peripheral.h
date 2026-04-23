@@ -20,6 +20,8 @@ void Fan_Current_Det(void);
 
 void peripheral_fun_handler(void);
 void workd_interval_time_peripheral_handle(void);
+void workd_interval_turn_off_handle(void);
+
 
 void power_off_peripheral_handler(void);
 
