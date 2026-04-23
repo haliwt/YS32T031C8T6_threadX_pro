@@ -432,7 +432,7 @@ static void power_on_handler(void)
 			
 		}
 		else{ //conneting to wifi net 
-	
+	        
 			link_wifi_net_handler();
 		}
 	} 
@@ -907,6 +907,11 @@ void power_onoff_handler(void)
          wifi_parse_tencennt_hadler();//
        
     }
+
+	if(key_net_config_f==0 ){
+      wifi_auto_detected_link_state();
+
+   	}
 
 	if(dc_power_f ==0){
 	   dc_power_f++;

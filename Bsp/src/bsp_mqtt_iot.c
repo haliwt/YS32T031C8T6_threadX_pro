@@ -608,7 +608,7 @@ void link_wifi_net_handler(void)
               send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
               //delay_ms(200);//delay_ms(1000);
-               tx_thread_sleep(100);//10ms * 100 
+               tx_thread_sleep(300);//10ms * 100 = 1000s 
 			  	link_net_step  = 1;
 			  
 			break;
@@ -618,22 +618,18 @@ void link_wifi_net_handler(void)
               
                 send_usart2_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
                 //delay_ms(100);
-               
+                tx_thread_sleep(200);
                 uid =Get_Unique_ID_32bit();
-			    //delay_ms(100);
-                time_link_net_counter =0;
-
-				tx_thread_sleep(200);//10ms * 100 
-
-				link_net_step  = 2;
+			  
+                 link_net_step  = 2;
                 
-                
+                time_link_net_counter=0;
 
             break;
 
             case 2:
 		
-                 if(time_link_net_counter  > 5){
+                 if(time_link_net_counter  > 6){
                     
 					time_link_net_counter=0;
 
@@ -643,7 +639,7 @@ void link_wifi_net_handler(void)
             		   send_usart2_data((const uint8_t *)message,message_len);
             	  	   //delay_ms(1000);
                       
-                        tx_thread_sleep(100);//10ms * 100 
+                        tx_thread_sleep(300);//10ms * 100 
 
 						link_net_step  = 3;
 
@@ -654,7 +650,7 @@ void link_wifi_net_handler(void)
 
 
             case 3:
-            if(time_link_net_counter   > 4){
+            if(time_link_net_counter   > 6){
                       time_link_net_counter  = 0;
                   
                 send_usart2_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
@@ -663,7 +659,7 @@ void link_wifi_net_handler(void)
 			     tx_thread_sleep(100);//10ms * 100 
 
 				 link_net_step  = 4;
-               
+                 time_link_net_counter  =0;
                 
             }
 	
@@ -673,11 +669,11 @@ void link_wifi_net_handler(void)
 
             case 4:
 		
-                 if(time_link_net_counter   > 7){
+                 if(time_link_net_counter   > 8){
                    time_link_net_counter  = 0;
 
                    wifi_linking_tencent_f =1;
-				    tx_thread_sleep(100);//10ms * 100 
+				   
 
 					link_net_step  = 5;
           
@@ -691,12 +687,8 @@ void link_wifi_net_handler(void)
             //  uid =Get_Unique_ID_32bit();
 	          message_len =  sprintf((char *)message, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",uid);
               send_usart2_data((const uint8_t *)message,message_len);
-	           //delay_ms(2000);
-
-
-
-			   tx_thread_sleep(100);//10ms * 100 
-					link_net_step  = 6;
+	            tx_thread_sleep(300);//10ms * 100 
+				link_net_step  = 6;
 			
              
 
@@ -714,7 +706,7 @@ void link_wifi_net_handler(void)
  //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//�?始连�?
              send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
 			 //delay_ms(1000);
-			   tx_thread_sleep(100);//10ms * 100 
+			   tx_thread_sleep(200);//10ms * 100 
 
 			  link_net_step  = 7;
 
@@ -733,7 +725,7 @@ void link_wifi_net_handler(void)
 			
 				
                 
-               SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+               if(disp_second_f ==1)SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
                //delay_ms(100);
 			
 			    link_net_step= 8;
@@ -744,7 +736,7 @@ void link_wifi_net_handler(void)
                 
                   key_net_config_f =0;
                   link_net_step = 11;
-                  SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
+                  if(disp_second_f == 1)SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
                  // delay_ms(100);
                   
                 }

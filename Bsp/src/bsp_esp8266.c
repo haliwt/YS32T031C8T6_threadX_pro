@@ -101,6 +101,7 @@ static void auto_connect_wifi_handler(void)
 	    tx_thread_sleep(100);//10ms *100 =1s.
 
 	    time_autolink_counter=0; 
+		dc_connect_net_step =1;
 
 	break;
 
