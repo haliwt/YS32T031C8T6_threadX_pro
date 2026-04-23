@@ -384,6 +384,10 @@ static void power_on_handler(void)
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
       gon_t.on_step =1;
+	   #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -391,6 +395,10 @@ static void power_on_handler(void)
     dht11_read_temp_humidity_value();
     display_digital_3_numbers();
     gon_t.on_step =2;
+	 #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -399,25 +407,41 @@ static void power_on_handler(void)
        dht11_read_temp_humidity_value();
 	   display_digital_3_numbers();
 	   gon_t.on_step =3;
+	    #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
    case 3:
    	   
-   	  set_temp_compare();
+   	  //set_temp_compare();
       gon_t.on_step =4;
+	   #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
    break;
 
    case 4:
-   	  // display_digital_3_numbers();
+ 
         gon_t.on_step =5;
+		 #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
    case 5:
-        wifi_normal_led_state();
+       
 		Fan_Ctrl_Process();	  // 风扇控制
         gon_t.on_step =6;
+       #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
    break;
 
    case 6:
@@ -426,6 +450,10 @@ static void power_on_handler(void)
 		   wifi_default_handler();
          }
         gon_t.on_step =7;
+	   #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
    break;
 
    case 7:
@@ -445,6 +473,10 @@ static void power_on_handler(void)
 		}
 	} 
       gon_t.on_step =8;
+	 #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -457,6 +489,10 @@ static void power_on_handler(void)
 
    	   }
        gon_t.on_step =8;
+	    #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -466,6 +502,10 @@ static void power_on_handler(void)
       	dht11_read_temp_humidity_value();
    	}
    gon_t.on_step =9;
+	 #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -474,6 +514,10 @@ static void power_on_handler(void)
              Countdown_timer_Handler();
 	   	}
       gon_t.on_step =11;
+	    #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -485,6 +529,10 @@ static void power_on_handler(void)
 	    works_nomal_run_time_handler();
 		
 	    gon_t.on_step =12;
+    #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -503,6 +551,10 @@ static void power_on_handler(void)
 		}
     }
       gon_t.on_step =13;
+	 #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -516,6 +568,11 @@ static void power_on_handler(void)
 		
 	}
      gon_t.on_step =3;
+
+	  #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 
    break;
 
@@ -872,6 +929,9 @@ void power_onoff_handler(void)
 	if(discharge_f == 1){
 
        display_digital_3_numbers();
+	   set_temp_compare();
+	   wifi_normal_led_state();
+	  
 	}
 
 	if(key_net_config_f==0 && gpro_t.time_100ms_f==1){// 处理腾讯连连通信

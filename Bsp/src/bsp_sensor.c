@@ -318,12 +318,12 @@ uint8_t dht11_read_temp_humidity_value(void)
 	
 	dht11_read_flag = DHT11_ReadData(&humidity,&temperature);
 
-
+  #if 0
 	if(dht11_read_flag==0){
       
 	 // humidity = dht11_data_buf[0];
 	 // temperature = dht11_data_buf[2];
-	 	   printf("humidity = %d \r\n",humidity);
+	    printf("humidity = %d \r\n",humidity);
 	    printf("temperature = %d \r\n",temperature);
 	   LED_PLASMA_ON();
        return 0;
@@ -342,6 +342,6 @@ uint8_t dht11_read_temp_humidity_value(void)
 		
 	}
 
-
+  #endif 
 }
 

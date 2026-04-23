@@ -194,8 +194,7 @@ void TIM6_LPTIM_IRQHandler (void)
 					time_autolink_counter++;
 					fan_one_minute_cuonter++;
 				
-					
-					if(++c2s >=2){c2s=0; gpro_t.time_2s_f =1;}
+					gpro_t.time_2s_f++;
 					if(++c3s >=3){c3s=0; gpro_t.time_3s_f =1;}
 					if(++c4s >=4){c4s=0; gpro_t.time_4s_f =1;}
 					if(++c5s >=5){c5s=0; gpro_t.time_5s_f =1;}
