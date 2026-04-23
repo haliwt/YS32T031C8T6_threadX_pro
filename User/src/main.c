@@ -81,7 +81,7 @@ int main(void)
 		TSC_StartCmd(ENABLE);          //开始扫描
 		bsp_init();
 		DHT11_Init();
-		Trigger_Simple_Beep(2);
+		beep_power_sound();
 
 		
 		 tx_kernel_enter(); 

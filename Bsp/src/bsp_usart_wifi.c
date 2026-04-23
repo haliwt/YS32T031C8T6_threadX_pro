@@ -1331,9 +1331,7 @@ void Reconnection_Wifi_Order(void)
 void wifi_check_id_handler(void)
 {
  
- 
-
-    if(wifi_check_net_f ==2){
+   if(wifi_check_net_f ==2){
 	    wifi_check_net_f++;
 
 	 char *p = strstr((const  char *)wifi_t.rx_check_wifi, "+TCMQTTSTATE:");

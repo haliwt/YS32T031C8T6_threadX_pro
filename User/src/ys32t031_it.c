@@ -147,9 +147,8 @@ void TIM6_LPTIM_IRQHandler (void)
 {
 
     volatile static uint8_t cnt10 =0,cnt100 =0,cnt1000,cnt1m=0,cnt20ms=0;
-	volatile static uint8_t c1s,c2s,c3s,c4s,c5s,c6s,c7s,c8s,c9s,c10s;
-	volatile static uint8_t c100ms,c200ms,c300ms,c400ms,c500ms,c600ms,c900ms;
-	volatile static uint8_t c1m,c2m,c3m,c4m,c5m,c6m;
+
+	volatile static uint8_t c100ms;
 	
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update) != RESET ) 
 	{
@@ -170,15 +169,11 @@ void TIM6_LPTIM_IRQHandler (void)
 			if(++cnt100 >=10){ //10* 10 = 100ms .
 				cnt100 =0;
 				
-				gpro_t.time_100ms_f =1;
+				gpro_t.time_100ms_f ++;
 
-				if(++c200ms>=2){c200ms =0; gpro_t.time_200ms_f = 1;}
+				gpro_t.time_200ms_f++;
 
-				if(++c300ms>=3){c300ms =0; gpro_t.time_300ms_f = 1;}
-				if(++c400ms>=4){c400ms =0; gpro_t.time_400ms_f = 1;}
-				if(++c500ms>=5){c500ms =0; gpro_t.time_500ms_f = 1;}
-				if(++c600ms>=6){c600ms =0; gpro_t.time_600ms_f = 1;}
-				if(++c900ms>=9){c900ms =0; gpro_t.time_900ms_f = 1;}
+			
 
 				if(++cnt1000> 9){ // 100ms *10 =1000ms=1s 
 					cnt1000 = 0;
@@ -195,26 +190,19 @@ void TIM6_LPTIM_IRQHandler (void)
 					fan_one_minute_cuonter++;
 				
 					gpro_t.time_2s_f++;
-					if(++c3s >=3){c3s=0; gpro_t.time_3s_f =1;}
-					if(++c4s >=4){c4s=0; gpro_t.time_4s_f =1;}
-					if(++c5s >=5){c5s=0; gpro_t.time_5s_f =1;}
-					if(++c6s >=6){c6s=0; gpro_t.time_6s_f =1;}
-					if(++c7s >=7){c7s=0; gpro_t.time_7s_f =1;}
-					if(++c10s >=10){c10s=0; gpro_t.time_10s_f =1;}
-				
-
-					if(++cnt1m > 59){//1s *60 =60s 
-						cnt1m = 0;
+					gpro_t.time_3s_f++;
+					gpro_t.time_4s_f++;
+					gpro_t.time_5s_f++;
+					gpro_t.time_6s_f++;
+				    gpro_t.time_7s_f++;
+					
+				     if(++gpro_t.time_base_1s_counter > 59){//1s *60 =60s 
+					     gpro_t.time_base_1s_counter = 0;
 					    
-						gpro_t.time_1m_f = 1;
+						gpro_t.time_1m_f++;
 						gpro_t.time_1m_wifi_f = 1;
-						//  time_1minute_f=1;
-						if(++c2m >=2){c2m =0; gpro_t.time_2m_f = 1;}
-						if(++c3m >=3){c3m =0; gpro_t.time_3m_f = 1;}
-						if(++c4m >=4){c4m =0; gpro_t.time_4m_f = 1;}
-						if(++c5m >=5){c5m =0; gpro_t.time_5m_f = 1;}
-						if(++c6m >=6){c6m =0; gpro_t.time_6m_f = 1;}
-
+						
+						
 						
 					}
 

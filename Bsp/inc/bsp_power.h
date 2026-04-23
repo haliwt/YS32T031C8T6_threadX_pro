@@ -68,7 +68,7 @@ extern uint16_t ad_value[1];
 extern uint16_t fan_current;
 
 extern uint8_t discharge_f;
-extern uint16_t work_time;
+
 
 
 extern uint16_t current_temperature;

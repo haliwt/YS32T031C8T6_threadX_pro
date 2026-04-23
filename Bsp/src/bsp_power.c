@@ -91,7 +91,7 @@ int8_t setting_timing_hour;
 uint8_t  time_set_hours_counter;
 
 //wroks time two hours
-uint16_t work_time;
+
 uint8_t  works_interval_f;
 
 
@@ -232,7 +232,7 @@ void Clear_Ram(void)
 	  key_time = 0;
 	
 	  discharge_f = 0;
-		work_time = 0;
+		
 		
 		device_rest_time = 0;
 		
@@ -414,49 +414,35 @@ static void power_on_handler(void)
 
    break;
 
+
+
    case 3:
-   	   
-   	  //set_temp_compare();
-      gon_t.on_step =4;
-	   #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
+        if(gpro_t.time_3s_f > 2){
+		  gpro_t.time_3s_f =0;	
+		  Fan_Ctrl_Process();	  // 风扇控制
 
-	   #endif 
-   break;
-
-   case 4:
- 
-        gon_t.on_step =5;
-		 #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
-
-   break;
-
-   case 5:
-       
-		Fan_Ctrl_Process();	  // 风扇控制
-        gon_t.on_step =6;
+        }
+        gon_t.on_step =4;
        #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
 	   #endif 
    break;
 
-   case 6:
+   case 4:
 
-      if(wifi_connected_success_f==1){
+      if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 1){
+	  	   gpro_t.time_4s_f=0;
 		   wifi_default_handler();
          }
-        gon_t.on_step =7;
+        gon_t.on_step =5;
 	   #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
 	   #endif 
    break;
 
-   case 7:
+   case 5:
    	if(key_net_config_f)
 	{
 		key_net_config_time++;
@@ -472,7 +458,7 @@ static void power_on_handler(void)
 			link_wifi_net_handler();
 		}
 	} 
-      gon_t.on_step =8;
+      gon_t.on_step =6;
 	 #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -481,14 +467,14 @@ static void power_on_handler(void)
    break;
 
 
-   case 8:
-   	   if(gpro_t.time_3s_f==1){
-	   	  gpro_t.time_3s_f=0;
+   case 6:
+   	   if(gpro_t.time_5s_f > 1){
+	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
 	      peripheral_fun_handler();
 
    	   }
-       gon_t.on_step =9;
+       gon_t.on_step =7;
 	    #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -496,12 +482,12 @@ static void power_on_handler(void)
 
    break;
 
-   case 9:
-   	if(gpro_t.time_4s_f ==1){
-		gpro_t.time_5s_f =0;
+   case 7:
+   	if(gpro_t.time_6s_f > 3){
+		gpro_t.time_6s_f =0;
       	dht11_read_temp_humidity_value();
    	}
-   gon_t.on_step =10;
+   gon_t.on_step =8;
 	 #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -509,11 +495,11 @@ static void power_on_handler(void)
 
    break;
 
-   case 10:
+   case 8:
 	   if(Is_countdown_timer_f ==1){
              Countdown_timer_Handler();
 	   	}
-      gon_t.on_step =11;
+      gon_t.on_step =9;
 	    #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -522,13 +508,13 @@ static void power_on_handler(void)
    break;
 
 
-   case 11:
+   case 9:
 
-        //wifi_check_id_handler();
+        wifi_check_id_handler();
         
 	    works_nomal_run_time_handler();
 		
-	    gon_t.on_step =12;
+	    gon_t.on_step =10;
     #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -536,21 +522,27 @@ static void power_on_handler(void)
 
    break;
 
-   case 12:
-    if(gpro_t.time_10s_f ==1){
+   case 10:
+    if(gpro_t.time_7s_f > 6){
 
-	   gpro_t.time_10s_f =0 ;
+	   gpro_t.time_7s_f =0 ;
 	   counter_10s++;
 	   
        AD_Filter();
 	   Adc_Channel_Sample();
+    }
+	gon_t.on_step =11;
 
-	   if(counter_10s > 3){
+	break; 
+
+	case 11:
+
+	   if(counter_10s > 1){
 	   	   counter_10s =0;
 	       Fan_Current_Det();		// 电流检测
 		}
-    }
-      gon_t.on_step =13;
+    
+      gon_t.on_step =12;
 	 #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -558,7 +550,7 @@ static void power_on_handler(void)
 
    break;
 
-   case 13:
+   case 12:
      if(key_net_config_f==0 &&  discharge_f ==1 &&  wifi_linking_tencent_f ==0){
 	   	   if(gpro_t.time_1m_wifi_f ==1){ 
 		     	gpro_t.time_1m_wifi_f =0;
@@ -710,33 +702,31 @@ void Countdown_timer_Handler(void)
 **/
 void works_nomal_run_time_handler(void)
 {
-   
-
-	if(gpro_t.time_1m_f == 1){
-		gpro_t.time_1m_f =0;
-		work_time++;
+ 
 		#if DEBUG_ENABLE 
-			if(work_time >11 && works_interval_f==0){
+			if(gpro_t.time_1m_f >11 && works_interval_f==0){
 		#else 
-			if(work_time > 119 && works_interval_f==0){
+			if(gpro_t.time_1m_f > 119 && works_interval_f==0){
 
 		#endif 
 
-			work_time = 0;
+			gpro_t.time_1m_f = 0;
+		    gpro_t.time_base_1s_counter=0;
 			works_interval_f=1;
 			fan_one_minute_cuonter =0;
 		#if DEBUG_ENABLE 
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
 		}
-		else if(works_interval_f==1 && work_time >10){
-				work_time = 0;  
+		else if(works_interval_f==1 && gpro_t.time_1m_f >10){
+				gpro_t.time_1m_f = 0;  
 				works_interval_f =0;
+		        gpro_t.time_base_1s_counter=0;
 		#if DEBUG_ENABLE 
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
 		}
-		}
+		
  }
   
 
@@ -931,14 +921,11 @@ void power_onoff_handler(void)
        display_digital_3_numbers();
 	   set_temp_compare();
 	   wifi_normal_led_state();
-	   #if DEBUG_ENABLE
-         printf("on_step = %d  \r\n",gon_t.on_step);
-
-	   #endif 
+	 
 	  
 	}
 
-	if(key_net_config_f==0 && gpro_t.time_100ms_f==1){// 处理腾讯连连通信
+	if(key_net_config_f==0 && gpro_t.time_100ms_f > 0){// 处理腾讯连连通信
 	      gpro_t.time_100ms_f=0;
          wifi_parse_tencennt_hadler();//
        

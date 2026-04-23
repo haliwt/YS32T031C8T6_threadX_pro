@@ -601,10 +601,11 @@ void link_wifi_net_handler(void)
 	message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
     switch(link_net_step){
 
-            case 0: //one step
 
-          
-        	send_usart2_data("AT+RST\r\n", strlen("AT+RST\r\n"));
+
+	        case 0:
+
+              send_usart2_data("AT+RST\r\n", strlen("AT+RST\r\n"));
         
               //delay_ms(200);//delay_ms(1000);
                tx_thread_sleep(100);//10ms * 100 

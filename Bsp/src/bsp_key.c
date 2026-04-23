@@ -225,7 +225,8 @@ void System_Status_PowerOn(void)
     // 2. 设定启动默认参数
     setting_temperature = 40;   // 默认设定温度 40°C
     setting_timing_hour = 0;    // 默认不设置定时（常开模式）
-    
+    gpro_t.time_base_1s_counter=0;  // 重置工作时间累计
+    gpro_t.time_1m_f = 0;           // 重置工作时间累计
     // 3. 状态显示切换
     Is_time_setting_f = 0;
     Is_countdown_timer_f = 0;
@@ -235,7 +236,7 @@ void System_Status_PowerOn(void)
     timing_min_cnt = 0;
    
     Cacl_time_sec = 0;
-    work_time = 0;              // 重置工作时间累计
+            
     works_interval_f = 0 ; // device_rest_f = 0;          // 退出休息模式
     device_rest_time = 0;
 	key_net_config_f =0;
@@ -279,7 +280,8 @@ void System_Status_PowerOff(void)
  
     Is_countdown_timer_f = 0;
 	works_interval_f =0;
-	
+	gpro_t.time_base_1s_counter=0;// 重置工作时间累计
+	gpro_t.time_1m_f = 0;// 重置工作时间累计
 	
 	//wifi
 	wifi_run_step=0;
@@ -289,7 +291,7 @@ void System_Status_PowerOff(void)
     timing_min_cnt = 0;
    
     Cacl_time_sec = 0;
-    work_time = 0;
+
     device_rest_time = 0;
     
     
