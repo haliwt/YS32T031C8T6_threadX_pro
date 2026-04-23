@@ -148,9 +148,9 @@ void tx_application_define(void *first_unused_memory)
    while(1){
 
     power_onoff_handler();
-
+    
 	
-	tx_thread_sleep(10);//10ms * 10 = 100ms  
+	tx_thread_sleep(1);//10ms * 10 = 100ms  
 	
     } 
 }
@@ -177,10 +177,8 @@ void tx_application_define(void *first_unused_memory)
 	}
 
 	Key_Scan();
-	Task_Beep_Simple_10ms() ;
 
-
-	tx_thread_sleep(3);//10*3=30 
+    tx_thread_sleep(1);//10*1=10 
 	
     } 
 }

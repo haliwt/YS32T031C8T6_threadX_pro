@@ -409,7 +409,7 @@ static void power_on_handler(void)
    break;
 
    case 4:
-   	   display_digital_3_numbers();
+   	  // display_digital_3_numbers();
         gon_t.on_step =5;
 
    break;
@@ -693,7 +693,7 @@ void beep_power_sound(void)
 {
   
 	BEEP_ON();
-	delay_ms_dht11(20);//DelayMS(20);
+	delay_ms_dht11(20);//tx_thread_sleep(2);//2*10ms //delay_ms_dht11(20);//DelayMS(20);
     BEEP_OFF();
 
 }
@@ -706,8 +706,11 @@ void beep_power_sound(void)
 **/
 void Trigger_Simple_Beep(uint8_t ms_10) 
 {
-    time_beep_counter = 0;
-	beep_sound_f = 1;
+    //time_beep_counter = 0;
+	//beep_sound_f = 1;
+	BEEP_ON();
+	tx_thread_sleep(2);//DelayMS(20);
+    BEEP_OFF();
    // BEEP_ON();//BEEP_PWM_ON(); // 立即响
 }
 /**
@@ -865,6 +868,11 @@ void power_onoff_handler(void)
 
 	  break;
       }
+
+	if(discharge_f == 1){
+
+       display_digital_3_numbers();
+	}
 
 	if(key_net_config_f==0 && gpro_t.time_100ms_f==1){// 处理腾讯连连通信
 	      gpro_t.time_100ms_f=0;

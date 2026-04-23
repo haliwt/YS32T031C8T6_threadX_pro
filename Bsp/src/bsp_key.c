@@ -301,7 +301,7 @@ void System_Status_PowerOff(void)
     // 5. 提示音
     beep_power_sound();//Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
 	all_led_off();
-	TM1639_Display_ON_OFF(0);
+    TM1639_Display_ON_OFF(0);
 }
 
 
