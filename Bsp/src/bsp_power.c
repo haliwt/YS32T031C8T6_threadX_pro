@@ -488,7 +488,7 @@ static void power_on_handler(void)
 	      peripheral_fun_handler();
 
    	   }
-       gon_t.on_step =8;
+       gon_t.on_step =9;
 	    #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -501,7 +501,7 @@ static void power_on_handler(void)
 		gpro_t.time_5s_f =0;
       	dht11_read_temp_humidity_value();
    	}
-   gon_t.on_step =9;
+   gon_t.on_step =10;
 	 #if DEBUG_ENABLE
          printf("on_step = %d  \r\n",gon_t.on_step);
 
@@ -931,6 +931,10 @@ void power_onoff_handler(void)
        display_digital_3_numbers();
 	   set_temp_compare();
 	   wifi_normal_led_state();
+	   #if DEBUG_ENABLE
+         printf("on_step = %d  \r\n",gon_t.on_step);
+
+	   #endif 
 	  
 	}
 

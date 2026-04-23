@@ -41,45 +41,7 @@ main_ref gpro_t;
 
 
 
-uint8_t  delay_ms(uint16_t ms)
-{
 
-  #if 0
-  // 假设你在 TIM6 中断里已经有 gpro_t.time_10ms_f 标志
-    // 如果是 100ms/200ms 这种大延时，直接判断标志位是最安全的
-    uint16_t target_10ms_units = ms / 10;
-    uint8_t count = 0;
-    
-    while (count < target_10ms_units)
-    {
-        if (time_wifi_10ms_f)
-        {
-            time_wifi_10ms_f = 0;
-            count++;
-        }
-        // 裸机运行，这里可以顺便喂狗
-        // IWDG_ReloadCounter(); 
-    }
-
-   #else 
-   static uint16_t time_counter=0;
-     if(time_wifi_10ms_f) //
-     {  
-           time_wifi_10ms_f = 0;
-		   time_counter++;
-
-		  if(time_counter >=ms ){
-		      time_counter =0;
-		  
-              return 1;
-		  }
-			           
-	 }
-
-
-
-   #endif 
-}
 
 
 

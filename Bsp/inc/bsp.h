@@ -50,6 +50,9 @@
 
 #define Enable_EventRecorder  0
 
+#define DEBUG_ENABLE    1
+
+
 
 #if(Enable_EventRecorder == 1)
 	#include "EventRecorder.h"
@@ -101,7 +104,7 @@ void task_scheduler(void);
 
 void Task_beep_called_100ms(void);
 
-uint8_t delay_ms(uint16_t ms);
+
 
 uint32_t Get_Unique_ID_32bit(void);
 uint8_t bcc_check(const unsigned char *data, int len) ;

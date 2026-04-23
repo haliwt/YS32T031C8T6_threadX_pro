@@ -98,8 +98,7 @@ static void auto_connect_wifi_handler(void)
 	   //HAL_Delay(1000);
 	   
 	   
-	   link_wifi_f = delay_ms(1);
-	   if(link_wifi_f ==1) dc_connect_net_step=1;
+	    tx_thread_sleep(100);//10ms *100 =1s.
 
 	    time_autolink_counter=0; 
 
@@ -135,6 +134,7 @@ static void auto_connect_wifi_handler(void)
 		   //delay_ms(1000);//HAL_Delay(1000);
 		  // link_wifi_f = delay_ms(2);
 	      // if(link_wifi_f ==1){
+	        tx_thread_sleep(100);//10*100ms = 
 		   	dc_connect_net_step=4;
 	        wifi_off_step = 0;
 	        time_autolink_counter=0;
@@ -153,6 +153,7 @@ static void auto_connect_wifi_handler(void)
 	            dc_connect_net_step =5;
 	            if(disp_second_f==1)SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
 	            //delay_ms(100);
+	            tx_thread_sleep(10);//10*100ms = 
 	            #if DEBUG_ENABLE 
 
 				  printf("wifi_connected success is normal  !!!\r\n");
@@ -165,6 +166,7 @@ static void auto_connect_wifi_handler(void)
 	       dc_connect_net_step=5;
 	       if(disp_second_f==1)SendWifiData_To_Cmd(0x1F,0x00);
 		    //delay_ms(100);
+		      tx_thread_sleep(10);//10*100ms = 
 		     #if DEBUG_ENABLE 
 
 				 printf("wifi_connected fail is normal !!!\r\n");
