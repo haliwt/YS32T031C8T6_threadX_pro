@@ -67,10 +67,10 @@ typedef struct PROCESS_T{
 process_t wifi_t;
 
 
-// static void Tencent_Cloud_Rx_Handler(void);
- static void Json_Parse_Command_Fun(void);
+
  uint8_t set_temperature_value,power_on_f;
  static void Wifi_Event_Process(void);
+
 
 
 
@@ -87,7 +87,7 @@ void wifi_parse_tencennt_hadler(void)
 
   //Tencent_Cloud_Rx_Handler();
    Parse_Tencent_Data() ;	
-   Json_Parse_Command_Fun();
+   Wifi_Event_Process();
 		 
   
    
@@ -166,225 +166,7 @@ void usart2_rx_callback_invoke(uint8_t data)
 	 break;
 	 }
 }
-/*******************************************************************************
-**
-*Function Name:void Subscribe_Rx_IntHandler(void)
-*Function: interrupt USART2 receive data fun
-*Input Ref: 
-*Return Ref:NO
-*
-********************************************************************************/
-#if 0
-void Subscribe_Rx_Interrupt_Handler(void)
-{
-     
-    switch(wifi_t.rx_data_state)
-      {
-      case 0: //#0
 
-	  	if((wifi_t.rx_inputBuf[0] == 'p') ||wifi_t.rx_inputBuf[0]=='E' || wifi_t.rx_inputBuf[0] =='T') //hex :54 - "T" -fixed
-            wifi_t.rx_data_state=1; //=1
-          else{
-               rx_wifi_data_counter=0;
-               wifi_t.rx_data_state=0; 
-            }
-        break;
-
-      case 1:
-      
-         if((wifi_t.rx_inputBuf[0] == 'a')  ||wifi_t.rx_inputBuf[0]=='R' || wifi_t.rx_inputBuf[0] =='C')//hex :54 - "T" -fixed
-            wifi_t.rx_data_state=2; //=1
-          else{
-               rx_wifi_data_counter=0;
-               wifi_t.rx_data_state=1;
-            }
-            
-         break;
-      case 2: //#1
-             if((wifi_t.rx_inputBuf[0] == 'r')||wifi_t.rx_inputBuf[0]=='R'|| wifi_t.rx_inputBuf[0] =='M')  //hex :4B - "K" -fixed
-            wifi_t.rx_data_state=3; //=1
-         else{
-            wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-         }
-         break;
-            
-        case 3:
-            if((wifi_t.rx_inputBuf[0] == 'a')||wifi_t.rx_inputBuf[0]=='o'|| wifi_t.rx_inputBuf[0] =='Q')    //hex :4B - "K" -fixed
-            wifi_t.rx_data_state=4; //=1
-         else{
-           wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-         }
-        
-        break;
-        
-        case 4:
-            if((wifi_t.rx_inputBuf[0] == 'm')  ||wifi_t.rx_inputBuf[0]=='R'|| wifi_t.rx_inputBuf[0] =='T')  //hex :4B - "K" -fixed
-            wifi_t.rx_data_state=5; //=1
-         else{
-            wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-         }
-        
-        break;
-
-      case 5:
-       if((wifi_t.rx_inputBuf[0] == 's') ||wifi_t.rx_inputBuf[0]==':'|| wifi_t.rx_inputBuf[0] =='T')   //hex :4B - "K" -fixed
-         wifi_t.rx_data_state=6; //=1
-         else{
-           wifi_t.rx_data_state=0;
-            rx_wifi_data_counter=0;
-         }
-            
-      break;
-
-      
-      case 6:
-       if((wifi_t.rx_inputBuf[0] == '"')||wifi_t.rx_inputBuf[0]=='2' || wifi_t.rx_inputBuf[0] =='S')    //hex :4B - "K" -fixed
-         wifi_t.rx_data_state=7; //=1
-         else{
-           wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-         }
-            
-      break;
-
-      case 7:
-       if((wifi_t.rx_inputBuf[0] == ':')||wifi_t.rx_inputBuf[0]=='0' ||wifi_t.rx_inputBuf[0]=='T' ){  //hex :4B - "K" -fixed
-         wifi_t.rx_data_state=8; //=1
-    	}
-		else{
-           wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-         }
-           
-      break;
-
-       case 8:
-       if((wifi_t.rx_inputBuf[0] == '{') ||wifi_t.rx_inputBuf[0]=='8' ||wifi_t.rx_inputBuf[0]=='A' ){ //hex :4B - "K" -fixed
-         if(wifi_t.rx_inputBuf[0]=='8')  wifi_t.rx_data_state =11;
-         else if(wifi_t.rx_inputBuf[0]=='A')  wifi_t.rx_data_state =12;
-         else
-             wifi_t.rx_data_state =9; //=1
-
-        }
-         else{
-           wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-         }
-
-		
-            
-      break;
-
-
-      case 9:
-
-       if(rx_wifi_data_success ==0){
-
-            wifi_t.rx_data_array[rx_wifi_data_counter] = wifi_t.rx_inputBuf[0];
-            rx_wifi_data_counter++ ;
-
-            if(wifi_t.rx_inputBuf[0]=='}' || wifi_t.rx_inputBuf[0]==0x0A) //0x7D='}', 0x0A = line feed // end
-            {
-                rx_wifi_data_success=1;
-                wifi_t.rx_data_state=0;
-                wifi_t.received_data_from_tencent_cloud = rx_wifi_data_counter;
-                rx_wifi_data_counter=0;
-
-
-            }
-
-
-       }
-       else{
-            rx_wifi_data_success=0;
-            wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-            wifi_t.received_data_from_tencent_cloud =0;
-
-
-       }
-
-     break;
-
-     
-      case 11:
-		 //wifi_connected_success_f =0; //wifi_t.esp8266_login_cloud_success =0;
-         //gpro_t.get_beijing_time_success = 0;
-         wifi_t.rx_data_state =0;
-         rx_wifi_data_counter=0;
-
-      break;
-
-      case 12:
-		if(wifi_t.rx_inputBuf[0]== 'T'){   //hex :4B - "K" -fixed
-         wifi_t.rx_data_state=13; //=1
-        }
-        else{
-            wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-         }
-
-      break;
-
-	  case 13:
-
-       if(wifi_t.rx_inputBuf[0]== 'E'){   //hex :4B - "K" -fixed
-          wifi_t.rx_data_state=14; //=1
-        }
-        else{
-             wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-         }
-
-      break;
-
-	  case 14:
-		if(wifi_t.rx_inputBuf[0]== ':'){   //hex :4B - "K" -fixed
-          wifi_t.rx_data_state=15; //=1
-         }
-         else{
-             wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-         }
-
-      break;
-
-	  case 15:
-		if(wifi_t.rx_inputBuf[0]== '0'){   //hex :4B - "K" -fixed
-           wifi_connected_success_f =0;//wifi_connected_success_f = 0;//wifi_t.esp8266_login_cloud_success =0;
-            //gpro_t.get_beijing_time_success = 0;
-            wifi_t.rx_data_state =0;
-            rx_wifi_data_counter=0;
-        }
-        else if(wifi_t.rx_inputBuf[0]== '1'){
-
-            wifi_connected_success_f =1;//wifi_connected_success_f = 1;//net_t.esp8266_login_cloud_success =1;
-       
-             wifi_t.rx_data_state =0;
-             rx_wifi_data_counter=0;
-        }
-        else{
-
-           wifi_t.rx_data_state =0;
-           rx_wifi_data_counter=0;
-
-
-        }
-
-      break;
-
-	
-
-	  default:
-      break;
-      }
- 
-
-}
-#endif 
 /*******************************************************************************
 **
 *Function Name:
@@ -631,321 +413,12 @@ void Parse_Tencent_Data(void)
 }
 /*******************************************************************************
 **
-*Function Name: static void Json_Parse_Command_Fun(void)
+*Function Name:
 *Function: 
 *Input Ref:  
 *Return Ref:NO
 *
 ********************************************************************************/
-#if 0
-static void Json_Parse_Command_Fun(void)
-{
- 
-    //static uint8_t wind_unit,temp_decade,temp_unit;
-	//static uint8_t buzzer_temp_on,phone_power_flag;
-    
-
-   switch(wifi_t.wifi_rx_signal_f){
-  
-	case OPEN_ON_ITEM:
-        if(wifi_connected_success_f==1){ //WT.EDIT 2025.03.27
-            
-			 discharge_f = 1;
-             System_Status_PowerOn() ;
-            //gpro_t.phone_power_on_flag = 1; //ack_app_power_on;
-	        
-			MqttData_Publish_SetOpen(1); 
-
-			//MqttData_Publish_Init();//MqttData_Publish_SetOpen(1);  
-			//delay_ms(200);//delay_ms(200);//HAL_Delay(100);//delay_ms(100);//HAL_Delay(100);
-
-	       /// Publish_Data_ToTencent_Initial_Data();
-		    //delay_ms(200);//delay_ms(200);//HAL_Delay(200);
-		   if(disp_second_f == 1) SendWifiData_To_Cmd(0x20,0x01); //smart phone is power on
-		
-			//delay_ms(100);//delay_ms(100);
-			
-             
-	        wifi_t.wifi_rx_signal_f= 0xfe;
-			return ;
-        }
-
-	  break;
-
-       case OPEN_OFF_ITEM:
-
-	      
-         if(wifi_connected_success_f==1){  //WT.EDIT 2025.03.27
-             Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);// Beep(BEEP_ONCE);
-		 	 discharge_f = 0;
-		     System_Status_PowerOff() ;
-			
-	
-             if(disp_second_f == 1)SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
-             //delay_ms(100);//delay_ms(100);
-             MqttData_Publish_PowerOff_Ref(); 
-			
-		     //delay_ms(200);
-			
-
-         
-            wifi_t.wifi_rx_signal_f= 0xfe;
-
-			return ;
-             }
-       
-	  break;
-
-	  case PTC_ON_ITEM:
-	  if(discharge_f == 1){
-
-          Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);// Beep(BEEP_ONCE);
-          PTC_heat_open_f = 1;//ptc_prohibit_off_f =1;//esp_t.gDry=1;
-          ptc_prohibit_off_f = 0;
-          
-          LED_PTC_ON();
-          RELAY_ON(); //RELAY_ON();
-		   key_input_temp_f = 1;//again send data to tencent cloud .
-	
-           if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x01);
-		   //delay_ms(100);//HAL_Delay(5);
-		   MqttData_Publish_SetPtc(0x01);
-		   //delay_ms(200);
-         
-		    
-         
-         }
-
-		
-         wifi_t.wifi_rx_signal_f=0xfe;
-	  return ;
-	  	
-         
-	   break;
-
-	  case PTC_OFF_ITEM:
-	  	if(discharge_f == 1){
-          Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);// Beep(BEEP_ONCE);
-        
-
-		  	 PTC_heat_open_f =0;  //ptc_prohibit_off_f = 0;//esp_t.gDry=0;
-              ptc_prohibit_off_f = 1;//WT.EDIT 2026.03.30
-                LED_PTC_OFF();
-		        RELAY_OFF();  //RELAY_OFF();
-		
-	         key_input_temp_f = 1; //again send data to tencent cloud .
-        
-		
-		 
-	      if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x0);
-         //delay_ms(100);//HAL_Delay(5);
-
-		 MqttData_Publish_SetPtc(0);
-         
-		 //delay_ms(200);
-         }
-	
-	     wifi_t.wifi_rx_signal_f= 0xfe;
-		return ;
-
-	 
-	  	break;
-
-	  case ANION_OFF_ITEM: //"�?�?" //5
-	  	if(discharge_f == 1){
-			Trigger_Simple_Beep(2) ; // Beep(BEEP_ONCE);// Beep(BEEP_ONCE);
-			
-            plasma_open_f = 0; //esp_t.gPlasma=0;
-			//esp_t.gTimer_senddata_panel=8;
-			 if(disp_second_f == 1)SendWifiData_To_Cmd(0x03,0x0);
-	  	   //delay_ms(100);//HAL_Delay(5);
-	  	    MqttData_Publish_SetPlasma(0);
-			 ///delay_ms(200);
-			
-	  	}
-      
-	
-	   wifi_t.wifi_rx_signal_f= 0xfe;
-		return ;
-
-	   break;
-		
-	  case ANION_ON_ITEM: //plasma 
-	  	if(discharge_f == 1){
-			  Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
-         
-             plasma_open_f = 1; //esp_t.gPlasma=1;
-            //  esp_t.gTimer_senddata_panel=8;
-			
-			 if(disp_second_f == 1)SendWifiData_To_Cmd(0x03,0x01);
-	  	   //delay_ms(100);//HAL_Delay(5);
-	  	    MqttData_Publish_SetPlasma(1);
-		    // delay_ms(200);//delay_ms(100);//HAL_Delay(350);
-		   
-	  	}
-  
-
-	   wifi_t.wifi_rx_signal_f=0xfe;
-		return ;
-	    break;
-
-	  case SONIC_OFF_ITEM://ultransonic off
-        if(discharge_f == 1){
-			 Trigger_Simple_Beep(2) ; // Beep(BEEP_ONCE);
-
-              
-              Ultra_Sound_open_f = 0;//esp_t.gUlransonic=0;
-             //esp_t.gTimer_senddata_panel=8; 
-	
-			 if(disp_second_f == 1)SendWifiData_To_Cmd(0x04,0x0);
-			//delay_ms(100);//HAL_Delay(5);
-			 MqttData_Publish_SetUltrasonic(0);
-			//delay_ms(200);//delay_ms(100);	//HAL_Delay(350);
-			
-			
-        }
-	
-	   wifi_t.wifi_rx_signal_f=0xfe;
-		return ;
-
-	  	break;
-
-	  case SONIC_ON_ITEM://ultransonic off
-	    if(discharge_f == 1){
-		      Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
-           
-              Ultra_Sound_open_f = 1;//esp_t.gUlransonic=1;
-              //esp_t.gTimer_senddata_panel=8;
-        
-		
-			 if(disp_second_f == 1)SendWifiData_To_Cmd(0x04,0x01);
-			//delay_ms(100);//HAL_Delay(5);
-			 MqttData_Publish_SetUltrasonic(1);
-			//delay_ms(200);//delay_ms(100);	//HAL_Delay(350);
-			
-        }
-        
-
-	   wifi_t.wifi_rx_signal_f=0xfe;
-		return ;
-	  	break;
-
-	  case STATE_TIMER_MODEL_ITEM: //timer timing mode 0x0A
-	  if(discharge_f == 1){
-
-            Trigger_Simple_Beep(2) ;// Beep(BEEP_ONCE);
-            AI_timing_open_f = 0;//esp_t.gModel=2; no AI mode
-            LED_AI_OFF(); 
-	       disp_set_hours_time_f =1;
-           time_set_hours_counter =0;
-             
-    	    if(disp_second_f == 1)SendWifiData_To_Cmd(0x27,0x02);
-		   //delay_ms(100);
-		    MqttData_Publish_AitState(2);
-    	    /// delay_ms(200);//delay_ms(100);//HAL_Delay(350);
-    	   
-           
-        }
-    
-
-	   wifi_t.wifi_rx_signal_f= 0xfe;
-	   return ;
-	
-	  break;
-		
-	  case STATE_AI_MODEL_ITEM: // beijing timing 0x09
-	  	 if(discharge_f == 1){
-		      Trigger_Simple_Beep(2) ; //Beep(BEEP_ONCE);
-              AI_timing_open_f =1;//esp_t.gModel=1;
-              disp_set_hours_time_f =1;
-              time_set_hours_counter =0;
-			  LED_AI_ON(); 
-            
-    		   if(disp_second_f == 1)SendWifiData_To_Cmd(0x27,0x01);
-               //delay_ms(100);
-			    MqttData_Publish_AitState(1);
-    		 // delay_ms(200);//delay_ms(100);//HAL_Delay(350);
-    		
-            
-        }
-     
-
-	    wifi_t.wifi_rx_signal_f= 0xfe;
-		 return ;
-		
-	  	break;
-
-	  case TEMPERATURE_ITEM:
-	   if(discharge_f == 1){
-		  Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
-
-       
-			ptc_prohibit_off_f =0;
-          
-			set_temperature_value_f = 1;
-			key_input_temp_f = 4 ;
-		    time_1s_counter =0;
-
-	 
-		
-			if(disp_second_f ==1 )SendWifiData_To_Data(0x2A, setting_temperature); //smart phone set temperature value .
-			//delay_ms(100);//delay_ms(10);//HAL_Delay(10);
-			
-	
-
-			 MqttData_Publis_SetTemp(setting_temperature);
-             //delay_ms(200);
-            
-       }
-     
-
-	  wifi_t.wifi_rx_signal_f= 0xfe;
-	   return ;
-
-	  break;
-
-	  case FAN_ITEM:
-	    if(discharge_f == 1){
-			
-           Trigger_Simple_Beep(2) ; //Beep(BEEP_ONCE);
-        
-			MqttData_Publis_SetFan(fan_speed_level);
-			
-          
-	   }
-        
-	
-	    wifi_t.wifi_rx_signal_f= 0xfe;
-		return ;
-	
-	  	break;
-
-	
-
-
-   }
-}
-
-//   if(wifi_t.wifi_rx_signal_f==0xfe){
-        
-    
-		
-//        memset(wifi_t.rx_data_array,0,20);
-      
-//		wifi_t.wifi_rx_signal_f=0xf0;
-//	}
-
-  
-  
-// }
-
-#else 
-static void Json_Parse_Command_Fun(void)
-{
-	Wifi_Event_Process();
-}
-
-
 static void evt_open_on(void)
 {
     if (wifi_connected_success_f == 1)
@@ -953,9 +426,12 @@ static void evt_open_on(void)
         discharge_f = 1;
         System_Status_PowerOn();
         MqttData_Publish_SetOpen(1);
+		tx_thread_sleep(20);
 
-        if (disp_second_f == 1)
+        if (disp_second_f == 1){
             SendWifiData_To_Cmd(0x20, 0x01);
+			tx_thread_sleep(10);
+        }
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -965,15 +441,18 @@ static void evt_open_off(void)
 {
     if (wifi_connected_success_f == 1)
     {
-        Trigger_Simple_Beep(2);
+  
         discharge_f = 0;
         System_Status_PowerOff();
 
-        if (disp_second_f == 1)
+        if (disp_second_f == 1){
             SendWifiData_To_Cmd(0x20, 0x00);
+            tx_thread_sleep(10);
+        }
 
         MqttData_Publish_PowerOff_Ref();
-
+		tx_thread_sleep(10);
+       
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
 }
@@ -1156,6 +635,14 @@ static void evt_fan(void)
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
 }
+/*******************************************************************************
+**
+*Function Name:void Subscribe_Rx_IntHandler(void)
+*Function: interrupt USART2 receive data fun
+*Input Ref: 
+*Return Ref:NO
+*
+********************************************************************************/
 
 typedef void (*wifi_evt_handler_t)(void);
 
@@ -1190,7 +677,7 @@ static void Wifi_Event_Process(void)
 }
 
 
-#endif 
+
 /*******************************************************************************
 **
 *Function Name:void Subscribe_Rx_IntHandler(void)
@@ -1349,7 +836,9 @@ void wifi_check_id_handler(void)
 	rx_wifi_data_counter=0;
 	memset(wifi_t.rx_check_wifi, 0, 50);
 
-	if(mqtt_status==1)wifi_connected_success_f =1;
+	if(mqtt_status==1){
+		wifi_connected_success_f =1;
+	}
 	else if(mqtt_status==0){
 		 dc_connect_net_step = 0;
 		 wifi_off_step=0;

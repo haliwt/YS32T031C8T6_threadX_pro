@@ -114,7 +114,7 @@ static void Mqtt_power_off_Value(void)
     sg_info.ptc=0; 
     sg_info.anion=0;  //灭菌
 	sg_info.sonic =0;  //驱虫
-    sg_info.find=100;
+    sg_info.find=0;
 	//if(esp_t.set_temperature_value <20)esp_t.set_temperature_value = 20;
 	//else if(esp_t.set_temperature_value > 40 )esp_t.set_temperature_value = 40;
 	sg_info.set_temperature = 20; //esp_t.set_temperature_value ;
@@ -723,7 +723,7 @@ void link_wifi_net_handler(void)
 
              if(wifi_connected_success_f==1){
 			
-				
+	
                 
                if(disp_second_f ==1)SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
                //delay_ms(100);
@@ -752,7 +752,7 @@ void link_wifi_net_handler(void)
 			 
 				MqttData_Publish_SetOpen(0x01);
 		      
-		      // delay_ms(200);
+		        tx_thread_sleep(10);//10ms*10 =100ms
 		        
 				
 			  link_net_step = 9; // this is flag: link wifi times 119s is over.
@@ -768,9 +768,9 @@ void link_wifi_net_handler(void)
 
 			case 10:
 
-				Subscriber_Data_FromCloud_Handler();
+			Subscriber_Data_FromCloud_Handler();
 		
-	           //  delay_ms(200);
+	           tx_thread_sleep(10);//  delay_ms(200);
         
 			 link_net_step = 0xfe;
 

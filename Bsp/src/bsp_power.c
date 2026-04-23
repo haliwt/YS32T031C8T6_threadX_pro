@@ -892,6 +892,7 @@ void power_onoff_handler(void)
 
 	  case 0:
 	  	   power_off_handler();
+		   wifi_power_off_handler();
 
 	  break;
       }
@@ -902,8 +903,8 @@ void power_onoff_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-	if(key_net_config_f==0 && gpro_t.time_100ms_f > 0){// 处理腾讯连连通信
-	      gpro_t.time_100ms_f=0;
+	if(key_net_config_f==0 && gpro_t.time_50ms_f > 5){// 处理腾讯连连通信
+	     gpro_t.time_50ms_f=0;
          wifi_parse_tencennt_hadler();//
        
     }

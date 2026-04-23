@@ -162,14 +162,13 @@ void TIM6_LPTIM_IRQHandler (void)
 			cnt10 =0; 
 		
 		    time_wifi_10ms_f = 1;
-			gpro_t.time_20ms_f++;
-			
+			gpro_t.time_50ms_f++;
 
 			if(++cnt100 >=10){ //10* 10 = 100ms .
 				cnt100 =0;
 				
 				gpro_t.time_100ms_f ++;
-
+  
 				gpro_t.time_200ms_f++;
 				gpro_t.time_100ms_fast_led_f++;
 
