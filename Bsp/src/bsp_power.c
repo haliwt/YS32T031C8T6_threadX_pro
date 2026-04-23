@@ -580,22 +580,30 @@ static void power_off_handler(void)
 		        LED_POWER_TOGGLE();
 		      }
              if(dc_on ==0){
+			 	dc_on++;
 			    gon_t.off_step = 2;
 
 			 }
 			 else{
-				 if(time_1s_counter > 1){
+				 if(time_1s_counter > 2){
 				 	time_1s_counter =0;
 				    dht11_read_temp_humidity_value();
+				    #if DEBUG_ENABLE
+                      printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
+				    #endif 
 				 }
 
 				 if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
 	                 FAN_RUN_OFF();
 
+					#if DEBUG_ENABLE
+                      printf("power_off_fan_stop !!!\n\r");
+					#endif 
+
 				 }
 			 }
- 
+            	
 		break;
 
 		 case 2 :
@@ -604,6 +612,14 @@ static void power_off_handler(void)
 		       setting_timing_second =0;
 		        LED_POWER_TOGGLE();
 		    }
+
+		     if(time_1s_counter > 2){
+				 	time_1s_counter =0;
+				    dht11_read_temp_humidity_value();
+				    #if DEBUG_ENABLE
+                      printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
+				    #endif 
+				 }
 		  gon_t.off_step = 2;
 		break;
 
@@ -860,6 +876,13 @@ void power_onoff_handler(void)
 
       case 1:
            power_on_handler();
+	 
+	      display_digital_3_numbers();
+	      set_temp_compare();
+	 
+	      wifi_fast_led_state();
+	  
+	       
 	  break;
 
 	  case 0:
@@ -868,15 +891,7 @@ void power_onoff_handler(void)
 	  break;
       }
 
-	if(discharge_f == 1){
-	  
 
-       display_digital_3_numbers();
-	   set_temp_compare();
-	 
-	   wifi_fast_led_state();
-	  
-	}
 
 	if(key_net_config_f==0 && gpro_t.time_100ms_f > 0){// 处理腾讯连连通信
 	      gpro_t.time_100ms_f=0;

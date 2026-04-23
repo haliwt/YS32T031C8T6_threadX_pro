@@ -36,7 +36,11 @@ static void vTaskMsgPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
 static void vTaskUiPro(ULONG thread_input);
 
+#if DEBUG_ENABLE
+ULONG unused =0;
 
+static void debug_stack_check(void);
+#endif 
 
 /*
 *********************************************************************************************************
@@ -150,6 +154,7 @@ void tx_application_define(void *first_unused_memory)
     power_onoff_handler();
     
 	IWDG_ReloadCounter();
+  
 	tx_thread_sleep(1);//10ms * 10 = 100ms  
 	
     } 
@@ -198,4 +203,26 @@ void wifi_semaphore_xtask(void)
    // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
 
 }
+
+#if DEBUG_ENABLE
+static void debug_stack_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_ONE; i++)
+    {
+        if (stack_msg_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+
+#endif 
+
 
