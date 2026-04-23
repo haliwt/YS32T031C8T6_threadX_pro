@@ -8,7 +8,7 @@ static void DHT11_GPIO_Input(void);
 static void DHT11_WritePin(uint8_t val);
 static uint8_t DHT11_ReadPin(void);
 
-static void TIM14_Init_1MHz(void);
+static void TIM17_Init_1MHz(void);
 static void Delay_US_dht11(uint16_t us);
 
 static uint8_t DHT11_ReadBit(void);
@@ -32,7 +32,7 @@ void DHT11_Init(void)
     DHT11_WritePin(1);
 
     /* 初始化 TIM14 为 1MHz 计数 */
-    TIM14_Init_1MHz();
+    TIM17_Init_1MHz();
 }
 
 /**
@@ -168,7 +168,7 @@ static uint8_t DHT11_ReadPin(void)
 
 /*---------------- TIM14 1MHz 延时 ----------------*/
 
-static void TIM14_Init_1MHz(void)
+static void TIM17_Init_1MHz(void)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM17, ENABLE);
 
