@@ -97,7 +97,7 @@ void Task_Logic_100ms(void)
 	 wifi_fast_led_state();
     }
     if(key_net_config_f==0 ){// 处理腾讯连连通信
-         wifi_communication_tnecent_handler();//
+         wifi_parse_tencennt_hadler();//
        
     }
 }
@@ -325,7 +325,7 @@ void Task_1minutes(void)
 {
     if(discharge_f ==1){
 
-	 works_timing_handler();
+	 works_nomal_run_time_handler();
 	 Fan_Current_Det();		// 电流检测
    }
 

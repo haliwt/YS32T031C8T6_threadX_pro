@@ -84,7 +84,7 @@ int main(void)
 		Trigger_Simple_Beep(2);
 
 		
-		  tx_kernel_enter(); 
+		 tx_kernel_enter(); 
 		
 		
     while(1)

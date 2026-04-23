@@ -208,6 +208,7 @@ void TIM6_LPTIM_IRQHandler (void)
 						cnt1m = 0;
 					    
 						gpro_t.time_1m_f = 1;
+						gpro_t.time_1m_wifi_f = 1;
 						//  time_1minute_f=1;
 						if(++c2m >=2){c2m =0; gpro_t.time_2m_f = 1;}
 						if(++c3m >=3){c3m =0; gpro_t.time_3m_f = 1;}

@@ -128,7 +128,7 @@ uint8_t  link_net_step;
 uint8_t  time_link_net_counter;
 uint8_t  wifi_linking_tencent_f;
 uint8_t  wifi_connected_success_f;
-uint8_t  wifi_rx_numbers;
+volatile uint8_t  wifi_rx_numbers;
 uint8_t  wifi_cofig_success_f;
 uint8_t  wifi_app_timer_power_on_f;
 uint8_t  wifi_run_step ;
@@ -141,8 +141,8 @@ uint8_t  time_autolink_counter;
 uint8_t  wifi_check_net_f;
 uint8_t dc_connect_net_step	;
 
-uint8_t  rx_wifi_data_success;
-uint8_t   rx_wifi_data_counter;
+volatile uint8_t  rx_wifi_data_success;
+volatile uint8_t   rx_wifi_data_counter;
 uint8_t  mqtt_status;
 
 
@@ -182,7 +182,22 @@ const uint8_t LED_TAB[11]={
 
 
 
+uint8_t counter;
+uint8_t power_Led_switch;	
+
+volatile uint16_t i;
+volatile uint16_t bw_i=0;
+volatile uint16_t sw_i=0;
+volatile uint16_t gw_i=0;
+volatile uint16_t disp_timing_time_temp;
+volatile uint16_t timing_diff_value_hour;
+volatile uint16_t timing_diff_value_min;
+
+
 volatile uint8_t static beep_sound_f =0;
+static void power_on_handler(void);
+static void power_off_handler(void);
+
 
 
 /**
@@ -243,15 +258,6 @@ void Clear_Ram(void)
 		led_scan_time = 0;
 		
 		timing_min_cnt = 0;
-		
-		
-	
-		
-
-
-		
-	
-
 		
 		no_fan_load_f = 0;
 		fan_current_det_time = 0;
@@ -330,95 +336,6 @@ void AD_Filter(void)
 }
 
 
-
-
-
-uint8_t counter;
-uint8_t power_Led_switch;	
-
- volatile uint16_t i;
- volatile uint16_t bw_i=0;
-volatile uint16_t sw_i=0;
-volatile uint16_t gw_i=0;
- volatile uint16_t disp_timing_time_temp;
- volatile uint16_t timing_diff_value_hour;
- volatile uint16_t timing_diff_value_min;
-
-#if 0
-/**
-  * @brief  fan run is error
-  * @note  
-  * @param: no_fan_load_f =1
-  *
-**/
-static void power_on_fan_error_handler(void)
-{
-	
-	com_data_temp[0] |= Lcdch_E;  //E
-	com_data_temp[1] |= Lcdch_r;  //r
-	com_data_temp[1] |= _DP1;     //DP1
-	com_data_temp[2] |= _DP2;     //DP2
-	com_data_temp[2] |= Lcdch_2;
-
-	if(!AI_timing_open_f) {LED_AI_ON();}
-	if(PTC_heat_open_f) {LED_PTC_ON();}
-	if(plasma_open_f) {LED_PLASMA_ON();}
-	if(Ultra_Sound_open_f) {LED_MOUSE_ON();}
-
-	LED_POWER_ON();
-
-	if(key_net_config_f)
-	{
-		 led_scan_time++;
-		if(led_scan_time>=33)
-		{
-			led_scan_time = 0;
-		}
-
-		if(led_scan_time<16)
-		{
-			LED_WIFI_ON();
-		}
-	}
-	else
-	{
-		if(wifi_connected_success_f)
-		{
-			LED_WIFI_ON();
-		}
-		else
-		{
-			led_scan_time++;
-			if(led_scan_time>=150)
-			{
-			led_scan_time = 0;
-			}											
-
-			if(led_scan_time<75)
-			{
-			LED_WIFI_ON();
-			}
-		}
-	}
-
-	com_data_temp[3] |= _A5|_B5|_CC5|_DD5|_E5|_F5|_G5|_H5;
-	com_data_temp[4] |= _A1|_B1|_CC1|_DD1|_E1|_F1|_G1|_H1;
-	com_data_temp[5] |= _A2|_B2|_CC2|_DD2|_E2|_F2|_G2|_H2;
-	com_data_temp[6] |= _A3|_B3|_CC3|_DD3|_E3|_F3|_G3|_H3;
-	com_data_temp[7] |= _A4|_B4|_CC4|_DD4|_E4|_F4|_G4|_H4;
-
-	beep_interval_time++;
-	if(beep_interval_time>=1000)
-	{
-	beep_interval_time = 0;
-
-	Beep(BEEP_THREE);
-	}
-
-
-}
-#endif 
-
 /**
   * @brief  fan run is ok
   * @note  
@@ -432,10 +349,10 @@ static void power_on_fan_error_handler(void)
  * 参数:无
  * 返回值:无
  ************************************************************************/
-void power_on_handler(void)
+static void power_on_handler(void)
 {
-
-   if(discharge_f ==1){
+   static uint8_t counter_10s=0;
+   
    switch(gon_t.on_step){
 
    case 0:
@@ -485,13 +402,133 @@ void power_on_handler(void)
 
    break;
 
+   case 3:
+   	   
+   	  set_temp_compare();
+      gon_t.on_step =4;
+   break;
+
+   case 4:
+   	   display_digital_3_numbers();
+        gon_t.on_step =5;
+
+   break;
+
+   case 5:
+        wifi_normal_led_state();
+		Fan_Ctrl_Process();	  // 风扇控制
+        gon_t.on_step =6;
+   break;
+
+   case 6:
+
+      if(wifi_connected_success_f==1){
+		   wifi_default_handler();
+         }
+        gon_t.on_step =7;
+   break;
+
+   case 7:
+   	if(key_net_config_f)
+	{
+		key_net_config_time++;
+		if(key_net_config_time>=130)
+		{
+			key_net_config_time = 0;
+
+			key_net_config_f = 0;
+			
+		}
+		else{ //conneting to wifi net 
+	
+			link_wifi_net_handler();
+		}
+	} 
+      gon_t.on_step =8;
+
+   break;
+
+
+   case 8:
+   	   if(gpro_t.time_3s_f==1){
+	   	  gpro_t.time_3s_f=0;
+          Heat_Process(); 
+	      peripheral_fun_handler();
+
+   	   }
+       gon_t.on_step =8;
+
+   break;
+
+   case 9:
+   	if(gpro_t.time_4s_f ==1){
+		gpro_t.time_5s_f =0;
+      	dht11_read_temp_humidity_value();
+   	}
+   gon_t.on_step =9;
+
+   break;
+
+   case 10:
+	   if(Is_countdown_timer_f ==1){
+             Countdown_timer_Handler();
+	   	}
+      gon_t.on_step =11;
+
+   break;
+
+
+   case 11:
+
+        //wifi_check_id_handler();
+        
+	    works_nomal_run_time_handler();
+		
+	    gon_t.on_step =12;
+
+   break;
+
+   case 12:
+    if(gpro_t.time_10s_f ==1){
+
+	   gpro_t.time_10s_f =0 ;
+	   counter_10s++;
+	   
+       AD_Filter();
+	   Adc_Channel_Sample();
+
+	   if(counter_10s > 3){
+	   	   counter_10s =0;
+	       Fan_Current_Det();		// 电流检测
+		}
+    }
+      gon_t.on_step =13;
+
+   break;
+
+   case 13:
+     if(key_net_config_f==0 &&  discharge_f ==1 &&  wifi_linking_tencent_f ==0){
+	   	   if(gpro_t.time_1m_wifi_f ==1){ 
+		     	gpro_t.time_1m_wifi_f =0;
+		       Reconnection_Wifi_Order();
+
+	   	   	}
+		
+	}
+     gon_t.on_step =3;
+
+   break;
+
+
+   
+
    default :
 
    break;
 
     }
- }
-
+ 
+  
 }
 /************************************************************************
  *
@@ -501,7 +538,7 @@ void power_on_handler(void)
  * 返回值:无
  *
  ************************************************************************/
-void power_off_handler(void)
+static void power_off_handler(void)
 {
    static uint8_t dc_on=0,fan_one_f=0;
 	switch(gon_t.off_step){
@@ -515,6 +552,8 @@ void power_off_handler(void)
 			wifi_run_step = 0;
 			wifi_off_step =0;
 			power_off_peripheral_handler();
+			all_led_off();
+	        TM1639_Display_ON_OFF(0);
 			gon_t.off_step = 1;
 	
 		 break;
@@ -545,7 +584,7 @@ void power_off_handler(void)
 		break;
 
 		 case 2 :
-		   dc_on=2;
+
           if(setting_timing_second> 1){//
 		       setting_timing_second =0;
 		        LED_POWER_TOGGLE();
@@ -612,34 +651,38 @@ void Countdown_timer_Handler(void)
   * @param: 
   *
 **/
-void works_timing_handler(void)
+void works_nomal_run_time_handler(void)
 {
    
-    work_time++;
-    #if DEBUG_ENABLE 
-        if(work_time >11 && works_interval_f==0){
-    #else 
-	   if(work_time > 119 && works_interval_f==0){
 
-	#endif 
-	
-     work_time = 0;
-     works_interval_f=1;
-     fan_one_minute_cuonter =0;
-     #if DEBUG_ENABLE 
-      printf("works_interval_f = %d \n\r",works_interval_f);
-	 #endif 
-   }
-   else if(works_interval_f==1 && work_time >10){
-         work_time = 0;  
-      works_interval_f =0;
-	#if DEBUG_ENABLE 
-     printf("works_interval_f = %d \n\r",works_interval_f);
-	#endif 
-   }
- 
-   
-}
+	if(gpro_t.time_1m_f == 1){
+		gpro_t.time_1m_f =0;
+		work_time++;
+		#if DEBUG_ENABLE 
+			if(work_time >11 && works_interval_f==0){
+		#else 
+			if(work_time > 119 && works_interval_f==0){
+
+		#endif 
+
+			work_time = 0;
+			works_interval_f=1;
+			fan_one_minute_cuonter =0;
+		#if DEBUG_ENABLE 
+			printf("works_interval_f = %d \n\r",works_interval_f);
+		#endif 
+		}
+		else if(works_interval_f==1 && work_time >10){
+				work_time = 0;  
+				works_interval_f =0;
+		#if DEBUG_ENABLE 
+			printf("works_interval_f = %d \n\r",works_interval_f);
+		#endif 
+		}
+		}
+ }
+  
+
 /**
   * @brief  // 按键按下时调用
   * @note  
@@ -650,7 +693,7 @@ void beep_power_sound(void)
 {
   
 	BEEP_ON();
-	DelayMS(20);
+	delay_ms_dht11(20);//DelayMS(20);
     BEEP_OFF();
 
 }
@@ -676,7 +719,7 @@ void Trigger_Simple_Beep(uint8_t ms_10)
 void Task_Beep_Simple_10ms(void) 
 {
 
-  if (time_beep_counter > 1 && beep_sound_f == 1) {
+  if (time_beep_counter > 0 && beep_sound_f == 1) {
 		 beep_sound_f ++;
 
 	     BEEP_OFF();
@@ -802,9 +845,48 @@ void Heat_Process(void)
        }
 
 }
+/**
+  * @brief  
+  * @note  
+  * @param: 
+  *
+**/
 
 void power_onoff_handler(void)
 {
+     switch(discharge_f){
 
+      case 1:
+           power_on_handler();
+	  break;
+
+	  case 0:
+	  	   power_off_handler();
+
+	  break;
+      }
+
+	if(key_net_config_f==0 && gpro_t.time_100ms_f==1){// 处理腾讯连连通信
+	      gpro_t.time_100ms_f=0;
+         wifi_parse_tencennt_hadler();//
+       
+    }
+
+	
+    wifi_fast_led_state();
 }
+/**
+  * @brief  
+  * @note  
+  * @param: 
+  *
+**/
+
+/**
+  * @brief  
+  * @note  
+  * @param: 
+  *
+**/
+
 

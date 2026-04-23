@@ -25,7 +25,7 @@ void wifi_fast_led_state(void)
    if(discharge_f ==1){
 	if(key_net_config_f){
 		led_scan_time++;
-		if(led_scan_time>0){
+		if(led_scan_time>2){
 			led_scan_time =0;
 	       LED_WIFI_TOGGLE();
 		}
@@ -42,12 +42,11 @@ void  wifi_normal_led_state(void)
 		{
 			LED_WIFI_ON();
 		}
-		else
-		{
-			led_scan_time++;
-			if(led_scan_time>1)
-			{
-			  led_scan_time =0;
+		else{
+			//led_scan_time++;
+			if(gpro_t.time_2s_f ==1){//if(led_scan_time>1)
+			  gpro_t.time_2s_f =0; 
+			 // led_scan_time =0;
 	          LED_WIFI_TOGGLE();
 			}
 		}

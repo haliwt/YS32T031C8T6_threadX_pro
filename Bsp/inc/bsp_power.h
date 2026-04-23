@@ -155,7 +155,7 @@ extern uint8_t disp_set_hours_time_f;
 extern uint8_t  key_input_temp_f;
 
 //wifi ref
-extern  uint8_t  wifi_rx_numbers;
+volatile extern  uint8_t  wifi_rx_numbers;
 extern  uint8_t  link_net_step;
 extern  uint8_t  wifi_cofig_success_f;
 
@@ -170,8 +170,8 @@ extern  uint8_t  wifi_first_connectoed_cloud_f;
 extern  uint8_t  wifi_read_net_data_f;
 extern  uint8_t  wifi_check_net_f;
 extern  uint8_t dc_connect_net_step	;
-extern  uint8_t  rx_wifi_data_success;
-extern  uint8_t   rx_wifi_data_counter;
+volatile extern  uint8_t  rx_wifi_data_success;
+volatile extern  uint8_t   rx_wifi_data_counter;
 extern  uint8_t  mqtt_status;
 extern  uint8_t  time_autolink_counter;
 
@@ -335,8 +335,7 @@ extern void AD_Filter(void);
 
 extern void LED_Strip_Ctrl(void);
 
-void power_off_handler(void);
-void power_on_handler(void);
+
 
 void Countdown_timer_Handler(void);
 
@@ -345,7 +344,7 @@ void Trigger_Simple_Beep(uint8_t ms_10) ;
 
 void Task_Beep_Simple_10ms(void);
 
-void works_timing_handler(void);
+void works_nomal_run_time_handler(void);
 void set_temp_compare(void);
 void beep_power_sound(void);
 

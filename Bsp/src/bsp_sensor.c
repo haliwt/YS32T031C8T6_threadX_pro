@@ -16,6 +16,13 @@ static uint8_t DHT11_ReadByte(void);
 
 /*================= 对外接口实现 =================*/
 
+void delay_ms_dht11(uint16_t ms)
+{
+    ms = 1000*ms;
+	Delay_US_dht11(ms);
+
+}
+
 void DHT11_Init(void)
 {
     /* GPIO 默认配置为输出高电平 */
