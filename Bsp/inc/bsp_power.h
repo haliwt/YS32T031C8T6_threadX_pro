@@ -348,6 +348,9 @@ void Task_Beep_Simple_10ms(void);
 void works_timing_handler(void);
 void set_temp_compare(void);
 void beep_power_sound(void);
+
+void power_onoff_handler(void);
+
 	
 
 

@@ -106,8 +106,8 @@ volatile uint8_t non_beep_length;		//º‰∏Ù ±º‰
 uint16_t beep_interval_time;
 
 //temp ref
-extern uint8_t temperature;
-extern uint8_t humidity;
+uint8_t temperature;
+uint8_t humidity;
 
 
 
@@ -803,4 +803,8 @@ void Heat_Process(void)
 
 }
 
+void power_onoff_handler(void)
+{
+
+}
 

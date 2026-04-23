@@ -81,8 +81,8 @@ int main(void)
 		TSC_StartCmd(ENABLE);          //开始扫描
 		bsp_init();
 		DHT11_Init();
-		Beep(BEEP_ONCE);	
-		// printf("YST301C8T6 OK \n");
+		Trigger_Simple_Beep(2);
+
 		
 		  tx_kernel_enter(); 
 		

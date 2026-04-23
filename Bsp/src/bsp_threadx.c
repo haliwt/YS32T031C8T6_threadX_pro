@@ -126,11 +126,7 @@ void tx_application_define(void *first_unused_memory)
 			 Wifi_Rx_InputInfo_Handler();
 
 		    }
-		    else{ //if( wifi_t.rx_data_success==1){
-				wifi_rx_run_handler();
-
-			}
-                
+		   
        }
 	 
 	   
@@ -183,7 +179,7 @@ void tx_application_define(void *first_unused_memory)
 	Key_Scan();
 
 
-	tx_thread_sleep(3);//1*10ms 
+	tx_thread_sleep(3);//10*3=30 
 	
     } 
 }
