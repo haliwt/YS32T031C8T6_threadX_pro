@@ -16,9 +16,13 @@ void Heat_Process(void);
 
 void Fan_Current_Det(void);
 
-void set_temp_compare(void);
+
 
 void peripheral_fun_handler(void);
+void workd_interval_time_peripheral_handle(void);
 
+void power_off_peripheral_handler(void);
+
+void power_on_peripheral_handler(void);
 
 #endif 

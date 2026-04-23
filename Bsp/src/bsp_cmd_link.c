@@ -283,5 +283,13 @@ void SendWifiData_Answer_Cmd(uint8_t cmd ,uint8_t data)
 }
 
 
+//int fputc(int ch, FILE *f)
+//{
+   
+//	while(UART_GetFlagStatus(UART1, UART_FLAG_TXE) == RESET);
+//	UART_SendData(UART1, (uint8_t)ch);
+
+//	 return ch;
+//}
 
 

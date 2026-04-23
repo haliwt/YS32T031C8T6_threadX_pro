@@ -11,17 +11,23 @@
 **/
 void Fan_Ctrl_Process(void)
 {
-    if(discharge_f){
-		if((fan_open_f)&&(!device_rest_f)){
-			if(fan_speed_level==1 || fan_speed_level < 34)
+   static uint8_t  fan_stop_f;
+	if(discharge_f){
+	   if(works_interval_f == 0 ){
+	      	
+			fan_stop_f = 0;
+			fan_one_minute_cuonter=0;;
+	     
+		if((fan_open_f)){
+			if(fan_speed_level < 34)
 			{
 			fan_on(287);
 			}
-			else if(fan_speed_level==2 || (fan_speed_level > 33 && fan_speed_level < 67))
+			else if(fan_speed_level > 33 && fan_speed_level < 67)
 			{
 			fan_on(303);
 			}
-			else if(fan_speed_level==3)
+			else if(fan_speed_level==100 && fan_speed_level > 66)
 			{
 			fan_on(319);
 			}
@@ -30,6 +36,31 @@ void Fan_Ctrl_Process(void)
 
 			FAN_RUN_ON();
 		}
+    }
+	else if(works_interval_f == 1){
+       
+		if(fan_one_minute_cuonter < 61  && fan_stop_f ==0){
+		      FAN_RUN_ON(); 
+	     
+		}
+		else{
+		  fan_stop_f =2;
+		  FAN_RUN_OFF(); 
+		#if DEBUG_ENABLE 
+
+		printf("fan_stop !!! \n\r");
+
+		#endif 
+		  
+
+		}
+
+	}
+
+    }
+ }
+
+#if 0
         else
 			{
 			if(fan_delay_time_off!=0){
@@ -96,14 +127,19 @@ void Fan_Ctrl_Process(void)
 		}
 }
 
+#endif 
+/**
+  * @brief  
+  * @note  
+  * @param: 
+  *
+**/
 
-
+#if 0
 //�������������
 void Beep(Beep_TypeDef music)
 {
-
-   #if 0
-	switch (music)
+    switch (music)
 	  {
 		    case BEEP_ONCE:
 			     beep_times=1;
@@ -141,12 +177,9 @@ void Beep(Beep_TypeDef music)
 			     non_beep_length=0;	
            break;		
     }
-
-	#endif 
-	BEEP_ON();
 } 
 
-
+#endif 
 
 /**
 *
@@ -157,9 +190,8 @@ void Beep(Beep_TypeDef music)
 **/
 void LED_Strip_Ctrl(void)
 {
-	  if(discharge_f)
-		{
-        if((led_strip_open_f)&&(!device_rest_f))
+	  if(discharge_f){
+        if((led_strip_open_f))
         {
 		        LED_TAPE_ON();
         }
@@ -168,19 +200,21 @@ void LED_Strip_Ctrl(void)
 		        LED_TAPE_OFF();   
         }
 	  }
-		else
-		{
-		    LED_TAPE_OFF();
-		}
+		
 }
 
 
 
-//�����ӿ���
+/**
+  * @brief  
+  * @note  
+  * @param: 
+  *
+**/
 void Plasma_Ctrl(void)
 {
 	  if(discharge_f){
-        if((plasma_open_f)&&(!device_rest_f))
+        if(plasma_open_f)
 		    {
 		        PLASMA_ON();
 				LED_PLASMA_ON();
@@ -191,20 +225,23 @@ void Plasma_Ctrl(void)
 				LED_PLASMA_OFF();
 		    }
         }
-		else
-		{
-            LED_PLASMA_OFF();
-			PLASMA_OFF();
-		}
+		
 }
 
 
-//����������
+/**
+*
+*@brief environment temperature value compare set temperater value
+*@notice
+*@param
+*@retrval 
+*
+**/
 void Ultra_Sound_Ctrl(void)
 {
     if(discharge_f)
     {
-		    if((Ultra_Sound_open_f)&&(!device_rest_f))
+		    if(Ultra_Sound_open_f)
 				{
 				    ultra_sound_on(159); 
 					LED_MOUSE_ON();
@@ -215,11 +252,7 @@ void Ultra_Sound_Ctrl(void)
 					LED_MOUSE_OFF();
 				}
 		}
-    else
-    {
-		    ultra_sound_off();
-			LED_MOUSE_OFF();
-		}			
+   
 }
 
 
@@ -233,154 +266,104 @@ void Ultra_Sound_Ctrl(void)
 **/
 void Relay_Ctrl(void)
 {
-    if(discharge_f)
-		{
-		    if((PTC_heat_open_f)&&(!device_rest_f)&& ptc_prohibit_off_f == 0)
+   
+	if(discharge_f){
+		    if((PTC_heat_open_f)&& ptc_prohibit_off_f == 0)
 				{
                     LED_PTC_ON();
 					RELAY_ON();
 					
 				}
-				else
+				else if(PTC_heat_open_f ==0)
 				{
 					LED_PTC_OFF();
 					RELAY_OFF();
 					
 				}
 		}
-		else
-		{
-		    RELAY_OFF();
-			LED_PTC_OFF();
-		}
+
+	
+		
 }	
 
 
-
-/**
-	*
-	*@brief environment temperature value compare set temperater value
-	*@notice
-	*@param
-	*
-**/
-void Heat_Process(void)
+void workd_interval_time_peripheral_handle(void)
 {
-      static uint8_t default_init = 0xff;   // 第一次比较标志
-     if(discharge_f == 1){
-	   if(ptc_prohibit_off_f == 1 || set_temperature_value_f ==1) return ;
+	if(discharge_f){
 
-	  uint8_t target_temp;
-
-	  target_temp = setting_temperature;
-
-	  if(temperature > 39){
-
-        PTC_heat_open_f = 0;   // 立即关闭
-	    first_temp_compare_f = 1; 
-	    if(default_init != PTC_heat_open_f ){
-					default_init= PTC_heat_open_f;
-				SendWifiData_To_Cmd(0x02,0);
-		        //tx_thread_sleep(100);//HAL_Delay(5);
-		        MqttData_Publish_SetPtc(0);
-
-				}
-	  
-	     return ;
-
-	  }
-
-      // -----------------------------
-    // 2. 第一次比较：必须立即决定 PTC 开关
-    // -----------------------------
-	  if(first_temp_compare_f == 0){
-
-		if(temperature >= target_temp){
-            PTC_heat_open_f = 0;   // 立即关闭
-
-		       if(default_init != PTC_heat_open_f ){
-					default_init = PTC_heat_open_f;
-				SendWifiData_To_Cmd(0x02,0);
-		        //tx_thread_sleep(100);//HAL_Delay(5);
-		        MqttData_Publish_SetPtc(0);
-
-				}
-		}
-        else{
-            PTC_heat_open_f = 1;   // 立即打开
-            first_temp_compare_f = 1;         // 以后进入滞后控制
-            if(default_init!= PTC_heat_open_f ){
-					default_init = PTC_heat_open_f;
-				SendWifiData_To_Cmd(0x02,0x01);
-		        //tx_thread_sleep(100);//HAL_Delay(5);
-		        MqttData_Publish_SetPtc(0x01);
-
-			}
-        }
-        return;
-
-
-	  }
-
-		// -----------------------------
-		// 3. 第二次及以后：使用 -2°C 滞后控制
-		// -----------------------------
-		if(first_temp_compare_f == 1)
+		if((PTC_heat_open_f)&& ptc_prohibit_off_f == 0)
 		{
-			// 当前是开启状态 → 高于设定温度则关闭
-			if(temperature >= target_temp){
-					PTC_heat_open_f = 0;
-				if(default_init != PTC_heat_open_f ){
-					default_init = PTC_heat_open_f;
-				SendWifiData_To_Cmd(0x02,0);
-		       // tx_thread_sleep(100);//HAL_Delay(5);
-		        MqttData_Publish_SetPtc(0);
+			LED_PTC_ON();
+        }
+		else if(PTC_heat_open_f ==0)
+		{
+			LED_PTC_OFF();
 
-				}
-			}
-			else
-			{
-				// 当前是关闭状态 → 低于设定温度 - 2 才重新打开
-				if(temperature <  (target_temp - 2))
-				PTC_heat_open_f = 1;
-				if(default_init!= PTC_heat_open_f ){
-					default_init = PTC_heat_open_f;
-				SendWifiData_To_Cmd(0x02,0x01);
-		       // tx_thread_sleep(100);//HAL_Delay(5);
-		        MqttData_Publish_SetPtc(0x01);
 
-				}
-			}
 		}
+		
+		if(Ultra_Sound_open_f)
+		{
 
-       }
+			LED_MOUSE_ON();
+		}
+		else
+		{
 
+			LED_MOUSE_OFF();
+		}
+		if(plasma_open_f)
+		{
+
+		LED_PLASMA_ON();
+		}
+			else
+		{
+
+		LED_PLASMA_OFF();
+		}
+	}
+ 
 }
 
+/**
+*
+*@brief environment temperature value compare set temperater value
+*@notice
+*@param
+*@retrval 
+*
+**/
 void set_temp_compare(void)
 {
-   if(discharge_f == 1 && set_temperature_value_f ==1 && time_set_temp_counter > 2){
+   if(discharge_f == 1 && (set_temperature_value_f ==1 && time_1s_counter > 1 &&  key_input_temp_f != 4)|| ( key_input_temp_f == 4 && time_1s_counter  > 2)){//1
 	    set_temperature_value_f ++;
 
     if(temperature >= setting_temperature){
 	     ptc_prohibit_off_f = 0;
 	     PTC_heat_open_f = 0;   // 立即关闭
-	     SendWifiData_To_Cmd(0x02,0);
-		 //tx_thread_sleep(20);//HAL_Delay(5);
-		 MqttData_Publish_SetPtc(0);
+	     RELAY_OFF();
+		 LED_PTC_OFF();
+		 if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0);
+		 //delay_ms(20);//HAL_Delay(5);
+		 if(wifi_connected_success_f ==1)MqttData_Publish_SetPtc(0);
 
     }
 	else{
 	    ptc_prohibit_off_f = 0;
 		PTC_heat_open_f = 1;   // 立即open
-		SendWifiData_To_Cmd(0x02,0x01);
-		//tx_thread_sleep(20);//HAL_Delay(5);
-		MqttData_Publish_SetPtc(1);
-
+		LED_PTC_ON();
+		if(works_interval_f == 0)RELAY_ON();
+		 
+	
+		if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x01);
+		//delay_ms(20);//HAL_Delay(5);
+		if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(1);
+        
 
 	}
-	 MqttData_Publis_SetTemp(setting_temperature);
-
+	if(wifi_connected_success_f == 1 && key_input_temp_f == 1)MqttData_Publis_SetTemp(setting_temperature);
+    if(key_input_temp_f == 4) key_input_temp_f =2;
 
 	}
 
@@ -393,11 +376,12 @@ void set_temp_compare(void)
 *@brief environment temperature value compare set temperater value
 *@notice
 *@param
+*@retrval 
 *
 **/
 void Fan_Current_Det(void)
 {
-	if((discharge_f)&&(fan_open_f)&&(!device_rest_f))
+	if((discharge_f)&&(fan_open_f) && works_interval_f == 0)
 	{
 		if(fan_current<_NO_FAN_LOAD_CURRENT){
 			fan_current_det_time++;
@@ -406,7 +390,7 @@ void Fan_Current_Det(void)
 
 				if(!no_fan_load_f)
 				{
-					Beep(BEEP_THREE);
+					//Beep(BEEP_THREE);
 					beep_interval_time = 0;
 
 					fan_open_f = 0;
@@ -436,23 +420,68 @@ void Fan_Current_Det(void)
 void peripheral_fun_handler(void)
 {
    if(discharge_f==1){
-      if(!AI_timing_open_f){
+
+    switch(works_interval_f){
+
+	case 0:
+      LED_Strip_Ctrl();
+      Plasma_Ctrl();
+      Ultra_Sound_Ctrl();
+	  Relay_Ctrl();
+
+	 if(disp_set_hours_time_f == 1 || Is_time_setting_f ==1) return ;
+	  
+      if(AI_timing_open_f==1){
 	  	LED_AI_ON();
 	  }
 	  else{
 	     LED_AI_OFF();
 
 	  }
-      LED_Strip_Ctrl();
-     // Plasma_Ctrl();
-      Ultra_Sound_Ctrl();
-	  Relay_Ctrl();
+    break;
 
+	case 1: //have a rest 10 minutes 
+	   LED_Strip_Ctrl();
 
-   }
-  
+	 
+	   
+	   workd_interval_time_peripheral_handle();
+	   if(disp_set_hours_time_f == 1 || Is_time_setting_f ==1) return ;
+	   if(AI_timing_open_f==1){
+	  	LED_AI_ON();
+	   }
+	   else{
+	     LED_AI_OFF();
+       }
+
+	break;
+	  
+    }
+
+	}
+
 }
 
 
+void power_off_peripheral_handler(void)
+{
+
+	RELAY_OFF();
+	ultra_sound_off();
+	PLASMA_OFF();
+
+
+}
+
+
+void power_on_peripheral_handler(void)
+{
+
+	RELAY_ON();
+	 ultra_sound_on(159); 
+	PLASMA_ON();
+
+
+}
 
 

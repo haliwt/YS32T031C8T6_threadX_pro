@@ -146,63 +146,84 @@ void SysTick_Handler(void)
 void TIM6_LPTIM_IRQHandler (void)
 {
 
-    static uint8_t cnt10 =0,cnt100 =0,cnt1000,cnt1m=0;
-	static uint8_t cnt300 =0;
+    volatile static uint8_t cnt10 =0,cnt100 =0,cnt1000,cnt1m=0,cnt20ms=0;
+	volatile static uint8_t c1s,c2s,c3s,c4s,c5s,c6s,c7s,c8s,c9s,c10s;
+	volatile static uint8_t c100ms,c200ms,c300ms,c400ms,c500ms,c600ms,c900ms;
+	volatile static uint8_t c1m,c2m,c3m,c4m,c5m,c6m;
+	
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update) != RESET ) 
-    {
-        TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
-			
-		    time_5ms_f = 1;
-	       
-          
-	  if(++cnt10 > 1){//10ms
-	  
-			  cnt10 =0; 
-              time_10ms_f = 1;
-		      time_wifi_10ms_f = 1;
-			  
-			  
-		      if(++cnt100 >=10){ //10* 10 = 100ms .
-		          cnt100 =0;
-				  cnt300++;
-			     time_100ms_f =1;
-				 if(cnt300 > 2){
-				   cnt300 =0;
-				   time_300ms_f = 1;
+	{
+		TIM_ClearITPendingBit(TIM6,TIM_IT_Update);
 
-				 }
+		time_5ms_f = 1;
+		cnt10++;  
+
+		if(cnt10 > 1){//5ms*2 =10ms
+
+			cnt10 =0; 
+			time_beep_counter++;
+			gpro_t.time_10ms_f = 1;
+			time_wifi_10ms_f = 1;
+			
+            if(++cnt20ms >=2){cnt20ms =0; gpro_t.time_20ms_f =1;}
+
+			if(++cnt100 >=10){ //10* 10 = 100ms .
+				cnt100 =0;
 				
-			    
-			   
-			  
-			   if(++cnt1000> 9){ // 100 *10 =1000ms=1s 
-			     cnt1000 = 0;
-			   
-                  time_1s_f = 1;
-			      time_link_net_counter++;
-				 
-				  disp_switch_time++;
-				  time_switch_temp_hum_counter++;
-				  time_set_hours_counter++;
-				  time_set_temp_counter++;
-				   
-				  
-				  
-				  if(++cnt1m > 59){//1s *60 =60s 
-				  	  cnt1m = 0;
-					 
-                      time_1minute_f=1;
+				gpro_t.time_100ms_f =1;
+
+				if(++c200ms>=2){c200ms =0; gpro_t.time_200ms_f = 1;}
+
+				if(++c300ms>=3){c300ms =0; gpro_t.time_300ms_f = 1;}
+				if(++c400ms>=4){c400ms =0; gpro_t.time_400ms_f = 1;}
+				if(++c500ms>=5){c500ms =0; gpro_t.time_500ms_f = 1;}
+				if(++c600ms>=6){c600ms =0; gpro_t.time_600ms_f = 1;}
+				if(++c900ms>=9){c900ms =0; gpro_t.time_900ms_f = 1;}
+
+				if(++cnt1000> 9){ // 100ms *10 =1000ms=1s 
+					cnt1000 = 0;
+					time_1s_counter ++ ;
+
+				    gpro_t.time_1s_f =1;
+				
+					time_link_net_counter++;
+
+					disp_switch_temp_humi++;
+					time_set_hours_counter++;
+					setting_timing_second ++;
+					time_autolink_counter++;
+					fan_one_minute_cuonter++;
+				
 					
+					if(++c2s >=2){c2s=0; gpro_t.time_2s_f =1;}
+					if(++c3s >=3){c3s=0; gpro_t.time_3s_f =1;}
+					if(++c4s >=4){c4s=0; gpro_t.time_4s_f =1;}
+					if(++c5s >=5){c5s=0; gpro_t.time_5s_f =1;}
+					if(++c6s >=6){c6s=0; gpro_t.time_6s_f =1;}
+					if(++c7s >=7){c7s=0; gpro_t.time_7s_f =1;}
+					if(++c10s >=10){c10s=0; gpro_t.time_10s_f =1;}
+				
 
-				  }
+					if(++cnt1m > 59){//1s *60 =60s 
+						cnt1m = 0;
+					    
+						gpro_t.time_1m_f = 1;
+						//  time_1minute_f=1;
+						if(++c2m >=2){c2m =0; gpro_t.time_2m_f = 1;}
+						if(++c3m >=3){c3m =0; gpro_t.time_3m_f = 1;}
+						if(++c4m >=4){c4m =0; gpro_t.time_4m_f = 1;}
+						if(++c5m >=5){c5m =0; gpro_t.time_5m_f = 1;}
+						if(++c6m >=6){c6m =0; gpro_t.time_6m_f = 1;}
 
-			   	} 
+						
+					}
 
-			   }
+				} 
 
-	  }
-			
-    }
+			}
+
+		}
+	}
 }
 
 

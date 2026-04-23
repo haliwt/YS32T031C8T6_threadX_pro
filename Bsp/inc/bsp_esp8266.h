@@ -8,6 +8,7 @@ void wifi_auto_detected_link_state(void);
 
 void wifi_default_handler(void);
 
+void wifi_power_off_handler(void);
 
 
 #endif 

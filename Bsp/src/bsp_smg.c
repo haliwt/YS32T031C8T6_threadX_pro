@@ -7,8 +7,8 @@
 
 #define SWITCH_THRESHOLD 2
 
-uint8_t disp_temp_hum,dsip_timer_value;
-uint8_t timerbuf[1];
+
+
 
 
 static const uint8_t Number_Table[] = {
@@ -112,11 +112,16 @@ void SMG_Display_Err(uint8_t idata)
 
 
 
-
+/**
+*
+*@breif
+*@notice
+*
+**/
 void display_digital_3_numbers(void)
 {
     
-	 static uint8_t read_error_flag;//,switch_adc;
+	 static uint8_t read_error_flag,disp_temp_hum;//,switch_adc;
 
 	// If any warning is active, do nothing
     if (no_fan_load_f ==1) return;
@@ -125,18 +130,27 @@ void display_digital_3_numbers(void)
 
       
 	    if(time_set_hours_counter < 4){
-    	           AI_timing_open_f=0;
+    	        
     	 		   LED_AI_OFF();
 		           LED_HUMI_OFF();//HUMIDITY_ICON_OFF();
 		           LED_TEMP_OFF();//TEMP_ICON_OFF();//WT.EDIT 2025.04.28
 		           if(key_be_pressed_f == 1){
 						 TM1639_Display_setTimerHours_3_Digit(setting_timing_hour);
-						 if(setting_timing_hour > 0) Is_timing_hour_disp_f = 1;
-						 else Is_timing_hour_disp_f = 0;
+						 if(setting_timing_hour > 0){
+                            temporary_timer_hours = setting_timing_hour;
+							Is_countdown_timer_f = 1;
+							real_hours_counter=0;
+						    setting_timing_second = 0;
+						   
+						 }
+						 else if(setting_timing_hour ==0){
+						 	Is_countdown_timer_f = 0;
+
+						 }
 
 				   }
 		           else{
-				   	   if(timing_hour_cnt >0)
+				   	   if(setting_timing_hour > 0)
 			               TM1639_Display_setTimerHours_3_Digit(setting_timing_hour);
 					   else
 					   	   TM1639_Display_setTimerMinutes_3_Digit(timing_min_cnt);
@@ -147,49 +161,36 @@ void display_digital_3_numbers(void)
 		 else{
              disp_set_hours_time_f = 0;
 			 Is_time_setting_f=0;// g_pro.g_disp_smg_timer_or_temp_hours_item = temperature_mode; //WT.EDIT 2025.010.06
-             Is_temp_setting_f = 1;//at once display "temperature_mode" //WT.EDIT 2025.10.17
+             key_be_pressed_f =0;
             
-		     if(setting_timing_hour > 0 || timing_hour_cnt > 0){ // && g_key.key_mode_long_flag != 1){
-                  AI_timing_open_f=1;
-    	 		  LED_AI_ON(); 
-			   #if DEBUG_ENABLE
-			      printf("gAI = 1 \r\n");
-			   #endif 
+		     if(setting_timing_hour > 0 || timing_min_cnt> 0){ // && g_key.key_mode_long_flag != 1){
+                  AI_timing_open_f=0;
+    	 		  LED_AI_OFF(); 
+			  
 			 }
 			 else {
-			    AI_timing_open_f=0;
-				LED_AI_OFF(); 
-			 #if DEBUG_ENABLE
-			    printf("gAI = 0 \r\n");
-			 #endif 
+			    AI_timing_open_f=1;
+				LED_AI_ON(); 
+			
 
             }
 		
         }
       
      }
-	 else if(set_temperature_value_f == 1 && time_set_temp_counter  < 3){//set up temperature value 
+	 else if((set_temperature_value_f == 1 && time_set_hours_counter < 3  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 4)){//set up temperature value 
 
         
 	       TM1639_Display_Temperature(setting_temperature);
 		   
 	 }
 	 else{ //display temperature value 
-
-	     if(key_long_f == 1) return ;
-
-         if( AI_timing_open_f ==1){
-			         
-		     LED_AI_OFF(); 
-		   }
-		  else{
-		     LED_AI_ON(); 
-
-		   }
-
           
-            if (time_switch_temp_hum_counter > SWITCH_THRESHOLD ){
-			  time_switch_temp_hum_counter = 0; // 重置计时�??
+   
+		 if(key_long_f == 1) return ;
+
+            if (disp_switch_temp_humi > SWITCH_THRESHOLD ){
+			    disp_switch_temp_humi = 0; // 重置计时�??
 
 			  disp_temp_hum = disp_temp_hum ^ 0x01;
 
@@ -393,4 +394,64 @@ void  DHT11_Display_Data(uint8_t mode)
 }
 
 
+/************************************************************************
+ * Function Name: LED_Power_Breathing(void)
+ * 功能:
+ * 参数:无
+ * 返回值:无
+ ************************************************************************/
+void LED_FUN_ON(void)
+{
+  //smg 
+ #if 1
+  // TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,0xFF); // 
+  // TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,0xFF); // 
+  // TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,0xFF); //
+
+  
+	   	     
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,0xF3  );
+       
+      // 显示个位
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L, 0xF3 | 0x08);
+        
+        // 显示度数符号
+       //TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
+        //显示小数点�?��?��?? 显示数字�?0�?
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, 0xF3);
+
+   
+
+     
+
+	    //streamlinght led
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0xFF); //
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0xFF); //
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0xFF); //
+   TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0xFF); //
+    TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0xFF); //
+
+      
+#else
+
+     TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,0x00); // 
+	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,0x00); // 
+	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,0x00); //
+   
+	 //streamlinght led
+	 TM1639_Write_Digit_Full(TM1639_ADDR_GRID4_H, TM1639_ADDR_GRID4_L,0x00); //
+	 TM1639_Write_Digit_Full(TM1639_ADDR_GRID5_H, TM1639_ADDR_GRID5_L,0x00); //
+	 TM1639_Write_Digit_Full(TM1639_ADDR_GRID6_H, TM1639_ADDR_GRID6_L,0x00); //
+	 TM1639_Write_Digit_Full(TM1639_ADDR_GRID7_H, TM1639_ADDR_GRID7_L,0x00); //
+   
+	 TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0x00); //
+
+#endif 
+   //key led
+   
+  // TM1639_Write_Digit_Full(TM1639_ADDR_GRID8_H, TM1639_ADDR_GRID8_L,0xCF); // 0xCF :
+
+   TM1639_Display_ON_OFF(1);
+
+}
 

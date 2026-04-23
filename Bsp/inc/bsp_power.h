@@ -20,33 +20,11 @@ extern "C" {
 #include "system_ys32t031.h"  
 #include <stdint.h> 
 
-
-//extern volatile uint8_t Times5msCnt;
-extern uint8_t Times10msCnt;
-//extern uint8_t Times100msCnt;
-extern uint8_t Times1minute;
-extern uint16_t Times1minCnt;
-extern uint8_t Cacl_time_sec;
-
-extern volatile uint8_t time_5ms_f;
-extern volatile uint8_t time_10ms_f;
-extern uint8_t time_100ms_f;
-extern uint8_t time_300ms_f;
-
-extern uint8_t time_1s_f;
-extern uint8_t time_1minute_f;
-//WIFI TIMER
-extern uint8_t time_wifi_10ms_f;
-
-extern uint16_t ad_value[1];
 #define _AD_FCUR      0
 
 #define _FCUR_CH      2
 
-extern uint16_t fan_current;
 
-extern uint8_t discharge_f;
-extern uint16_t work_time;
 #define _DEVICE_WORK_TIME         120
 
 #define _POWER_KEY_DOWN          (1<<0)     
@@ -60,8 +38,37 @@ extern uint16_t work_time;
 
 #define _DEVICE_REST_TIME            10
 
-#define DEBUG_ENABLE            0
+#define BEEP_LENGTH_DEFAULT 49		//4*100ms
+#define NON_BEEP_LENGTH_DEFAULT 49	//4*100ms 
 
+typedef enum {BEEP_ONCE,BEEP_TWO,BEEP_THREE,BEEP_1SECONDS,BEEP_TIME_OVER}Beep_TypeDef;
+
+
+
+
+
+
+//extern volatile uint8_t Times5msCnt;
+extern uint8_t Times10msCnt;
+//extern uint8_t Times100msCnt;
+extern uint8_t Times1minute;
+extern uint16_t Times1minCnt;
+extern uint8_t Cacl_time_sec;
+
+extern volatile uint8_t time_5ms_f;
+
+extern uint8_t disp_second_f ;
+
+
+//WIFI TIMER
+extern uint8_t time_wifi_10ms_f;
+
+extern uint16_t ad_value[1];
+
+extern uint16_t fan_current;
+
+extern uint8_t discharge_f;
+extern uint16_t work_time;
 
 
 extern uint16_t current_temperature;
@@ -80,81 +87,74 @@ extern uint8_t Ultra_Sound_open_f;
 extern uint8_t plasma_open_f;
 
 extern uint16_t timing_is_reach_disptime;
+/*countdown timer  */
+extern int8_t setting_timing_hour;
+extern int8_t setting_timing_second;
+extern int8_t timing_min_cnt;
+extern uint8_t real_hours_counter;
+extern int8_t temporary_timer_hours;
+extern uint8_t time_beep_counter;
 
-extern uint16_t setting_timing_hour;
+
+//
 
 extern uint8_t Is_time_setting_f;
-extern uint8_t Is_temp_setting_f;
-extern uint8_t Is_timing_hour_disp_f;
+
+extern uint8_t Is_countdown_timer_f;
 extern uint8_t set_temperature_value_f;
-extern uint8_t time_set_temp_counter;
-extern uint8_t disp_set_hours_time_f;
+extern uint8_t time_1s_counter;
 
 
-extern uint16_t timing_hour_disp_time;
+
 extern uint16_t led_scan_time;
 
-extern uint16_t key_flash_time;
+
 extern uint8_t key_net_config_f;
 extern uint16_t key_net_config_time;
 extern uint8_t led_strip_open_f;
 
 extern uint8_t flash_f;
 
-extern uint8_t device_rest_f;
+
 extern uint16_t device_rest_time;
 
 
-extern uint8_t timing_min_cnt;
-extern uint8_t timing_hour_cnt;
+
+
 
 extern uint8_t fan_open_f;
 extern uint8_t fan_speed_level;
-extern uint8_t temperature;
-extern  uint8_t humidity;
-
-
-
-extern uint16_t fan_delay_time_off;
 
 
 
 
-typedef enum {BEEP_ONCE,BEEP_TWO,BEEP_THREE,BEEP_1SECONDS,BEEP_TIME_OVER}Beep_TypeDef;  
 
 extern volatile uint8_t beep_times;				  //次数
 extern volatile uint8_t beep_lenght;			  //响的长度 *100ms
 extern volatile uint8_t non_beep_length;		//间隔时间
 extern uint16_t beep_interval_time;
 
-#define BEEP_LENGTH_DEFAULT 49		//4*100ms
-#define NON_BEEP_LENGTH_DEFAULT 49	//4*100ms 
-
-
 //
 extern uint8_t soft_version;
 
-extern uint8_t time_switch_temp_hum_counter;
-extern uint8_t  key_be_pressed_f;
-extern uint8_t  time_set_hours_counter;
+
+extern uint8_t temperature;
+extern uint8_t humidity;
 
 
 
-
-
-extern uint16_t reach_SetTemperature_time;
-extern uint16_t lower_SetTemperature_time;
-
-extern uint16_t temperature_det_more_time;
-extern uint16_t temperature_det_less_time;
 
 extern uint8_t no_fan_load_f;
 extern uint16_t fan_current_det_time;
 #define _NO_FAN_LOAD_CURRENT       50      //0.06A*0.67*4096/3.3   
 
-extern uint16_t disp_switch_time;
-//wifi 
-//extern  uint8_t  wifi_connected_f;
+extern uint8_t disp_switch_temp_humi;
+//peripheral 
+extern uint8_t key_be_pressed_f;
+extern uint8_t disp_set_hours_time_f;
+extern uint8_t  key_input_temp_f;
+
+//wifi ref
 extern  uint8_t  wifi_rx_numbers;
 extern  uint8_t  link_net_step;
 extern  uint8_t  wifi_cofig_success_f;
@@ -164,15 +164,31 @@ extern  uint8_t  wifi_linking_tencent_f;
 extern  uint8_t  wifi_connected_success_f;
 extern  uint8_t  wifi_app_timer_power_on_f;
 extern  uint8_t  wifi_run_step ;
+extern  uint8_t  wifi_off_step;
+
 extern  uint8_t  wifi_first_connectoed_cloud_f;
 extern  uint8_t  wifi_read_net_data_f;
+extern  uint8_t  wifi_check_net_f;
+extern  uint8_t dc_connect_net_step	;
+extern  uint8_t  rx_wifi_data_success;
+extern  uint8_t   rx_wifi_data_counter;
+extern  uint8_t  mqtt_status;
+extern  uint8_t  time_autolink_counter;
+
+/*end*/
+
+//fan
+extern uint8_t  fan_one_minute_cuonter;
 
 
 
+//time couter 
+extern uint8_t  time_set_hours_counter;
+
+extern uint8_t  works_interval_f;
 
 
-
-
+//wifi end 
 
 extern uint8_t com_data_temp[8];
 extern uint8_t com_data_buf[16];
@@ -301,25 +317,38 @@ extern const uint8_t LED_TAB[11];
 #define _LED_UP          ((1<<2)|(1<<3))  
 #define _LED_DOWN        ((1<<6)|(1<<7))
 
+typedef struct  _power_state{
+
+    uint8_t on_step;
+	uint8_t  off_step;
+
+
+}power_state;
+
+extern power_state gon_t;
+
 
 void Clear_Ram(void);
-void Real_Time(void);
-void Adc_Channel_Sample(void);
-void AD_Filter(void);
-//extern void Key_Scan(void);
-void LED_Strip_Ctrl(void);
-//extern void Plasma_Ctrl(void);
-//extern void Fan_Ctrl_Process(void);
-//extern void Beep(Beep_TypeDef music);   
-//extern void Task_beep_called_100ms(void);
-//extern void Ultra_Sound_Ctrl(void);
-///extern void Relay_Ctrl(void);
-//extern void Heat_Process(void);
-//extern void Fan_Current_Det(void);
-void Update_onLED_Display(void);
-void Update_offLED_Display(void);
+
+extern void Adc_Channel_Sample(void);
+extern void AD_Filter(void);
+
+extern void LED_Strip_Ctrl(void);
+
+void power_off_handler(void);
+void power_on_handler(void);
+
+void Countdown_timer_Handler(void);
 
 
+void Trigger_Simple_Beep(uint8_t ms_10) ;
+
+void Task_Beep_Simple_10ms(void);
+
+void works_timing_handler(void);
+void set_temp_compare(void);
+void beep_power_sound(void);
+	
 
 
 

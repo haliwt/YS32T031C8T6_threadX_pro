@@ -43,7 +43,7 @@ static const uint8_t TM1639_Char_Table[] = {
 
 #define TM1639_CHAR_N                   TM1639_Char_Table[4]
 
-#define TM1639_DOT 0x08 // 小数点段�?,from low position start
+#define TM1639_DOT  0x08 // 小数点段�?,from low position start
 
 /**
  * @brief  TM1639写入�?个字�?
@@ -275,7 +275,7 @@ void TM1639_Display_setTimerMinutes_3_Digit(uint8_t num)
 	
 	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_CHAR_N);
 	#else
-	 TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,0x0);
+	    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,0x00);
 	#endif  
 	 
 }
@@ -324,7 +324,7 @@ void TM1639_Display_Temperature(int8_t temp)
         // 显示十位
        if(temp >= 10){
 	   	     
-            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[temp / 10]);
+            TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L,TM1639_Number_Table[temp / 10] );
        	}
        else{
 	   	  
@@ -332,12 +332,12 @@ void TM1639_Display_Temperature(int8_t temp)
        	}
         
         // 显示个位
-       TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[temp % 10] );
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[temp % 10] | TM1639_DOT);
         
         // 显示度数符号
        //TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_DEGREE);
         //显示小数点�?��?��?? 显示数字�?0�?
-      TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_Number_Table[0] | TM1639_DOT);
+       TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L,TM1639_Number_Table[0]);
 }
 /**
  * @brief  显示湿度�?
@@ -359,12 +359,12 @@ void TM1639_Display_Humidity(uint8_t humi)
         TM1639_Write_Digit_Full(TM1639_ADDR_DIG1_H, TM1639_ADDR_DIG1_L, TM1639_Number_Table[0]);
     
     // 显示个位带小数点
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[humi % 10]);
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG2_H, TM1639_ADDR_DIG2_L,TM1639_Number_Table[humi % 10] | TM1639_DOT);
     
     // 显示RH符号
     //TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_CHAR_RH);
     //显示小数点�?��?��?? + 数字 �?0�?
-    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_Number_Table[0] | TM1639_DOT );
+    TM1639_Write_Digit_Full(TM1639_ADDR_DIG3_H, TM1639_ADDR_DIG3_L, TM1639_Number_Table[0]);
 }
 
 /**

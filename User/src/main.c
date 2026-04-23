@@ -21,7 +21,7 @@
 #include "key.h"
 #include "adc.h"
 
-#include "dht11.h"
+
 #include "ys32t031_tsc.h"
 #include "ys32t031_tsc_lib.h"
 #include "ys32t031_tsc_config.h"

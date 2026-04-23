@@ -9,9 +9,10 @@ uint8_t counter_1m;
 
 
 
-static void task_1s_run_handler(void);
+
 uint8_t counter_2s,tim_2s_f;
 
+main_ref gpro_t;
 
 
 /**************************************************************************************
@@ -21,12 +22,12 @@ uint8_t counter_2s,tim_2s_f;
 *
 *
 **************************************************************************************/
-  void bsp_init(void)
-  {
-   
-   discharge_f =0;
-  //SET_DHT11_DATA_OUT_MODE();//SET_DHT11_DATA_IN_MODE();
-   //SET_DHT11_DATA_IN_MODE();
+ void bsp_init(void)
+ {
+  LED_POWER_ON(); 
+
+
+	
 #if(Enable_EventRecorder == 1)  
 	/* 0…60‹10‡80†40†30…4EventRecorder0…50„40†70„90‡40‹0 */
 	EventRecorderInitialize(EventRecordAll, 1U);
@@ -40,24 +41,45 @@ uint8_t counter_2s,tim_2s_f;
 
 
 
-//void tx_thread_sleep(uint16_t ms)
-//{
-//    // 假设你在 TIM6 中断里已经有 time_10ms_f 标志
-//    // 如果是 100ms/200ms 这种大延时，直接判断标志位是最安全的
-//    uint16_t target_10ms_units = ms / 10;
-//    uint8_t count = 0;
-//    
-//    while (count < target_10ms_units)
-//    {
-//        if (time_wifi_10ms_f)
-//        {
-//            time_wifi_10ms_f = 0;
-//            count++;
-//        }
-//        // 裸机运行，这里可以顺便喂狗
-//        // IWDG_ReloadCounter(); 
-//    }
-//}
+uint8_t  delay_ms(uint16_t ms)
+{
+
+  #if 0
+  // 假设你在 TIM6 中断里已经有 gpro_t.time_10ms_f 标志
+    // 如果是 100ms/200ms 这种大延时，直接判断标志位是最安全的
+    uint16_t target_10ms_units = ms / 10;
+    uint8_t count = 0;
+    
+    while (count < target_10ms_units)
+    {
+        if (time_wifi_10ms_f)
+        {
+            time_wifi_10ms_f = 0;
+            count++;
+        }
+        // 裸机运行，这里可以顺便喂狗
+        // IWDG_ReloadCounter(); 
+    }
+
+   #else 
+   static uint16_t time_counter=0;
+     if(time_wifi_10ms_f) //
+     {  
+           time_wifi_10ms_f = 0;
+		   time_counter++;
+
+		  if(time_counter >=ms ){
+		      time_counter =0;
+		  
+              return 1;
+		  }
+			           
+	 }
+
+
+
+   #endif 
+}
 
 
 
@@ -67,205 +89,7 @@ uint8_t counter_2s,tim_2s_f;
 #@notice
 
 **/
-void task_scheduler(void)
-{
-   uint8_t temp_counter_flag,tim_200ms_counter;
-   
 
-	if(time_5ms_f && temp_counter_flag < 100){
-		time_5ms_f = 0;
-		
-	     temp_counter_flag ++;
-
-		// Read_DHT11_Data(); 
-		
-	}
-
-	
-
-	if(time_10ms_f){
-		
-
-
-		Key_Scan();
-		
-
-		Task_beep_called_100ms();
-
-		if(wifi_linking_tencent_f==1 &&  wifi_read_net_data_f==1){
-			wifi_read_net_data_f++;
-
-		    Wifi_Rx_InputInfo_Handler();
-
-		}
-
-	   
-		time_10ms_f = 0;
-	}
-
-	if(time_100ms_f)
-	{
-	    time_100ms_f = 0;
-		
-		tim_200ms_counter++;
-		if(tim_200ms_counter ==5)time_200ms_run_flag=1;
-		Update_onLED_Display();
-		//wifi_fast_led_state();
-		
-
-		
-	     wifi_rx_run_handler();
-
-		
-	}
-
-	if(time_300ms_f==1){
-		 time_300ms_f =0;  
-		// wifi_normal_led_state();
-	     set_temp_compare();
-		 peripheral_fun_handler();
-	     Fan_Ctrl_Process();
-		 Fan_Current_Det();  
-	
-     }
-
-	
-
-
-	if(time_200ms_run_flag ==1){
-      
-       wifi_default_handler();
-	   // printf("time_200ms_f = 1\n");
-	   time_200ms_run_flag=0;
-	  
-   }
-
- 
-	
-	/*timer 1s*/
-	if(time_1s_f == 1){
-	 
-	   counter_2s ++;
-	   time_set_temp_counter++;
-	   time_3s_flag++;
-
-	  Heat_Process();	
-	
-	 if(counter_2s > 3){
-	 	 counter_2s=0;
-	 	
-	    if(discharge_f==0){
-	    switch(counter_1m){
-
-		  case 0:
-		  
-            if(wifi_connected_success_f ==1){
-	          MqttData_Publish_SetOpen(0); 
-			  
-			 counter_1m =1;
-		
-             }
-		  
-		    
-          break;
-
-		  case 1:
-		   if(wifi_connected_success_f ==1){
-            MqttData_Publish_PowerOff_Ref(); 
-			
-		    counter_1m =2;
-		  	}
-		  
-		  break;
-
-		 case 2:
-		 	if(wifi_connected_success_f ==1){
-			   Subscriber_Data_FromCloud_Handler();
-		      counter_1m =3;
-		 	}
-
-		  case 3:
-		  	if(wifi_connected_success_f ==1){
-			
-		       Publish_Data_fan_Warning(0); //fan warning .
-		  
-             
-		       counter_1m =0;
-		  	}
-			
-
-
-		  break;
-			
-	    	}
-			
-		  }
-	   // printf("tim_2s_f = 1\n");
-	   
-	   }
-       wifi_default_handler();
-	 	
-	   if(time_3s_flag > 3 && discharge_f ==1){
-			//Read_DHT11_Data(); 
-			AD_Filter();
-			
-		    Adc_Channel_Sample();
-			time_3s_flag =0;
-		}
-	  task_1s_run_handler();
-	   time_1s_f = 0;
-
-	 
-	} //end 1s task
-
-	
-
-
-	 if(time_1minute_f==1){//1s * 60 =60s = 1 minute
-      
-	     switch(discharge_f){
-
-		  case 1: //power on
-   
-			if(device_rest_f)
-			{
-				device_rest_time++;
-				if(device_rest_time>=10){
-					device_rest_time = 0;
-					device_rest_f = 0;
-
-					work_time = 0;
-				}
-			}
-			else{
-				work_time++;
-				if(work_time>119){ // 2 hours
-					work_time = 0;
-
-					device_rest_f = 1;
-					device_rest_time = 0;
-
-					fan_delay_time_off = 600;
-			   }
-			}
-		
-
-		break;
-
-		case 0: //power off
-		
-        
-
-		  break;
-
-		
-	}
-
-	 time_1minute_f = 0;
-
-	
-     }
-}
 /**
  *
  * @brief 
@@ -273,80 +97,6 @@ void task_scheduler(void)
  * @retrval 
  *
  **/
-static void task_1s_run_handler(void)
-{
-	if(((discharge_f)&&(AI_timing_open_f))){
-		if(!device_rest_f){
-			if(++Cacl_time_sec>=60){
-				Cacl_time_sec = 0;
-
-				timing_min_cnt++;
-				if(timing_min_cnt>=60)
-				{
-					timing_min_cnt = 0;
-
-					timing_hour_cnt++;
-					if(timing_hour_cnt>=setting_timing_hour){
-
-						timing_hour_cnt = 0;
-
-						discharge_f = 0;
-						AI_timing_open_f = 0;
-						PTC_heat_open_f = 0;
-						first_temp_compare_f =0;
-						ptc_prohibit_off_f =0;
-						Ultra_Sound_open_f = 0;
-						led_strip_open_f = 0;
-						plasma_open_f = 0;
-						fan_open_f = 0;
-
-						Is_time_setting_f = 0;
-						Is_temp_setting_f = 0;
-						Is_timing_hour_disp_f = 0;
-
-						timing_min_cnt = 0;
-						timing_hour_cnt = 0;	
-
-						no_fan_load_f = 0;	
-						//wifi
-						wifi_run_step=0;
-
-						fan_delay_time_off = 600;
-
-						device_rest_f = 0;
-						device_rest_time = 0;
-					}
-				}
-		   }
-		}
-	}
-	else
-	{
-		timing_min_cnt = 0;
-	}
-
-	if(key_net_config_f)
-	{
-		key_net_config_time++;
-		if(key_net_config_time>=130)
-		{
-			key_net_config_time = 0;
-
-			key_net_config_f = 0;
-		}
-		else{ //conneting to wifi net 
-		// IWDG->KR = 0xAAAA;
-			link_wifi_net_handler();
-		}
-	}
-	else
-	{
-		key_net_config_time = 0;
-	}
-
-	  
-		
-}
 
 /**
  *
@@ -365,20 +115,7 @@ static void task_1s_run_handler(void)
  *
  **/
 
-void wifi_rx_run_handler(void)
-{
-      
-    if(key_net_config_f==0 ){
-         wifi_communication_tnecent_handler();//
-    
-         //getBeijingTime_cofirmLinkNetState_handler();
 
-         wifi_auto_detected_link_state();
-		
-    }
-
-
-}
 
 /**
 *@brief:  totall task
@@ -414,7 +151,7 @@ void Task_beep_called_100ms(void)
 					          beep_times--;
 				        }
 			      }		
-	      }
+	       }
 		    else 
 		    {
 			      BEEP_OFF();
@@ -447,6 +184,7 @@ void Task_beep_called_100ms(void)
 		    BEEP_OFF();
 	  }
 } 
+
 
 
 

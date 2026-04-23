@@ -93,7 +93,7 @@ static void Mqtt_Value_update_data(void)
 {
     
     sg_info.open = 1;
-	if(AI_timing_open_f==0)gmode =1;
+	if(AI_timing_open_f==1)gmode =1;
 	sg_info.state = gmode;
 	sg_info.ptc  = PTC_heat_open_f;//esp_t.gDry;
     //sg_info.ptc = g_dry_open_flag;
@@ -142,10 +142,10 @@ void property_topic_publish(void)
     message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
     message_len= snprintf(message, sizeof(message), "AT+TCMQTTPUB=\"$thing/up/property/%s/UYIJIA01-%d\",0,", PRODUCT_ID,uid);
     //at_send_data((uint8_t *)topic, size);
-    //tx_thread_sleep(300);
+    //delay_ms(300);
     //USART2_DMA_Send((uint8_t *)topic, size);
     send_usart2_data((const uint8_t *)message, message_len);
-   // tx_thread_sleep(300);
+   // delay_ms(300);
 }
 /********************************************************************************
 	*
@@ -167,10 +167,10 @@ static void property_report_state(void)
                                
  
 	//at_send_data((uint8_t *)message, message_len);
-	//tx_thread_sleep(100);
+	//delay_ms(100);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((const uint8_t *)message, message_len);
-	//tx_thread_sleep(200);
+	//delay_ms(200);
    
 }
 
@@ -188,7 +188,7 @@ void property_report_update_data(void)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	///	tx_thread_sleep(200);
+	///	delay_ms(200);
 
 
 }
@@ -209,7 +209,7 @@ static void property_report_power_off_state(void)
   
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	///	tx_thread_sleep(200);
+	///	delay_ms(200);
 
 
 }
@@ -234,7 +234,7 @@ static void property_report_ReadTempHum(uint8_t tempvalue,uint8_t humvalue)
 		//at_send_data((uint8_t *)message, message_len);
 		//USART2_DMA_Send((uint8_t *)message, message_len);
 		 send_usart2_data((uint8_t *)message, message_len);
-		//tx_thread_sleep(200);
+		//delay_ms(200);
 
 }
 
@@ -248,7 +248,7 @@ static void property_report_SetState(uint8_t dat)
 
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-		//tx_thread_sleep(200);
+		//delay_ms(200);
 
 }
 /********************************************************************************
@@ -268,7 +268,7 @@ static void property_report_SetTemp(uint8_t temp)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	//tx_thread_sleep(200);
+	//delay_ms(200);
 
 
 }
@@ -280,12 +280,12 @@ static void property_report_SetOpen(uint8_t open)
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"open\\\":%d}}\"\r\n",open);
 								  
 	//at_send_data((uint8_t *)message, message_len);
-	//tx_thread_sleep(200);
+	//delay_ms(200);
 	///USART2_DMA_Send((uint8_t *)message, message_len);
 
     send_usart2_data((uint8_t *)message, message_len);
 	
-	//tx_thread_sleep(200);
+	//delay_ms(200);
 
 }
 /********************************************************************************
@@ -307,7 +307,7 @@ static void property_report_SetSonic(uint8_t datsonic)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((uint8_t *)message, message_len);
-		//tx_thread_sleep(200);
+		//delay_ms(200);
 
 }
 /********************************************************************************
@@ -329,7 +329,7 @@ static void property_report_SetAnion(uint8_t datanion)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	//	tx_thread_sleep(200);
+	//	delay_ms(200);
 
 }
 /********************************************************************************
@@ -351,7 +351,7 @@ static void property_report_SetPtc(uint8_t datptc)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((uint8_t *)message, message_len);
-	//tx_thread_sleep(200);
+	//delay_ms(200);
 
 }
 
@@ -375,7 +375,7 @@ static void property_report_SetFan(uint8_t fan)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-		///tx_thread_sleep(200);
+		///delay_ms(200);
 
 }
 /********************************************************************************
@@ -398,7 +398,7 @@ static void property_report_SetTime(uint8_t time)
 	 // at_send_data((uint8_t *)message, message_len);
 	 //USART2_DMA_Send((uint8_t *)message, message_len);
 	  send_usart2_data((uint8_t *)message, message_len);
-	 //	tx_thread_sleep(200);
+	 //	delay_ms(200);
 }
 
 
@@ -422,10 +422,10 @@ void Subscriber_Data_FromCloud_Handler(void)
       
         message_len = sprintf((char *)message,"AT+TCMQTTSUB=\"$thing/down/property/%s/UYIJIA01-%d\",0\r\n", PRODUCT_ID,uid);
 
-         tx_thread_sleep(50);
+         delay_ms(50);
         // free(device_massage);
          send_usart2_data((const uint8_t *)message,message_len);
-       //  tx_thread_sleep(300);
+       //  delay_ms(300);
 }
 /*******************************************************************************
 **
@@ -459,7 +459,7 @@ static void property_report_fan_warning(uint8_t warning)
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"fan_warning\\\":%d}}\"\r\n",warning);
 								  
 	 send_usart2_data((const uint8_t *)message, message_len);
-	///tx_thread_sleep(200);
+	///delay_ms(200);
 
 }
 
@@ -596,6 +596,7 @@ void MqttData_Publis_SetTime(uint8_t time)
 void link_wifi_net_handler(void)
 {
     static uint32_t uid;
+	uint8_t wifi_step_f=0;
 	message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
     switch(link_net_step){
 
@@ -604,23 +605,25 @@ void link_wifi_net_handler(void)
           
         	send_usart2_data("AT+RST\r\n", strlen("AT+RST\r\n"));
         
-        	 tx_thread_sleep(200);//tx_thread_sleep(1000);
-        		
-            link_net_step  = 1;
-
-            break;
+              //delay_ms(200);//delay_ms(1000);
+              wifi_step_f = delay_ms(1);
+			  if(wifi_step_f==1) link_net_step  = 1;
+			  
+			break;
 
             case 1:
                // WIFI_IC_ENABLE();
-                tx_thread_sleep(100);
+              
                 send_usart2_data("AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-                tx_thread_sleep(100);
+                //delay_ms(100);
+               
                 uid =Get_Unique_ID_32bit();
-			    tx_thread_sleep(100);
+			    //delay_ms(100);
                 time_link_net_counter =0;
-		
+				wifi_step_f = delay_ms(1);
+		        if(wifi_step_f==1) link_net_step  = 2;
                 
-                link_net_step = 2;
+                
 
             break;
 
@@ -634,11 +637,12 @@ void link_wifi_net_handler(void)
             			
                        message_len = sprintf((char *)message, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,uid);
             		   send_usart2_data((const uint8_t *)message,message_len);
-            	  	   tx_thread_sleep(1000);
+            	  	   //delay_ms(1000);
                       
-                       link_net_step= 3;
+                       	wifi_step_f = delay_ms(1);
+		                if(wifi_step_f==1) link_net_step  = 3;
 
-                 }
+                 }   
 		
 
             break;
@@ -650,10 +654,11 @@ void link_wifi_net_handler(void)
                   
                 send_usart2_data("AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
-			    tx_thread_sleep(1000);
-			
+			   // delay_ms(1000);
+			    wifi_step_f = delay_ms(1);
+		         if(wifi_step_f==1) link_net_step  = 4;
                
-                  link_net_step = 4;
+                
             }
 	
 
@@ -666,8 +671,10 @@ void link_wifi_net_handler(void)
                    time_link_net_counter  = 0;
 
                    wifi_linking_tencent_f =1;
+				    wifi_step_f = delay_ms(1);
+		            if(wifi_step_f==1) link_net_step  = 5;
           
-                  link_net_step = 5;
+                 // link_net_step = 5;
                  }
             
             break;
@@ -677,9 +684,14 @@ void link_wifi_net_handler(void)
             //  uid =Get_Unique_ID_32bit();
 	          message_len =  sprintf((char *)message, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",uid);
               send_usart2_data((const uint8_t *)message,message_len);
-	           tx_thread_sleep(2000);
+	           //delay_ms(2000);
+
+
+
+			    wifi_step_f = delay_ms(1);
+		        if(wifi_step_f==1) link_net_step  = 6;
 			
-               link_net_step = 6;
+               //link_net_step = 6;
 
 
                     
@@ -695,10 +707,11 @@ void link_wifi_net_handler(void)
               wifi_connected_success_f=0;
  //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//�?始连�?
              send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-			 tx_thread_sleep(1000);
-	
-	         link_net_step = 7;
-             time_link_net_counter  = 0;
+			 //delay_ms(1000);
+			  wifi_step_f = delay_ms(1);
+		      if(wifi_step_f==1) link_net_step  = 7;
+
+                 time_link_net_counter  = 0;
             }
             
                    
@@ -714,7 +727,7 @@ void link_wifi_net_handler(void)
 				
                 
                SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-               //tx_thread_sleep(100);
+               //delay_ms(100);
 			
 			    link_net_step= 8;
                
@@ -725,7 +738,7 @@ void link_wifi_net_handler(void)
                   key_net_config_f =0;
                   link_net_step = 11;
                   SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
-                 // tx_thread_sleep(100);
+                 // delay_ms(100);
                   
                 }
                 
@@ -740,7 +753,7 @@ void link_wifi_net_handler(void)
 			 
 				MqttData_Publish_SetOpen(0x01);
 		      
-		      // tx_thread_sleep(200);
+		      // delay_ms(200);
 		        
 				
 			  link_net_step = 9; // this is flag: link wifi times 119s is over.
@@ -758,7 +771,7 @@ void link_wifi_net_handler(void)
 
 				Subscriber_Data_FromCloud_Handler();
 		
-	           //  tx_thread_sleep(200);
+	           //  delay_ms(200);
         
 			 link_net_step = 0xfe;
 

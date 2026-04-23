@@ -15,8 +15,6 @@ void System_Status_PowerOff(void) ;
 
 void System_Status_PowerOn(void) ;
 
-void power_onoff_handler(void);
-
 
 #endif 
 
