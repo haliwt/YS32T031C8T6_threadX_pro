@@ -171,6 +171,7 @@ void TIM6_LPTIM_IRQHandler (void)
 				gpro_t.time_100ms_f ++;
 
 				gpro_t.time_200ms_f++;
+				gpro_t.time_100ms_fast_led_f++;
 
 			
 

@@ -106,7 +106,7 @@ extern uint8_t time_1s_counter;
 
 
 
-extern uint16_t led_scan_time;
+
 
 
 extern uint8_t key_net_config_f;

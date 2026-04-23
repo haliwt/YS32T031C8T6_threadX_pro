@@ -30,7 +30,7 @@ static const Task_Config_t Task_Table[] = {
     {&gpro_t.time_20ms_f,  Task_link_wifi_20ms},
     {&gpro_t.time_100ms_f, Task_Logic_100ms},
     {&gpro_t.time_200ms_f, Task_ui_200ms},
-    {&gpro_t.time_300ms_f, Task_Peripheral_300ms},
+    {&gpro_t.time_100ms_fast_led_f, Task_Peripheral_300ms},
     {&gpro_t.time_400ms_f, Task_400ms},
     {&gpro_t.time_500ms_f, Task_500ms},
     {&gpro_t.time_600ms_f, Task_600ms},

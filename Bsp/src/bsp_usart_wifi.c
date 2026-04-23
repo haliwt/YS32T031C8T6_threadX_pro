@@ -1355,7 +1355,13 @@ void wifi_check_id_handler(void)
 		 wifi_off_step=0;
 	     wifi_run_step = 0;
 	     wifi_connected_success_f =0;
+		
     }
+    #if DEBUG_ENABLE
+
+		printf("mqtt_status = %d\n\r",mqtt_status);
+
+	#endif 
 
     }
 

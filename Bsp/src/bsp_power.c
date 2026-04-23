@@ -60,7 +60,7 @@ uint8_t time_1s_counter;
 uint8_t disp_second_f;
 
 
-uint16_t led_scan_time;
+
 
 
 uint8_t key_net_config_f;
@@ -205,7 +205,7 @@ void Clear_Ram(void)
     time_5ms_f = 0;
 	
 	  gpro_t.time_100ms_f = 0;
-	  gpro_t.time_300ms_f =0;
+	  gpro_t.time_100ms_fast_led_f =0;
 	  gpro_t.time_400ms_f =0;
 	  gpro_t.time_500ms_f =0;
 	  gpro_t.time_1s_f = 0;
@@ -249,7 +249,7 @@ void Clear_Ram(void)
 		
 	
 		flash_f = 0;
-		led_scan_time = 0;
+	
 		
 		timing_min_cnt = 0;
 		

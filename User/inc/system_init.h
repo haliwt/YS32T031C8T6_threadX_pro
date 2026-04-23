@@ -25,29 +25,29 @@ extern "C" {
 #define LED_TAPE_PIN            GPIO_Pin_11
 #define LED_TAPE_GPIO_PORT      GPIOB
 
-#define LED_TAPE_ON()           {GPIO_SetBits(LED_TAPE_GPIO_PORT,LED_TAPE_PIN);}
-#define LED_TAPE_OFF()          {GPIO_ResetBits(LED_TAPE_GPIO_PORT,LED_TAPE_PIN);}
+#define LED_TAPE_ON()           do{LED_TAPE_GPIO_PORT-> BSRR = LED_TAPE_PIN;}while(0)//{GPIO_SetBits(LED_TAPE_GPIO_PORT,LED_TAPE_PIN);}
+#define LED_TAPE_OFF()          do{LED_TAPE_GPIO_PORT-> BSRR =(uint32_t)LED_TAPE_PIN << 16;}while(0)///{GPIO_ResetBits(LED_TAPE_GPIO_PORT,LED_TAPE_PIN);}
 
 
 #define PLASMA_PIN              GPIO_Pin_2
 #define PLASMA_GPIO_PORT        GPIOB
 
-#define PLASMA_ON()             {GPIO_SetBits(PLASMA_GPIO_PORT, PLASMA_PIN);}
-#define PLASMA_OFF()            {GPIO_ResetBits(LED_TAPE_GPIO_PORT, LED_TAPE_PIN);}
+#define PLASMA_ON()             do{PLASMA_GPIO_PORT-> BSRR = PLASMA_PIN;}while(0)//{GPIO_SetBits(PLASMA_GPIO_PORT, PLASMA_PIN);}
+#define PLASMA_OFF()            do{PLASMA_GPIO_PORT-> BSRR =(uint32_t)PLASMA_PIN <<16;}while(0)//{GPIO_ResetBits(PLASMA_GPIO_PORT, PLASMA_PIN);}
 
 
 #define FAN_RUN_PIN             GPIO_Pin_5            
 #define FAN_RUN_GPIO_PORT       GPIOA
 
-#define FAN_RUN_ON()            {GPIO_SetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
-#define FAN_RUN_OFF()           {GPIO_ResetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
+#define FAN_RUN_ON()            do{FAN_RUN_GPIO_PORT->BSRR = FAN_RUN_PIN;}while(0)//{GPIO_SetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
+#define FAN_RUN_OFF()           do{FAN_RUN_GPIO_PORT->BSRR =(uint32_t)FAN_RUN_PIN << 16;}while(0)//{GPIO_ResetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
 
 
 #define RELAY_PIN               GPIO_Pin_10
 #define RELAY_GPIO_PORT         GPIOB
 
-#define RELAY_ON()              {GPIO_SetBits(RELAY_GPIO_PORT, RELAY_PIN);}
-#define RELAY_OFF()             {GPIO_ResetBits(RELAY_GPIO_PORT, RELAY_PIN);}
+#define RELAY_ON()              do{RELAY_GPIO_PORT ->BSRR = RELAY_PIN;}while(0)//{GPIO_SetBits(RELAY_GPIO_PORT, RELAY_PIN);}
+#define RELAY_OFF()             do{RELAY_GPIO_PORT ->BSRR =(uint32_t)RELAY_PIN <<16;}while(0)//{GPIO_ResetBits(RELAY_GPIO_PORT, RELAY_PIN);}
 
 
 #define LED_AI_PIN              GPIO_Pin_8
@@ -120,3 +120,4 @@ extern void NVIC_Configuration(void);
 #endif
 
 #endif /* __SYSTEM_INIT_H */
+
