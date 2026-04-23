@@ -180,12 +180,12 @@ extern  uint8_t  time_autolink_counter;
 //fan
 extern uint8_t  fan_one_minute_cuonter;
 
-
-
 //time couter 
 extern uint8_t  time_set_hours_counter;
 
 extern uint8_t  works_interval_f;
+
+extern uint8_t  soft_version ;
 
 
 //wifi end 
@@ -351,6 +351,7 @@ void beep_power_sound(void);
 void power_onoff_handler(void);
 
 	
+void buzzer_sound(void);
 
 
 

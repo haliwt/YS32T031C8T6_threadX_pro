@@ -40,14 +40,27 @@ void  wifi_normal_led_state(void)
 		if(wifi_connected_success_f)
 		{
 			LED_WIFI_ON();
+			  #if DEBUG_ENABLE
+
+			   printf("wifi_flag = %d\n\r",wifi_connected_success_f);
+
+			  #endif 
 		}
 		else{
 			//led_scan_time++;
-			if(gpro_t.time_200ms_f > 700){//if(led_scan_time>1)
+			if(gpro_t.time_200ms_f > 7){//if(led_scan_time>1)
 			   gpro_t.time_200ms_f =0; 
 			 // led_scan_time =0;
 	          LED_WIFI_TOGGLE();
+
+			  #if DEBUG_ENABLE
+
+			   printf("wifi_flag = %d\n\r",wifi_connected_success_f);
+
+			  #endif 
 			}
+
+			
 		}
 	
 

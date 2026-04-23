@@ -187,6 +187,7 @@ void TIM6_LPTIM_IRQHandler (void)
 					setting_timing_second ++;
 					time_autolink_counter++;
 					fan_one_minute_cuonter++;
+					key_net_config_time++;
 				
 					gpro_t.time_2s_f++;
 					gpro_t.time_3s_f++;
@@ -199,7 +200,7 @@ void TIM6_LPTIM_IRQHandler (void)
 					     gpro_t.time_base_1s_counter = 0;
 					    
 						gpro_t.time_1m_f++;
-						gpro_t.time_1m_wifi_f = 1;
+						gpro_t.time_1m_wifi_f++;
 						
 						
 						
@@ -229,16 +230,9 @@ void UART1_IRQHandler(void)
 		    UART_ClearFlag(UART1, UART_FLAG_RXNE);
 			
 			  res = UART1->RDR;
-			
-			  if(uart1_rx_cnt<sizeof(UART1_RX_BUF))
-				{
-				    UART1_RX_BUF[uart1_rx_cnt++] = res;
-				}
-				else
-				{
-				    uart1_rx_cnt = 0;
-				}
-		}	
+			  usart1_isr_callback_handler(res);
+			 
+	}	
 
     if(UART_GetFlagStatus(UART1, UART_FLAG_TC) == SET)
     {

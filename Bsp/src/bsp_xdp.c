@@ -1,19 +1,869 @@
 #include "bsp.h"
 
 
+// 为协议中的魔术字节定义常量，提高可读性
+#define FRAME_HEADER        0xA5        //receive display board header  
+#define FRAME_NUM           0x02          //main deviece number is 0x10 
+#define FRAME_OLD_NUM       0x01          //older version device NUM
+#define FRAME_ACK_NUM       0x80          //new version from main answer singnal 0x80 new version . 
+#define FRAME_END_BYTE              0xFE
+#define DATA_FRAME_TYPE_INDICATOR   0x0F
+#define FRAME_COPY_NUM              0xFF   //this is older version .
 
-void USART1_Process_Received(void)
+#define ACK_SUCCESS 0x00U
+#define ACK_FAILURE 0x01U
+
+
+
+
+volatile uint8_t uart1_rx_buf[UART1_RX_BUF_SIZE];
+volatile uint16_t uart1_rx_head ;
+volatile uint16_t uart1_rx_tail ;
+
+uint8_t fan_rx_stop_flag;
+
+
+
+typedef void (*Usart1RxCallback)(uint8_t data);
+
+static Usart1RxCallback usart1_rx_cb = NULL;  //定义一个全局静态函数指针
+
+//static void usart1_invoke_callback(uint8_t data);
+
+
+//static void usart1_isr_callback_handler(uint8_t data);
+static void parse_recieve_copy_data(uint8_t *pddata);
+
+
+uint8_t rx_inputBuf[12];
+uint8_t check_bcc_code;
+uint8_t rx1_data;
+uint8_t counter_power_flag;
+uint8_t ptc_onoff_default ;
+
+
+//提供注册接口
+void usart1_register_rx_callback(Usart1RxCallback cb)
 {
+   usart1_rx_cb = cb;
 
+}
+
+void usart1_invoke_callback(uint8_t data)
+{
+   if(usart1_rx_cb !=NULL){
+
+       usart1_rx_cb(data);
+   }
 
 
 }
 
 
-void USART1_Send_DisplayData(void)  // 外接显示板通信
+void callback_register_usart1_rx(void)
 {
 
+   usart1_register_rx_callback(usart1_isr_callback_handler);
 
+}
+
+
+
+
+volatile uint8_t rx_state;
+
+
+
+typedef enum{
+
+  open =1,
+  close =2,
+  no_change =0  
+
+}atcion_state_e;
+
+
+
+typedef enum {
+    UART_STATE_WAIT_HEADER = 0,
+    UART_STATE_NUM=1,
+    UART_STATE_CMD_NOTICE=2,
+    UART_STATE_EXEC_CMD_OR_LEN=3,
+    UART_STATE_FRAME_END=4,
+    UART_STATE_BCC_CHECK,
+    UART_STATE_OLDER_BCC_CHECK,
+    UART_STATE_DATA_LEN,
+    UART_STATE_DATA,
+    UART_STATE_DATA_END,
+    UART_STATE_DATA_BCC
+} uart_parse_state_t;
+
+typedef enum{
+
+    power_on_off=1,
+    ptc_on_off=2,
+    plasma_on_off=3,
+    ultrasonic_on_off=4,
+    wifi_link=5,
+    buzzer_sound_s=6,
+    ai_mode=7,
+    temp_high_warning=8,
+    fan_warning_s=9,
+    fan_on_off = 0x0B,
+
+     //notice no sound 
+    ack_power_on_off = 0x10,
+    ack_ptc_on_off = 0x12,
+    ack_plasma_on_ff= 0x13,
+    ack_ultrasonic_on_off = 0x14,
+}signal_parase_t;
+
+
+typedef struct Msg
+{
+    
+	uint8_t   cmd_notice;
+	uint8_t   execuite_cmd_notice;
+	uint8_t   copy_cmd_flag;
+	uint8_t   rx_data_flag;	
+    uint8_t   bcc_check_code;
+	uint8_t   check_code_hex;
+    uint8_t   receive_data_length;
+    uint8_t   data_length;
+	uint8_t   rc_data_length;
+	uint8_t   total_data_length;
+    uint8_t   rx_end_code;
+	uint8_t   rx_total_numbers;
+	uint8_t   rx_data[4];
+	uint8_t   usData[12];
+	uint8_t   desData[12];
+
+}MSG_T;
+
+MSG_T   gl_tMsg; 
+
+uint8_t inputBuf[1];
+
+
+
+static void usart1_protocol_state_machine(uint8_t *pdata);
+
+volatile uint8_t rx_usart1_data_counter=0;
+
+uint8_t parse_exit_flag,parse_decoder_flag;
+/********************************************************************************
+	**
+	*Function Name:void usart1_isr_callback_handler(void)
+	*Function :  this is receive data from mainboard.
+	*Input Ref:NO
+	*Return Ref:NO
+	*
+*******************************************************************************/
+#if 1
+void usart1_isr_callback_handler(uint8_t data)
+{
+   
+	switch(rx_state){
+
+	 case 0:
+		if(data == FRAME_HEADER){
+			rx_usart1_data_counter=0;
+			gl_tMsg.usData[rx_usart1_data_counter]=data;
+			
+			rx_state =1;
+
+		}
+		else{
+		   rx_state =0;
+
+		}
+	 break;
+
+	 case 1:
+			rx_usart1_data_counter++;
+			gl_tMsg.usData[rx_usart1_data_counter]=data;
+
+	        if(gl_tMsg.usData[rx_usart1_data_counter]==0x01 || gl_tMsg.usData[rx_usart1_data_counter]==0x02){
+			 
+				 rx_state = 2;
+			 }
+			 else{
+				rx_state = 0;
+				
+             }
+
+	 break;
+
+	 case 2:
+	 
+		   rx_usart1_data_counter++;
+           gl_tMsg.usData[rx_usart1_data_counter]=data;
+		   
+		  if(gl_tMsg.usData[rx_usart1_data_counter]==0xFE && rx_usart1_data_counter> 4){
+		      rx_state = 3;
+		  }
+		 
+     break;
+			 
+	 case 3:
+		       rx_usart1_data_counter++;
+	           gl_tMsg.usData[rx_usart1_data_counter]=data;
+			 
+	           rx_state = 0;
+               gl_tMsg.rx_total_numbers = rx_usart1_data_counter;
+
+			   gl_tMsg.rx_end_code = 0;
+			   
+		       //gpro_t.decoder_success_flag=1;
+
+			   gl_tMsg.bcc_check_code = data;
+
+               wifi_semaphore_xtask();//display_board_xtask_notice();
+
+	 break;
+
+	 default:
+	   rx_state =0;
+
+	 break;
+
+	 }
+
+}
+#else 
+void usart1_isr_callback_handler(uint8_t data)
+{
+    switch(rx_state) {
+        case 0: // 寻找帧头 0xA5
+            if(data == FRAME_HEADER) {
+                rx_usart1_data_counter = 0;
+                gl_tMsg.usData[rx_usart1_data_counter] = data;
+                rx_state = 1; 
+                gpro_t.decoder_success_flag = 0; // 开始新的一帧，清除成功标志
+            }
+            break;
+
+        case 1: // 接收数据体
+            rx_usart1_data_counter++;
+            if(rx_usart1_data_counter < 12) { // 防止数组越界
+                gl_tMsg.usData[rx_usart1_data_counter] = data;
+                
+                // 关键点：只有当收到 0xFE 时，才认为数据接收完毕，准备接收最后的校验位
+                if(data == FRAME_END_BYTE) {
+                    rx_state = 2;
+                }
+            } else {
+                // 超长错误，重置
+                rx_state = 0;
+            }
+            break;
+
+        case 2: // 接收最后的 BCC 校验位
+            rx_usart1_data_counter++;
+            if(rx_usart1_data_counter < 12) {
+                gl_tMsg.usData[rx_usart1_data_counter] = data;
+                gl_tMsg.bcc_check_code = data; // 存入校验码
+                gl_tMsg.rx_total_numbers = rx_usart1_data_counter + 1;
+                
+                // --- 校验逻辑 ---
+                // 这里可以写一个简单的循环计算 BCC，如果匹配再置标志位
+                gpro_t.decoder_success_flag = 1; 
+                
+                // 只有一整帧完全接收且校验过，才唤醒任务
+                //display_board_xtask_notice(); 
+            }
+            rx_state = 0; // 处理完无论成功失败，必须回到状态0等待新帧
+            break;
+
+        default:
+            rx_state = 0;
+            break;
+    }
+}
+
+
+
+#endif 
+/********************************************************************************
+	**
+	*Function Name:void usart1_protocol_state_machine(void)
+	*Function :  in process bsp_freertos.c xTaskMsgPro
+	*Input Ref:NO
+	*Return Ref:NO
+	*
+*******************************************************************************/
+static void usart1_protocol_state_machine(uint8_t *pdata)
+{
+
+   static uint8_t ptc_set_wifi = 0xff;
+   switch(pdata[2]){
+
+   case 0:
+
+   break;
+
+   case power_on_off: 
+
+         
+        if(pdata[3] == 0x01){ //open
+                
+		        gon_t.on_step=0;
+				
+		        buzzer_sound();//buzzer_sound_fun();
+	            SendWifiData_Answer_Cmd(0x01,0x01);
+	            tx_thread_sleep(100);
+				if(soft_version > 2)soft_version =0;
+				if(soft_version ==0 && wifi_app_timer_power_on_f==0){
+				   discharge_f  = 1;//gpro_t.gpower_on = power_on;
+				   fan_full_fun();//fan_full_run();//WT.EDIT 2026.01.26
+				   PLASMA_ON();//PLASMA_ON();;
+                   ultra_sound_on(159); //ultra_sound_on(uint16_t us_duty);   //ultra_sound_on(159);   //ultrasnoic ON 
+                   RELAY_ON();//RELAY_ON();
+
+				}
+	         
+	           
+
+		 }
+        else if(pdata[3] == 0x0){ //close 
+
+		     counter_power_flag ++;
+			 buzzer_sound();
+		     gon_t.off_step=0;
+             discharge_f  = 0 ;//gpro_t.gpower_on = power_off;
+			 RELAY_OFF();
+             
+              SendWifiData_Answer_Cmd(0x01,0x0); //power off .
+              tx_thread_sleep(100); 
+			  SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
+	           tx_thread_sleep(100);
+           
+			  	
+			
+			     
+              }
+      
+       
+
+     break;
+
+	  case ptc_on_off: //PTC key of command .
+
+       if(pdata[3] == 0x01 ){//phone_cmd_power
+
+	     buzzer_sound();
+	
+			ptc_prohibit_off_f =1; //ptc_prohibit_off_f = 1;
+			 
+			 if(works_interval_f==0){//two hours have a rest ten minutes .
+	         if(no_fan_load_f  ==0){ //PTC warning flag
+	             
+	              RELAY_ON();
+            }
+             
+           SendWifiData_Answer_Cmd(0x02,0x01); //
+           tx_thread_sleep(100); 
+		
+           }
+
+		 
+	   }
+       else if(pdata[3]== 0x0 ){
+	   
+		 
+          buzzer_sound();
+		
+	          ptc_prohibit_off_f = 0;
+		      RELAY_OFF();
+			 ptc_prohibit_off_f =1;
+		  
+          SendWifiData_Answer_Cmd(0x02,0x0); //
+          tx_thread_sleep(100); 
+     
+       }
+      break;
+
+	  
+     case plasma_on_off: //PLASMA ACTIVE OPEN OR CLOSE
+   
+		  if(pdata[3]== 0x01){
+			 
+			buzzer_sound();
+			
+			 plasma_open_f = 1;
+			 if(works_interval_f==0){
+				 PLASMA_ON(); ;
+   
+			}
+
+
+			SendWifiData_Answer_Cmd(0x03,0x01); //
+			tx_thread_sleep(100); 
+			 
+		  }
+		  else if(pdata[3]  == 0x0){
+			 buzzer_sound();
+			
+			 
+			 plasma_open_f = 0;
+			  PLASMA_OFF();
+
+			SendWifiData_Answer_Cmd(0x03,0x0); //
+			tx_thread_sleep(100); 
+			  
+		  
+		  }
+   
+   
+	break;
+
+	   
+   	case 0x04: //ultrasonic	ACTIVE OPEN OR CLOSE
+          
+		  if(pdata[3]  == 0x01){  //open 
+			 buzzer_sound();
+			Ultra_Sound_open_f =1;
+   
+			if(works_interval_f==0){
+				 ultra_sound_on(159);
+   
+			}
+			
+			SendWifiData_Answer_Cmd(0x04,0x01); //
+			tx_thread_sleep(100); 
+   
+		  }
+		  else if(pdata[3] == 0x0){ //close 
+              buzzer_sound();
+			Ultra_Sound_open_f = 0;
+   
+			ultra_sound_off();
+			
+			SendWifiData_Answer_Cmd(0x04,0x0); //
+			tx_thread_sleep(100); 
+   
+		  }
+   
+   
+    break;
+
+	
+     case  wifi_link: // link wifi command
+
+       if(pdata[3] == 0x01){  // link wifi 
+        
+          buzzer_sound();
+          link_net_step =0;
+	      wifi_connected_success_f=0;
+          key_net_config_f =1;
+		  key_net_config_time =0;
+         
+		
+          SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
+          tx_thread_sleep(100);
+         
+      
+        }
+
+
+     break;
+
+	  case buzzer_sound_s: //buzzer sound command 
+          if(pdata[3] == 0x01)
+            buzzer_sound();
+		 
+     break;
+
+	 case 0x10: //power on or off don't sound .
+
+	     if(wifi_app_timer_power_on_f ==1) return ;
+	     if(pdata[3] == 0x01){ //open
+           
+		   gon_t.on_step=0;
+	      discharge_f = 1;
+		   SendWifiData_Answer_Cmd(0x10,0x01);
+	       tx_thread_sleep(100);
+		    fan_full_fun();//WT.EDIT 2026.01.26
+		    if(wifi_app_timer_power_on_f ==0){
+			    PLASMA_ON();;
+	             ultra_sound_on(159);   //ultrasnoic ON 
+	             RELAY_ON();
+
+		    }
+	         
+	    }
+        else if(pdata[3] == 0x0){ //close 
+
+			    RELAY_OFF(); //ptc off
+				 PLASMA_OFF() ; //plasma turn off.
+	            ultra_sound_off();
+			
+              SendWifiData_Answer_Cmd(0x10,0x0); //power off .
+              tx_thread_sleep(100); 
+      
+             gon_t.off_step=0;
+              discharge_f = 0;
+			 
+		     
+        }
+
+
+	 break;
+
+      case 0x11:
+		    disp_second_f = pdata[3];
+	  break; 
+
+	  case 0x12: //powe off fan run one minute stop .
+	  	 if(pdata[3]==1){ // recach 2 hours fan stop
+
+            // gon_t.off_step=1;
+              discharge_f = 1;
+			 
+               fan_stop();
+			   RELAY_OFF(); //ptc off;
+			   tx_thread_sleep(100);
+			     PLASMA_OFF() ; //plasma turn off.
+	           ultra_sound_off();
+         }
+		 else{
+            
+		    fan_full_fun();//Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
+        }
+
+
+	  break;
+	  
+	  case 0x16 : //buzzer sound command with answer .
+
+        buzzer_sound();
+        
+         //SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
+
+		 /// tx_thread_sleep(100);
+		  
+       break;
+	  
+      case 0x27: //AI command without buzzer sound
+	  case 0x17: //AI notice
+	  
+	  if(pdata[3] == 0x02){
+	 
+		
+          AI_timing_open_f =0;
+           if(wifi_connected_success_f ==1){
+	          MqttData_Publish_AitState(2);
+			   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+	       }
+        
+          
+       }
+       else if(pdata[3] == 0x01){ //AI mode 
+       
+	      AI_timing_open_f=1;
+
+         if(wifi_connected_success_f ==1){
+	         MqttData_Publish_AitState(1);
+			 tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+	      }
+		 
+       }
+
+
+	 break;
+
+	 case 0x18: //WT.EDIT 2026.03.02
+         if(pdata[3]==1){ // recach 2 hours fan stop
+               fan_rx_stop_flag =1 ;
+			   works_interval_f=1;
+		       fan_stop();
+               RELAY_OFF(); //ptc off;
+			   PLASMA_OFF() ; //plasma turn off.
+               ultra_sound_off();
+         }
+		 else{
+             fan_rx_stop_flag = 0;
+		    fan_full_fun();//WT.EDIT 2026.01.26
+			if(ptc_prohibit_off_f ==1 &&ptc_prohibit_off_f==0){
+			  	RELAY_ON();
+				
+             }
+			 if(plasma_open_f==1)PLASMA_ON();;
+			 if(Ultra_Sound_open_f==1) ultra_sound_on(159);
+        }
+
+	 break;
+
+	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
+
+	    if(pdata[3]==1){ // recach 2 hours 
+
+            works_interval_f=1;
+	         RELAY_OFF(); //ptc off;
+			 PLASMA_OFF() ; //plasma turn off.
+            ultra_sound_off();
+			
+		}
+		else if(pdata[3]==0){
+			  works_interval_f=0;//WT.EDIT 2026.01.26
+			  fan_rx_stop_flag =0 ;
+		  
+        
+              if(ptc_prohibit_off_f >1)ptc_prohibit_off_f=1;//2026.02.27 WT.EDIT
+              if(plasma_open_f > 1) plasma_open_f =1;
+			  if(Ultra_Sound_open_f > 1) Ultra_Sound_open_f =1;
+              
+              if(ptc_prohibit_off_f ==1 &&ptc_prohibit_off_f==0){
+			  	RELAY_ON();
+				
+              }
+			  if(plasma_open_f==1)PLASMA_ON();;
+			  if(Ultra_Sound_open_f==1) ultra_sound_on(159);
+			 // Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
+			  
+		}
+	   
+
+	  break;
+
+  
+	  case 0x1B: //write set temperature value .data.2026.01.06
+	  
+        if(pdata[3]== 0x01){
+		      ptc_prohibit_off_f =0;
+			   ptc_prohibit_off_f = 1;//gctl_t.gDry = 1;
+
+			   if(works_interval_f ==0){
+			       RELAY_ON();
+		        
+				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
+		         tx_thread_sleep(10);
+				 if(wifi_connected_success_f==1){ 
+					  MqttData_Publish_SetPtc(0x01);
+					  tx_thread_sleep(200);
+					
+				  }
+			   	
+		       } 
+      }
+      else if(pdata[3]== 0x0){
+        
+          ptc_prohibit_off_f =0 ;//gctl_t.gDry =0;
+
+	       RELAY_OFF();
+        
+		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
+           tx_thread_sleep(10);
+
+		  
+		  if(wifi_connected_success_f==1){ 
+			MqttData_Publish_SetPtc(0x0);
+			tx_thread_sleep(200);
+		  }
+         
+	   }
+			 
+      break;
+     
+ 
+	  
+    case 0x1C: // is time data: hours,minutes,sencodes.
+		   
+	break;
+
+
+	case 0x22: //PTC ON OR OFF by compare temperature value .
+
+	    if(ptc_prohibit_off_f  == 1)return ;
+		
+        if(pdata[3]== 0x01){
+		  
+		   if(works_interval_f >1 )works_interval_f=0; //This is be solved bug.
+		   if(ptc_prohibit_off_f  >1)ptc_prohibit_off_f=0;
+		   
+		   if(works_interval_f ==0 &&ptc_prohibit_off_f==0){
+			  
+			     ptc_prohibit_off_f = 1;//gctl_t.gDry = 1;
+			     ptc_onoff_default++;
+                 RELAY_ON();
+		   	
+//		         if(gpro_t.soft_version == 0x02){
+//					 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
+//			         tx_thread_sleep(pdMS_TO_TICKS(100));
+//		         }
+				 if(ptc_set_wifi !=ptc_prohibit_off_f){
+				 	ptc_set_wifi =ptc_prohibit_off_f;
+					 if(wifi_connected_success_f==1){ 
+						  MqttData_Publish_SetPtc(0x01);
+						tx_thread_sleep(200);
+						
+					  }
+				 }
+		   	}   	
+	   }
+       else if(pdata[3]== 0x0){
+	   	 if(works_interval_f >1 )works_interval_f=0; //This is be solved bug.
+		 if(ptc_prohibit_off_f  >1)ptc_prohibit_off_f=0;
+		 
+               ptc_prohibit_off_f =0 ;//gctl_t.gDry =0;
+               ptc_onoff_default++;
+	    
+	          RELAY_OFF();
+         if(soft_version == 0x02){
+//		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
+//           tx_thread_sleep(pdMS_TO_TICKS(100));
+         	}
+		  if(ptc_set_wifi !=ptc_prohibit_off_f){
+				 	ptc_set_wifi =ptc_prohibit_off_f;
+		  if(wifi_connected_success_f==1){ 
+			MqttData_Publish_SetPtc(0x0);
+			tx_thread_sleep(200);
+		  }
+		  }
+         
+	  }
+	
+   
+     break;
+
+
+	 
+	 case 0x2A: //smart phone or display  board set temperature .receive.
+	 
+		   if(pdata[4]==0x01 && discharge_f == 1){
+			  
+			   if(pdata[5] >19 && pdata[5] < 41){
+			   	ptc_prohibit_off_f  = 0;
+				//gpro_t.set_temp_value_success=1;
+			   	if(works_interval_f >1 )works_interval_f=0; //This is be solved bug.
+			   setting_temperature = pdata[5] ;
+			    ptc_prohibit_off_f =0;
+			   if(setting_temperature > temperature && works_interval_f ==0){
+			
+			         ptc_onoff_default++;
+          
+				      RELAY_ON();
+					  
+			   }
+			   else{
+			   	   ptc_onoff_default++;
+				   ptc_prohibit_off_f =0 ;//gctl_t.gDry =0;
+
+			       RELAY_OFF();
+		       }
+
+		
+				   if(wifi_connected_success_f==1){
+					   MqttData_Publis_SetTemp(setting_temperature);
+					   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+					}
+			   	
+			  }
+		   
+			}
+		
+		
+	 break;
+
+	 
+
+	 case 0x6C: //Synchronize local time ->two display board 
+
+	   if(pdata[4]==0x03){ 
+
+		     if(pdata[5] < 24 && pdata[6] < 61 && pdata[7] < 61){
+         
+		      //gpro_t.disp_works_hours= pdata[5];
+			 
+			  //gpro_t.disp_works_minutes =pdata[6];
+			
+
+			  ///gpro_t.gTimer_works_time_seconds=pdata[7];
+			
+		     }
+		 }
+
+	 break;
+
+	 case 0xF0: //software version difference older and new sotfware 
+      
+            soft_version = pdata[3];
+	 
+		   #if DEBUG_ENABLE
+
+
+               printf("soft_version = %d \r\n",soft_version);
+		   
+
+		   #endif 
+
+    break;
+
+
+	case 0xFF: //copy comand or notice or data.
+
+	       parse_recieve_copy_data(pdata) ;
+
+	break;
+
+	}
+
+}
+/**********************************************************************
+	*
+	*Function Name:static void parse_recieve_copy_data_handler(void)
+	*Function: display board send to mainboard answer signal
+	*Input Ref:NO
+	*Return Ref:NO
+	*
+**********************************************************************/
+static void parse_recieve_copy_data(uint8_t *pddata)
+{
+
+    switch(pddata[3]){
+    
+       case 0:
+    
+    
+       break;
+
+	   case 0x01:
+
+	     if(pddata[4] == 0x01){ //open
+
+		    gon_t.on_step=0;
+	       discharge_f = 1;
+
+		 }
+        else if(pddata[4] == 0x0){ //close 
+
+		   gon_t.off_step=1;
+          discharge_f =0;
+			 
+		}
+	   
+
+	   break;
+
+	   
+    }
+      
+ }
+
+
+
+/**
+  * @brief This function handles USART1 global interrupt 
+  * @param
+  * @retrval 
+**/
+void decoder_handler(void)
+{
+   // gpro_t.decoder_success_flag=0;
+	check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
+	if(check_bcc_code == gl_tMsg.bcc_check_code){
+		usart1_protocol_state_machine(gl_tMsg.usData);
+    }
 }
 
 

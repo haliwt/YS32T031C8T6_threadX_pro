@@ -280,17 +280,11 @@ static uint8_t DHT11_ReadByte(void)
 	#else
 	
 	uint8_t i,dat=0;
-	
-	
-			
-		for(i=0;i<8;i++) 
+	 for(i=0;i<8;i++) 
 		  {
 				while(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==0);
 			
-					
-										
-				  
-					Delay_US_dht11(40);
+				Delay_US_dht11(40);
 				
 				  if(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==1)
 					{
@@ -317,6 +311,8 @@ uint8_t dht11_read_temp_humidity_value(void)
     uint8_t dht11_read_flag;
 	
 	dht11_read_flag = DHT11_ReadData(&humidity,&temperature);
+
+	return dht11_read_flag;
 
   #if 0
 	if(dht11_read_flag==0){

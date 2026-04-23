@@ -597,7 +597,7 @@ void MqttData_Publis_SetTime(uint8_t time)
 void link_wifi_net_handler(void)
 {
     static uint32_t uid;
-	uint8_t wifi_step_f=0;
+//	uint8_t wifi_step_f=0;
 	message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
     switch(link_net_step){
 
@@ -605,7 +605,7 @@ void link_wifi_net_handler(void)
 
 	        case 0:
 
-              send_usart2_data("AT+RST\r\n", strlen("AT+RST\r\n"));
+              send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
               //delay_ms(200);//delay_ms(1000);
                tx_thread_sleep(100);//10ms * 100 
@@ -616,7 +616,7 @@ void link_wifi_net_handler(void)
             case 1:
                // WIFI_IC_ENABLE();
               
-                send_usart2_data("AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
+                send_usart2_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
                 //delay_ms(100);
                
                 uid =Get_Unique_ID_32bit();
@@ -657,7 +657,7 @@ void link_wifi_net_handler(void)
             if(time_link_net_counter   > 4){
                       time_link_net_counter  = 0;
                   
-                send_usart2_data("AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
+                send_usart2_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
 			   // delay_ms(1000);
 			     tx_thread_sleep(100);//10ms * 100 

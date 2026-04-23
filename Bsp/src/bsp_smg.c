@@ -121,7 +121,7 @@ void SMG_Display_Err(uint8_t idata)
 void display_digital_3_numbers(void)
 {
     
-	 static uint8_t read_error_flag,disp_temp_hum;//,switch_adc;
+	 static uint8_t disp_temp_hum;//,switch_adc;
 
 	// If any warning is active, do nothing
     if (no_fan_load_f ==1) return;

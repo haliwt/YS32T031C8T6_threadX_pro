@@ -27,4 +27,8 @@ void power_off_peripheral_handler(void);
 
 void power_on_peripheral_handler(void);
 
+void fan_full_fun(void);
+void fan_stop(void);
+
+
 #endif 

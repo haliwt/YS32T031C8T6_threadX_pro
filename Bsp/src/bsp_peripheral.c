@@ -13,7 +13,7 @@ void Fan_Ctrl_Process(void)
 {
    static uint8_t  fan_stop_f;
 	if(discharge_f){
-	   if(works_interval_f == 0 ){
+	   if(works_interval_f == 0 && fan_rx_stop_flag ==0){
 	      	
 			fan_stop_f = 0;
 			fan_one_minute_cuonter=0;;
@@ -59,6 +59,21 @@ void Fan_Ctrl_Process(void)
 
     }
  }
+
+
+void fan_full_fun(void)
+{
+
+	fan_on(319);
+	FAN_RUN_ON();
+
+}
+
+void fan_stop(void)
+{
+	FAN_RUN_OFF();
+
+}
 
 #if 0
         else

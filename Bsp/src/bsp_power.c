@@ -23,17 +23,10 @@ uint8_t Cacl_time_sec;
 
 volatile uint8_t time_5ms_f;
 
-
 uint8_t time_wifi_10ms_f;
-
-
-
-
 
 uint16_t ad_value[1];
 uint16_t fan_current;
-
-
 uint8_t discharge_f;
 
 
@@ -109,6 +102,7 @@ uint16_t beep_interval_time;
 uint8_t temperature;
 uint8_t humidity;
 
+uint8_t  soft_version ;
 
 
 
@@ -429,7 +423,7 @@ static void power_on_handler(void)
    case 5:
    	if(key_net_config_f)
 	{
-		key_net_config_time++;
+		
 		if(key_net_config_time>=130)
 		{
 			key_net_config_time = 0;
@@ -515,14 +509,11 @@ static void power_on_handler(void)
    break;
 
    case 12:
-     if(key_net_config_f==0 &&  discharge_f ==1 &&  wifi_linking_tencent_f ==0){
-	   	   if(gpro_t.time_1m_wifi_f ==1){ 
-		     	gpro_t.time_1m_wifi_f =0;
-		       Reconnection_Wifi_Order();
+     if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 0){
+	   	   gpro_t.time_1m_wifi_f =0;
+		   Reconnection_Wifi_Order();
 
-	   	   	}
-		
-	}
+	 }
      gon_t.on_step =13;
 
 	
@@ -742,6 +733,17 @@ void Trigger_Simple_Beep(uint8_t ms_10)
     BEEP_OFF();
    // BEEP_ON();//BEEP_PWM_ON(); // 立即响
 }
+
+void buzzer_sound(void)
+{
+   
+	BEEP_ON();
+    tx_thread_sleep(2);//DelayMS(20);
+	BEEP_OFF();
+
+
+}
+
 /**
   * @brief 
   * @note  // 10ms 任务
@@ -891,7 +893,11 @@ void power_onoff_handler(void)
 	  break;
       }
 
+   if(wifi_linking_tencent_f==1 &&  wifi_read_net_data_f==1){
+	   wifi_read_net_data_f++;
 
+	   Wifi_Rx_InputInfo_Handler();
+	}
 
 	if(key_net_config_f==0 && gpro_t.time_100ms_f > 0){// 处理腾讯连连通信
 	      gpro_t.time_100ms_f=0;

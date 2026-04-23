@@ -36,7 +36,7 @@
 #include "bsp_peripheral.h"
 #include "bsp_key.h"
 #include "bsp_cmd_link.h"
-//#include "bsp_task.h"
+#include "bsp_xdp.h"
 #include "bsp_tm1639.h"
 #include "bsp_smg.h"
 #include "bsp_sensor.h"
@@ -85,10 +85,7 @@ typedef struct _main_ref{
  volatile uint8_t time_1m_f;
  volatile uint8_t time_1m_wifi_f;
  volatile uint8_t time_2m_f;
- volatile uint8_t time_3m_f;
-  volatile uint8_t time_4m_f;
- volatile uint8_t time_5m_f;
- volatile uint8_t time_6m_f;
+
 
 
 

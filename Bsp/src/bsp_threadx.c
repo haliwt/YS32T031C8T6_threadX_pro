@@ -126,11 +126,8 @@ void tx_application_define(void *first_unused_memory)
        // 阻塞等待 ISR 投递
       if(tx_semaphore_get(&wifi_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-           //if(wifi_linking_tencent_f==1 ){
-			 Wifi_Rx_InputInfo_Handler();
-
-		   /// }
-		   
+          decoder_handler() ;
+		    
        }
 	 
 	   
@@ -152,6 +149,8 @@ void tx_application_define(void *first_unused_memory)
    while(1){
 
     power_onoff_handler();
+
+   
     
 	IWDG_ReloadCounter();
   

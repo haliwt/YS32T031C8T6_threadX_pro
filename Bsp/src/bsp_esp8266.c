@@ -84,7 +84,7 @@ void wifi_auto_detected_link_state(void)
 ************************************************************************/
 static void auto_connect_wifi_handler(void)
 {
-  static uint8_t link_wifi_f=0;
+  //static uint8_t link_wifi_f=0;
   switch(dc_connect_net_step){
 
 	case 0:
@@ -94,7 +94,7 @@ static void auto_connect_wifi_handler(void)
         wifi_linking_tencent_f =1;//linking_tencent_cloud_doing = 1;
 	    wifi_cofig_success_f=0;
 		
-	   send_usart2_data("AT+RST\r\n", strlen("AT+RST\r\n"));
+	   send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
 	   //HAL_Delay(1000);
 	   
 	   
@@ -130,7 +130,7 @@ static void auto_connect_wifi_handler(void)
       
       
 	 // HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//??
-	       send_usart2_data("AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
+	       send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
 		   //delay_ms(1000);//HAL_Delay(1000);
 		  // link_wifi_f = delay_ms(2);
 	      // if(link_wifi_f ==1){
@@ -256,7 +256,7 @@ void wifi_default_handler(void)
            	fan_speed_level = 100;//gctl_t.set_wind_speed_value=100;
             MqttData_Publis_SetFan(fan_speed_level);//WT.EDIT 2025.12.19
             //delay_ms(100);
-            //gctl_t.set_temperature_value=40;
+            //setting_temperature=40;
             MqttData_Publis_SetTemp(temperature);
 			//delay_ms(100);
 
@@ -378,7 +378,7 @@ void wifi_default_handler(void)
 void wifi_power_off_handler(void)
 {
    
-	  static uint8_t counter_1, sw_flag,send_off_times,counter,first_send;
+	  static uint8_t counter_1, sw_flag,send_off_times,counter;
 	
 	   switch(wifi_off_step){
 	
