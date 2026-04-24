@@ -608,7 +608,7 @@ void link_wifi_net_handler(void)
               send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
               //delay_ms(200);//delay_ms(1000);
-               tx_thread_sleep(3000);//10ms * 100 = 1000s 
+               tx_thread_sleep(2000);//10ms * 100 = 1000s 
 			  	link_net_step  = 1;
 			  
 			break;
@@ -618,7 +618,7 @@ void link_wifi_net_handler(void)
               
                 send_usart2_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
                 //delay_ms(100);
-                tx_thread_sleep(2000);
+                tx_thread_sleep(1000);
                 uid =Get_Unique_ID_32bit();
 			  
                  link_net_step  = 2;
@@ -639,7 +639,7 @@ void link_wifi_net_handler(void)
             		   send_usart2_data((const uint8_t *)message,message_len);
             	  	   //delay_ms(1000);
                       
-                        tx_thread_sleep(3000);//10ms * 100 
+                        tx_thread_sleep(2000);//10ms * 100 
 
 						link_net_step  = 3;
 
@@ -650,7 +650,7 @@ void link_wifi_net_handler(void)
 
 
             case 3:
-            if(time_link_net_counter   > 6){
+            if(time_link_net_counter   > 4){
                       time_link_net_counter  = 0;
                   
                 send_usart2_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
@@ -669,7 +669,7 @@ void link_wifi_net_handler(void)
 
             case 4:
 		
-                 if(time_link_net_counter   > 8){
+                 if(time_link_net_counter   > 5){
                    time_link_net_counter  = 0;
 
                    wifi_linking_tencent_f =1;
@@ -687,7 +687,7 @@ void link_wifi_net_handler(void)
             //  uid =Get_Unique_ID_32bit();
 	          message_len =  sprintf((char *)message, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",uid);
               send_usart2_data((const uint8_t *)message,message_len);
-	            tx_thread_sleep(3000);//10ms * 100 
+	            tx_thread_sleep(1000);//10ms * 100 
 				link_net_step  = 6;
 			
              
@@ -706,7 +706,7 @@ void link_wifi_net_handler(void)
  //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//�?始连�?
              send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
 			 //delay_ms(1000);
-			   tx_thread_sleep(2000);//10ms * 100 
+			   tx_thread_sleep(1000);//10ms * 100 
 
 			  link_net_step  = 7;
 
@@ -782,7 +782,7 @@ void link_wifi_net_handler(void)
 
 			  key_net_config_f =0;
 
-              link_net_step = 0xff;
+              link_net_step = 0xfe;
 
             break;
 

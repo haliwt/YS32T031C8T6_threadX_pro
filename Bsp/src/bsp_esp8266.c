@@ -25,13 +25,13 @@ static void Update_Dht11_Totencent_Value(void);
 **********************************************************************/
 void wifi_auto_detected_link_state(void)
 {
-	if(wifi_connected_success_f ==0){
+	if(wifi_connected_success_f ==0 && key_net_config_f ==0){
 		
        auto_connect_wifi_handler();//InitWifiModule();
 	
 	 
     }
-	else if(wifi_connected_success_f==1 && link_counter_times ==0 ){
+	else if(wifi_connected_success_f==1 && link_counter_times ==0){
               
            link_counter_times ++ ;
 		   link_counter_times =10;

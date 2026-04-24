@@ -104,7 +104,6 @@ void wifi_parse_tencennt_hadler(void)
 ********************************************************************************/
 void usart2_rx_callback_invoke(uint8_t data)
 {
-  
    switch(wifi_linking_tencent_f){
 
 	 case 1:
@@ -405,11 +404,12 @@ void Parse_Tencent_Data(void)
 	   return ;
 		}
 
+	   wifi_check_id_handler();
+
+	 
+
 	  
 	}
-	 
-	
-	
 }
 /*******************************************************************************
 **
@@ -885,8 +885,8 @@ void wifi_check_id_handler(void)
 
 	#endif 
 
-    }
-
-	
+ }
 
 }
+
+
