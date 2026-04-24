@@ -256,7 +256,7 @@ extern   "C" {
    as a compilation option.  */
 
 #ifndef TX_TIMER_TICKS_PER_SECOND
-#define TX_TIMER_TICKS_PER_SECOND       (1000UL) //WT.EDIT 2026.04.24
+#define TX_TIMER_TICKS_PER_SECOND       (100UL) 
 #endif
 
 /* Define the default maximum message size in a queue. The default value is TX_16_ULONG, but may

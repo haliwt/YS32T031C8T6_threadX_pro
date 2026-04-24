@@ -722,7 +722,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>inc</GroupName>
+          <GroupName>Threadx/inc</GroupName>
           <Files>
             <File>
               <FileName>tx_api.h</FileName>
@@ -797,7 +797,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>src</GroupName>
+          <GroupName>Threadx/src</GroupName>
           <Files>
             <File>
               <FileName>tx_block_allocate.c</FileName>
