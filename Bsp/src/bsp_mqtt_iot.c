@@ -609,6 +609,7 @@ void link_wifi_net_handler(void)
         
               //delay_ms(200);//delay_ms(1000);
                tx_thread_sleep(2000);//10ms * 100 = 1000s 
+               gpro_t.time_1m_wifi_f=0;
 			  	link_net_step  = 1;
 			  
 			break;
@@ -622,6 +623,7 @@ void link_wifi_net_handler(void)
                 uid =Get_Unique_ID_32bit();
 			  
                  link_net_step  = 2;
+				  gpro_t.time_1m_wifi_f=0;
                 
                 time_link_net_counter=0;
 
@@ -640,7 +642,7 @@ void link_wifi_net_handler(void)
             	  	   //delay_ms(1000);
                       
                         tx_thread_sleep(2000);//10ms * 100 
-
+                         gpro_t.time_1m_wifi_f=0;
 						link_net_step  = 3;
 
                  }   
@@ -659,6 +661,7 @@ void link_wifi_net_handler(void)
 			     tx_thread_sleep(1000);//10ms * 100 
 
 				 link_net_step  = 4;
+				  gpro_t.time_1m_wifi_f=0;
                  time_link_net_counter  =0;
                 
             }
@@ -677,7 +680,7 @@ void link_wifi_net_handler(void)
 
 					link_net_step  = 5;
           
-                 // link_net_step = 5;
+                 gpro_t.time_1m_wifi_f=0;
                  }
             
             break;
@@ -689,7 +692,7 @@ void link_wifi_net_handler(void)
               send_usart2_data((const uint8_t *)message,message_len);
 	            tx_thread_sleep(1000);//10ms * 100 
 				link_net_step  = 6;
-			
+			     gpro_t.time_1m_wifi_f=0;
              
 
                     
@@ -711,9 +714,10 @@ void link_wifi_net_handler(void)
 			  link_net_step  = 7;
 
                  time_link_net_counter  = 0;
+				  gpro_t.time_1m_wifi_f=0;
             }
             
-                   
+                 gpro_t.time_1m_wifi_f=0; 
             break;
 
             case 7:
@@ -729,6 +733,7 @@ void link_wifi_net_handler(void)
                //delay_ms(100);
 			
 			    link_net_step= 8;
+			     gpro_t.time_1m_wifi_f=0;
                
 				
 		     }
@@ -738,6 +743,7 @@ void link_wifi_net_handler(void)
                   link_net_step = 11;
                   if(disp_second_f == 1)SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
                  // delay_ms(100);
+                  gpro_t.time_1m_wifi_f=0;
                   
                 }
                 
@@ -762,6 +768,7 @@ void link_wifi_net_handler(void)
 			 case 9: 
 			 
 			    link_net_step = 10;
+				 gpro_t.time_1m_wifi_f=0;
 
 
 			break;
@@ -773,6 +780,7 @@ void link_wifi_net_handler(void)
 	           tx_thread_sleep(100);//  delay_ms(200);
         
 			 link_net_step = 0xfe;
+			  gpro_t.time_1m_wifi_f=0;
 
                    
             break;
@@ -783,6 +791,7 @@ void link_wifi_net_handler(void)
 			  key_net_config_f =0;
 
               link_net_step = 0xfe;
+			   gpro_t.time_1m_wifi_f=0;
 
             break;
 
