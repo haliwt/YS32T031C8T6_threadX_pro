@@ -144,7 +144,7 @@ void usart2_rx_callback_invoke(uint8_t data)
 		  else if(rx_wifi_data_success==0){
 			  wifi_t.rx_data_array[rx_wifi_data_counter] =wifi_t.rx_inputBuf[0];
 		      rx_wifi_data_counter++;
-			  if(*wifi_t.rx_inputBuf==0x0A &&  rx_wifi_data_success==0 && rx_wifi_data_counter > 80) // 0x0A = "\n"
+			  if(*wifi_t.rx_inputBuf==0x0A &&  rx_wifi_data_success==0 && rx_wifi_data_counter > 10) // 0x0A = "\n"
 			  {
 	             rx_wifi_data_success=1;
 				 wifi_t.rx_recoder_counter=rx_wifi_data_counter;
@@ -179,7 +179,7 @@ void Parse_Tencent_Data(void)
    
 	char *p =  NULL;
 	char *p1 = NULL;
-	
+	static uint8_t rc_counter = 0;
 	 if(rx_wifi_data_success==1){
 	   rx_wifi_data_success=0;
       
@@ -399,17 +399,40 @@ void Parse_Tencent_Data(void)
 
 	   wifi_t.wifi_rx_signal_f= TEMPERATURE_ITEM;
 
-
-
-	   return ;
+        return ;
 		}
 
-	
 
-	 
+		if (strstr((const  char *)wifi_t.rx_data_array, "+TCMQTTRECONNECTING") != NULL)
+        {
+             //wifi_state = WIFI_MQTT_RECONNECTING;
+             rc_counter ++;
+			 if(rc_counter > 7){
+                rc_counter =0;
+                 wifi_connected_success_f  = 0;
+				 dc_connect_net_step = 0;
+				 wifi_off_step=0;
+			     wifi_run_step = 0;
+			     wifi_connected_success_f =0;
+				 wifi_app_timer_power_on_f = 0;
+			 }
 
-	  
-	}
+			 return ;
+        }
+
+		if(strstr((const char*)wifi_t.rx_data_array, "+TCMQTTCONN:FAIL,202") != NULL){
+
+                wifi_connected_success_f  = 0;
+				dc_connect_net_step = 0;
+				 wifi_off_step=0;
+			     wifi_run_step = 0;
+			     wifi_connected_success_f =0;
+				 wifi_app_timer_power_on_f = 0;
+                return ;
+				
+		}
+
+		}
 }
 /*******************************************************************************
 **
@@ -813,7 +836,6 @@ void Wifi_Rx_InputInfo_Handler(void)
  * @param  Data: 数据
  * @retval None
  */
-
 void send_usart2_data(const uint8_t* pdata,uint8_t length)
 {
   uint8_t i;
@@ -888,5 +910,10 @@ void wifi_check_id_handler(void)
  }
 
 }
+/**
+ * @brief  carck down net
+ * @param  Data:
+ * @retval None
+ */
 
 
