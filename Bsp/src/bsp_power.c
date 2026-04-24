@@ -712,14 +712,14 @@ void works_nomal_run_time_handler(void)
   * @param: 
   *
 **/
-void beep_power_sound(void)
-{
-  
-	BEEP_ON();
-	delay_ms_dht11(20);//tx_thread_sleep(2);//2*10ms //delay_ms_dht11(20);//DelayMS(20);
-    BEEP_OFF();
+//void beep_power_sound(void)
+//{
+//  
+//	BEEP_ON();
+//	//tx_thread_sleep(9);//delay_ms_dht11(10);//tx_thread_sleep(2);//2*10ms //delay_ms_dht11(20);//DelayMS(20);
+//   // BEEP_OFF();
 
-}
+//}
 
 /**
   * @brief  // 按键按下时调用
@@ -732,8 +732,8 @@ void Trigger_Simple_Beep(uint8_t ms_10)
     //time_beep_counter = 0;
 	//beep_sound_f = 1;
 	BEEP_ON();
-	tx_thread_sleep(20);//DelayMS(20);
-    BEEP_OFF();
+	//tx_thread_sleep(20);//DelayMS(20);
+   // BEEP_OFF();
    // BEEP_ON();//BEEP_PWM_ON(); // 立即响
 }
 
@@ -741,8 +741,8 @@ void buzzer_sound(void)
 {
    
 	BEEP_ON();
-    tx_thread_sleep(20);//DelayMS(20);
-	BEEP_OFF();
+    //tx_thread_sleep(20);//DelayMS(20);
+	//BEEP_OFF();
 
 
 }
@@ -876,7 +876,7 @@ void Heat_Process(void)
 void power_onoff_handler(void)
 {
 
-  static uint8_t dc_power_f = 0;
+ // static uint8_t dc_power_f = 0;
 	 switch(discharge_f){
 
       case 1:
@@ -914,12 +914,12 @@ void power_onoff_handler(void)
 
    	}
 
-	if(dc_power_f ==0){
-	   dc_power_f++;
+//	if(dc_power_f ==0){
+//	   dc_power_f++;
 
-	   beep_power_sound();
+//	   beep_power_sound();
 
-	}
+//	}
     
 }
 /**

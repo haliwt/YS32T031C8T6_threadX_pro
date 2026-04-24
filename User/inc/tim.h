@@ -31,6 +31,7 @@ extern void fan_off(void);
 extern void ultra_sound_on(uint16_t us_duty);
 extern void ultra_sound_off(void);
 
+void beep_power_sound(void);
 
 
 #ifdef __cplusplus

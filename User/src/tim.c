@@ -141,23 +141,37 @@ void TIM14_Configuration(void)
 //·äÃùÆ÷¿ª
 void BEEP_ON(void)
 {
-    TIM_SetCompare1(TIM14,374);
-    TIM_Cmd(TIM14, ENABLE);
+    
     TIM_CtrlPWMOutputs(TIM14, ENABLE);
-	tx_thread_sleep(20);//2*10ms =20ms
+	TIM_SetCompare1(TIM14,374);
+    TIM_Cmd(TIM14, ENABLE);
+	tx_thread_sleep(13);//15
 	//TIM_SetCompare1(TIM14,0);
 	 TIM_SetCompare1(TIM14,0);
-	TIM_Cmd(TIM14, DISABLE);
+	 TIM_Cmd(TIM14, DISABLE);
+	 TIM_CtrlPWMOutputs(TIM14, DISABLE);
 }
 
+void beep_power_sound(void)
+{
+	
+	  TIM_SetCompare1(TIM14,374);
+	  TIM_Cmd(TIM14, ENABLE);
+	  TIM_CtrlPWMOutputs(TIM14, ENABLE);
+	   delay_ms_dht11(15);//13
+	   TIM_SetCompare1(TIM14,0);
+	 TIM_Cmd(TIM14, DISABLE);
+	 TIM_CtrlPWMOutputs(TIM14, DISABLE);
+
+
+}
 
 //·äÃùÆ÷¹Ø
 void BEEP_OFF(void)
 {
     TIM_SetCompare1(TIM14,0);
-	
 	TIM_Cmd(TIM14, DISABLE);
-    //TIM_CtrlPWMOutputs(TIM14, ENABLE);
+    TIM_CtrlPWMOutputs(TIM14, DISABLE);
 }
 
 

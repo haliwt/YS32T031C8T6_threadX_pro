@@ -252,7 +252,8 @@ void System_Status_PowerOn(void)
     
     // 6. 执行开机提示音
    
-    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    beep_power_sound();//Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+ 
 	LED_FUN_ON();
 
 }
@@ -306,7 +307,8 @@ void System_Status_PowerOff(void)
 
     
     // 5. 提示音
-    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    beep_power_sound();//Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    
 	all_led_off();
     TM1639_Display_ON_OFF(0);
 }
