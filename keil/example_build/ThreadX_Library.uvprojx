@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -788,6 +788,11 @@
               <FileName>tx_user_sample.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\inc\tx_user_sample.h</FilePath>
+            </File>
+            <File>
+              <FileName>tx_user.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\inc\tx_user.h</FilePath>
             </File>
           </Files>
         </Group>

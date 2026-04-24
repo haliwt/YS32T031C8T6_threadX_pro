@@ -732,7 +732,7 @@ void Trigger_Simple_Beep(uint8_t ms_10)
     //time_beep_counter = 0;
 	//beep_sound_f = 1;
 	BEEP_ON();
-	tx_thread_sleep(2);//DelayMS(20);
+	tx_thread_sleep(20);//DelayMS(20);
     BEEP_OFF();
    // BEEP_ON();//BEEP_PWM_ON(); // 立即响
 }
@@ -741,7 +741,7 @@ void buzzer_sound(void)
 {
    
 	BEEP_ON();
-    tx_thread_sleep(2);//DelayMS(20);
+    tx_thread_sleep(20);//DelayMS(20);
 	BEEP_OFF();
 
 

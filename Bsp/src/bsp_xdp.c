@@ -522,7 +522,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
                fan_stop();
 			   RELAY_OFF(); //ptc off;
-			   tx_thread_sleep(100);
+			 
 			     PLASMA_OFF() ; //plasma turn off.
 	           ultra_sound_off();
          }
@@ -653,7 +653,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	       RELAY_OFF();
         
 		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-           tx_thread_sleep(10);
+           tx_thread_sleep(100);
 
 		  
 		  if(wifi_connected_success_f==1){ 

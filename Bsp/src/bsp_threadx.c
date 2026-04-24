@@ -154,7 +154,7 @@ void tx_application_define(void *first_unused_memory)
     
 	IWDG_ReloadCounter();
   
-	tx_thread_sleep(1);//10ms * 10 = 100ms  
+	tx_thread_sleep(10);//10ms * 10 = 100ms  
 	
     } 
 }
@@ -182,7 +182,7 @@ void tx_application_define(void *first_unused_memory)
 
 	Key_Scan();
 
-    tx_thread_sleep(1);//10*1=10 
+    tx_thread_sleep(10);//10*1=10 
 	
     } 
 }

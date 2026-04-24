@@ -211,7 +211,7 @@ static void Delay_US_dht11(uint16_t us)
 }
 
 /*---------------- DHT11 bit/byte 读取 ----------------*/
-
+#if 0
 static uint8_t DHT11_ReadBit(void)
 {
     #if 0
@@ -260,7 +260,7 @@ static uint8_t DHT11_ReadBit(void)
 
 	#endif 
 }
-
+#endif 
 static uint8_t DHT11_ReadByte(void)
 {
 
