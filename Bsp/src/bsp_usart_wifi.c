@@ -404,7 +404,7 @@ void Parse_Tencent_Data(void)
 	   return ;
 		}
 
-	   wifi_check_id_handler();
+	
 
 	 
 
