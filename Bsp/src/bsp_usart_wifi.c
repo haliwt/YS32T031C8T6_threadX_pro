@@ -422,12 +422,15 @@ void Parse_Tencent_Data(void)
 
 		if(strstr((const char*)wifi_t.rx_data_array, "+TCMQTTCONN:FAIL,202") != NULL){
 
-                wifi_connected_success_f  = 0;
-				dc_connect_net_step = 0;
-				 wifi_off_step=0;
-			     wifi_run_step = 0;
-			     wifi_connected_success_f =0;
-				 wifi_app_timer_power_on_f = 0;
+                 if(gpro_t.time_2m_f > 1){
+				 	 gpro_t.time_2m_f = 0;
+					 wifi_connected_success_f  = 0;
+					 dc_connect_net_step = 0;
+					 wifi_off_step=0;
+				     wifi_run_step = 0;
+				     wifi_connected_success_f =0;
+					 wifi_app_timer_power_on_f = 0;
+                 }
                 return ;
 				
 		}

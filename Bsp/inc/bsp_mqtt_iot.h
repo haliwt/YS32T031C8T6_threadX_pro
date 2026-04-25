@@ -68,6 +68,8 @@ void Publish_Data_fan_Warning(uint8_t warning);
 void Publish_Data_ToTencent_Initial_Data(void);
 
 void link_wifi_net_handler(void);
+void Get_BeiJing_Time_Cmd(void);
+void Get_Beijing_Time(void);
 
 
 #endif /* QCLOUD_IOT_EXPORT_MQTT_H_ */

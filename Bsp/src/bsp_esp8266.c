@@ -210,8 +210,8 @@ static void auto_connect_wifi_handler(void)
 ************************************************************************/
 void wifi_default_handler(void)
 {
-   static uint8_t sw_flag=0,send_times,sub_times,counter;
-	static uint8_t counter_1;
+   static uint8_t sw_flag=0;
+	static uint8_t counter_1=0,counter=0,send_times=0,beijing_counter=0;
 
 	if(key_net_config_f == 1 || discharge_f == 0 || wifi_connected_success_f==0) return ;
 		
@@ -279,9 +279,9 @@ void wifi_default_handler(void)
 
 	 case 2: 
 
-	   counter_1 ++;
+	   counter_1 ++;//10ms *400 =4000ms = 4s
 
-        if(wifi_connected_success_f ==1 &&  wifi_app_timer_power_on_f ==0 &&  counter_1 > 3){
+        if(wifi_connected_success_f ==1 &&  wifi_app_timer_power_on_f ==0 &&  counter_1 > 4){
       
 	     counter_1 =0;
 		   Subscriber_Data_FromCloud_Handler();
@@ -293,7 +293,7 @@ void wifi_default_handler(void)
      break; 
 
 	 case 3:
-		counter++;
+		counter++;//10ms
          if(wifi_connected_success_f ==1 &&  wifi_app_timer_power_on_f ==0 && wifi_first_connectoed_cloud_f==0){
           
 	      if(discharge_f){
@@ -312,8 +312,8 @@ void wifi_default_handler(void)
 			 wifi_first_connectoed_cloud_f++;
          }
 			 
-		if(wifi_connected_success_f ==1  && soft_version == 0){ //WT.EDIT 2026.02.27
-
+		if(wifi_connected_success_f ==1  && soft_version == 0 && counter > 3){ //WT.EDIT 2026.02.27
+            counter = 0;
 			sw_flag = sw_flag ^ 0x01;
 			if(sw_flag == 1){
 				if(disp_second_f == 1){
@@ -329,7 +329,7 @@ void wifi_default_handler(void)
 			}
 
 		}
-		else if(wifi_connected_success_f ==0 && counter > 1 && soft_version ==0){ //WT.EDIT 2026.02.27
+		else if(wifi_connected_success_f ==0 && counter > 300 && soft_version ==0){ //WT.EDIT 2026.02.27
 			counter =0;
 			sw_flag = sw_flag ^ 0x01;
 			if(sw_flag == 1){
@@ -352,11 +352,11 @@ void wifi_default_handler(void)
 
 	 case 4://3mm run once 
 
-	   sub_times++;
+	
 
 	 if(key_net_config_f ==0 && wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0 && wifi_first_connectoed_cloud_f ==1){
     
-
+            wifi_first_connectoed_cloud_f++;
 		   if(disp_second_f == 1){
 		   	SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
              tx_thread_sleep(100);//delay_ms(100);
@@ -370,15 +370,32 @@ void wifi_default_handler(void)
 
 
 	  case 5:
-	  	  send_times ++ ;
-	  	  if(wifi_connected_success_f ==1 &&  send_times > 4){
+	  	  send_times ++ ;//10ms* 500 = 5s
+	  	  if(wifi_connected_success_f ==1 &&  send_times > 5){
 		  	    send_times=0;
 			
 				Update_Dht11_Totencent_Value();
                tx_thread_sleep(200);// delay_ms(200);
         }
 
-	    wifi_run_step =2 ;
+	    wifi_run_step =6 ;
+
+	 break;
+
+
+	 case 6:
+         beijing_counter++;
+		 if(wifi_connected_success_f ==1 &&  beijing_counter > 9){ 
+		 	 beijing_counter=0;
+		     Get_BeiJing_Time_Cmd();
+			 tx_thread_sleep(200);
+	         Get_Beijing_Time();
+		     tx_thread_sleep(200);
+	         
+		 }
+
+		   wifi_run_step=2 ;
+		   
 
 	 break;
 
@@ -616,6 +633,59 @@ static void smartphone_timer_power_on_handler(void)
 }
 			
 
+
+
+// 定义时间结构体，方便后续写入 RTC
+typedef struct {
+    uint16_t year;
+    uint8_t  month;
+    uint8_t  day;
+    uint8_t  hour;
+    uint8_t  minute;
+    uint8_t  second;
+} RTC_Time_t;
+
+// 函数实现：解析 AT 指令返回的时间字符串
+void Parse_SNTP_Time(char *raw_str, RTC_Time_t *time_struct) {
+    // 1. 查找冒号，跳过 "+CIPSNTPTIME:"，指向 "Thu Jan..."
+    char *p = strchr(raw_str, ':');
+    if (!p) return;
+    p++; 
+
+    // 2. 解析月份
+    const char *m_list = "JanFebMarAprMayJunJulAugSepOctNovDec";
+    char *m_ptr = strstr(m_list, p + 4); 
+    time_struct->month = m_ptr ? ((m_ptr - m_list) / 3 + 1) : 1;
+
+    // 3. 偏移解析数字 (atoi 具有自动跳过空格的特性)
+    time_struct->day    = (uint8_t)atoi(p + 8);
+    time_struct->hour   = (uint8_t)atoi(p + 11);
+    time_struct->minute = (uint8_t)atoi(p + 14);
+    time_struct->second = (uint8_t)atoi(p + 17);
+    time_struct->year   = (uint16_t)atoi(p + 20);
+}
+
+// --- 使用方法演示 ---
+int main() {
+    // 模拟从串口接收到的原始数据
+    char uart_rx_buf[] = "+CIPSNTPTIME:Thu Jan  1 08:01:02 1970";
+    
+    RTC_Time_t my_rtc;
+
+    // 调用解析函数
+    Parse_SNTP_Time(uart_rx_buf, &my_rtc);
+
+    // 检查并使用数据
+    if (my_rtc.year > 2000) {
+        // 如果年份正常，则执行校时操作
+        printf("校时成功: %d年%d月%d日\n", my_rtc.year, my_rtc.month, my_rtc.day);
+    } else {
+        // 如果是 1970，说明网络校时还没成功
+        printf("等待网络同步...\n");
+    }
+
+    return 0;
+}
 
 
 

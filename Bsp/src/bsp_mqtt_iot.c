@@ -464,6 +464,31 @@ static void property_report_fan_warning(uint8_t warning)
 
 }
 
+/****************************************************************************************************
+**
+*Function Name:void Wifi_Link_SmartPhone_Fun(void)
+*Function: dy
+*Input Ref: 
+*Return Ref:NO
+*
+****************************************************************************************************/
+
+void Get_BeiJing_Time_Cmd(void)
+{
+
+
+	send_usart2_data((const uint8_t *)"AT+CIPSNTPCFG=1,8\r\n", strlen("AT+CIPSNTPCFG=1,8\r\n"));
+
+}
+
+void Get_Beijing_Time(void)
+{
+
+//   HAL_UART_Transmit(&huart2, "AT+CIPSNTPTIME?\r\n", strlen("AT+CIPSNTPTIME?\r\n"), 0xffff);//�?始连�?
+     send_usart2_data((const uint8_t *)"AT+CIPSNTPTIME?\r\n", strlen("AT+CIPSNTPTIME?\r\n"));
+
+
+}
 
 
 /********************************************************************************
