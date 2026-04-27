@@ -25,13 +25,13 @@ static void Update_Dht11_Totencent_Value(void);
 **********************************************************************/
 void wifi_auto_detected_link_state(void)
 {
-	if(wifi_connected_success_f ==0){
+	if(wifi_connected_success_f ==0 && key_net_config_f ==0){
 		
        auto_connect_wifi_handler();//InitWifiModule();
 	
 	 
     }
-	else if(wifi_connected_success_f==1 && link_counter_times ==0 ){
+	else if(wifi_connected_success_f==1 && link_counter_times ==0){
               
            link_counter_times ++ ;
 		   link_counter_times =10;
@@ -103,7 +103,7 @@ static void auto_connect_wifi_handler(void)
 	   
 	   
 	    tx_thread_sleep(200);//10ms *100 =1s.
-
+        gpro_t.time_1m_wifi_f=0;
 	    time_autolink_counter=0; 
 		dc_connect_net_step =1;
 
@@ -115,6 +115,7 @@ static void auto_connect_wifi_handler(void)
 	    dc_connect_net_step=2;
 	   
 	  }
+	 gpro_t.time_1m_wifi_f=0;
 	break;
 
 	case 2:
@@ -127,7 +128,7 @@ static void auto_connect_wifi_handler(void)
 
 		 dc_connect_net_step = 3;
      }
-
+      gpro_t.time_1m_wifi_f=0;
 	break;
 
 	case 3:
@@ -141,7 +142,7 @@ static void auto_connect_wifi_handler(void)
 		   	dc_connect_net_step=4;
 	        wifi_off_step = 0;
 	        time_autolink_counter=0;
-	   
+	        gpro_t.time_1m_wifi_f =0;
 
 	  
      break;
@@ -179,10 +180,12 @@ static void auto_connect_wifi_handler(void)
 
 			#endif 
 	    }
+	   gpro_t.time_1m_wifi_f =0;
 
 	break;
 
 	case 5:
+		 gpro_t.time_1m_wifi_f =0;
          wifi_linking_tencent_f =0;
 	     dc_connect_net_step =6;
 		 
@@ -207,8 +210,8 @@ static void auto_connect_wifi_handler(void)
 ************************************************************************/
 void wifi_default_handler(void)
 {
-   static uint8_t sw_flag=0,send_times,sub_times,counter;
-	static uint8_t counter_1;
+   static uint8_t sw_flag=0;
+	static uint8_t counter_1=0,counter=0,send_times=0,beijing_counter=0;
 
 	if(key_net_config_f == 1 || discharge_f == 0 || wifi_connected_success_f==0) return ;
 		
@@ -349,11 +352,11 @@ void wifi_default_handler(void)
 
 	 case 4://3mm run once 
 
-	   sub_times++;
+	
 
 	 if(key_net_config_f ==0 && wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0 && wifi_first_connectoed_cloud_f ==1){
     
-
+            wifi_first_connectoed_cloud_f++;
 		   if(disp_second_f == 1){
 		   	SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
              tx_thread_sleep(10);//delay_ms(100);
@@ -394,7 +397,7 @@ void wifi_default_handler(void)
 void wifi_power_off_handler(void)
 {
    
-	  static uint8_t counter_1, sw_flag,send_off_times,counter;
+	  static uint8_t  counter=0,sw_flag=0;
 	
 	   switch(wifi_off_step){
 	

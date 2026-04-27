@@ -412,7 +412,7 @@ static void power_on_handler(void)
 
    case 4:
 
-      if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 1){
+      if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_default_handler();
          }
@@ -509,7 +509,7 @@ static void power_on_handler(void)
    break;
 
    case 12:
-     if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 0){
+     if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
 		   #if DEBUG_ENABLE
 		     printf("reconnection wifi ! \n\r");
@@ -596,6 +596,13 @@ static void power_off_handler(void)
 					#endif 
 
 				 }
+
+				 if(wifi_connected_success_f ==1 &&  gpro_t.time_2m_f > 0){
+     
+				   Subscriber_Data_FromCloud_Handler();
+		    	   tx_thread_sleep(20);//delay_ms(100);
+	    
+			      }
 			 }
             	
 		break;
@@ -613,7 +620,15 @@ static void power_off_handler(void)
 				    #if DEBUG_ENABLE
                       printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
 				    #endif 
-				 }
+			}
+
+			 if(wifi_connected_success_f ==1 &&  gpro_t.time_2m_f > 0){
+      
+			        gpro_t.time_2m_f=0;
+				   Subscriber_Data_FromCloud_Handler();
+		    	   tx_thread_sleep(20);//delay_ms(100);
+	    
+			     }
 		  gon_t.off_step = 2;
 		break;
 
