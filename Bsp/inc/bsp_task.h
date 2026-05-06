@@ -2,7 +2,7 @@
 #define __BSP_TASK_H
 #include "main.h"
 
-#define DEBUG_ENABLE    1
+#define DEBUG_ENABLE    0
 
 // 任务结构体：这次我们直接检查标志位
 typedef struct {

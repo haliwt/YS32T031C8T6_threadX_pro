@@ -201,6 +201,7 @@ void TIM6_LPTIM_IRQHandler (void)
 					    
 						gpro_t.time_1m_f++;
 						gpro_t.time_1m_wifi_f++;
+						gpro_t.time_2m_f++;
 						
 						
 						
