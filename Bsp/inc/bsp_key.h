@@ -14,6 +14,7 @@ void Key_Scan(void);
 void System_Status_PowerOff(void) ;
 
 void System_Status_PowerOn(void) ;
+void key_power_short_handler(void);
 
 
 #endif 

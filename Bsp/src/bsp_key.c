@@ -312,6 +312,15 @@ void System_Status_PowerOff(void)
 }
 
 
+void key_power_short_handler(void)
+{
+
+	if (discharge_f) System_Status_PowerOff();
+     else System_Status_PowerOn();
+
+
+
+}
 
 
 
