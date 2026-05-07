@@ -221,7 +221,7 @@ void Clear_Ram(void)
 	
 	
 	  key_worked_f = 0;
-	  key_long_f = 0;
+	  //key_long_f = 0;
 	  key_data = 0;
 	  key_time = 0;
 	

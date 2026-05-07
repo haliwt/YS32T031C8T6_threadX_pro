@@ -58,12 +58,12 @@ void Key_Scan(void)
 
 // 长按处理子函数
 void Process_Long_Key(uint16_t key) {
-    if (key_long_f) return; // 已处理过长按则退出
+   // if (key_long_f) return; // 已处理过长按则退出
 
     switch (key) {
         case _POWER_KEY_DOWN:
             if (key_time >= KEY_TICKS_LONG_P) {
-                key_long_f = 1;
+                //key_long_f = 1;
                 if (discharge_f && !key_net_config_f) {
                     key_net_config_f = 1;
 					link_net_step=0;
@@ -82,7 +82,7 @@ void Process_Long_Key(uint16_t key) {
 
         case _MODE_KEY_DOWN://LONG KEY MODE ID 
             if (key_time >= KEY_TICKS_LONG_M) {
-                key_long_f = 1;
+                //key_long_f = 1;
                 if (discharge_f && !no_fan_load_f) {
                     Is_time_setting_f = 1;
                    
@@ -94,7 +94,7 @@ void Process_Long_Key(uint16_t key) {
 
         case _DOWN_KEY_DOWN:
             if (key_time >= KEY_TICKS_LONG_M) {
-                key_long_f = 1;
+                //key_long_f = 1;
                 if (discharge_f) {
 					if(led_strip_open_f==1){
 						led_strip_open_f=0;
@@ -332,7 +332,7 @@ void key_power_short_handler(void)
 */
 void key_power_long_handler(void)
 {
-	key_long_f = 1;
+	//key_long_f = 1;
     if (!key_net_config_f) {
         key_net_config_f = 1;
 		link_net_step=0;
@@ -378,7 +378,7 @@ void key_mode_short_handler(void)
 */
 void key_mode_long_handler(void)
 {
-	key_long_f = 1;
+	//key_long_f = 1;
     if (discharge_f && !no_fan_load_f) {
         Is_time_setting_f = 1;
        
@@ -422,7 +422,7 @@ void key_down_short_handler(void)
 */
 void key_down_long_handler(void)
 {
-	key_long_f = 1;
+	//key_long_f = 1;
 
 	if(led_strip_open_f==1){
 		led_strip_open_f=0;

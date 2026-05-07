@@ -3,7 +3,7 @@
 #include "main.h"
 
 extern uint8_t key_worked_f;
-extern uint8_t key_long_f;
+//extern uint8_t key_long_f;
 extern uint16_t key_data;
 extern uint16_t key_time;
 

@@ -125,6 +125,8 @@ void display_digital_3_numbers(void)
 
 	// If any warning is active, do nothing
     if (no_fan_load_f ==1) return;
+
+	
     
 	 if(Is_time_setting_f ==1 || disp_set_hours_time_f ==1){//display set timer timing hours.
 
@@ -187,7 +189,7 @@ void display_digital_3_numbers(void)
 	 else{ //display temperature value 
           
    
-		 if(key_long_f == 1) return ;
+		 //if(key_long_f == 1) return ;
 
             if (disp_switch_temp_humi > SWITCH_THRESHOLD ){
 			    disp_switch_temp_humi = 0; // 重置计时�??
