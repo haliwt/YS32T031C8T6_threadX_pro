@@ -22,7 +22,7 @@
 
 
 
-#define STACK_SIZE_KEY  256//512//1792//3072//2048//1024//896//768
+#define STACK_SIZE_KEY  256//256//512//1792//3072//2048//1024//896//768
 #define STACK_SIZE_DECODER  256//512//256
 #define STACK_SIZE_UI  1024//256
 #define STACK_SIZE_EVENT  256
@@ -195,7 +195,7 @@ void tx_application_define(void *first_unused_memory)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 90;   // 300 * 10ms = 3000ms
+    const uint16_t LONG_PRESS_TIME = 80;   // 300 * 10ms = 3000ms
   
   
  
@@ -212,7 +212,7 @@ void tx_application_define(void *first_unused_memory)
 	//Key_Scan();
 
 	// 物理层扫描
-    if(KEY10_PIN){
+    if(KEY10_PIN){ //power key
 		  power_cnt++;
             if(power_cnt == LONG_PRESS_TIME && discharge_f == 1){
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
@@ -226,10 +226,56 @@ void tx_application_define(void *first_unused_memory)
 
 	}
 	
-    //if (KEY9_PIN)  key_i = _MODE_KEY_DOWN;
-    //if (KEY8_PIN)  key_i = _UP_KEY_DOWN;
-    ///if (KEY7_PIN)  key_i = _DOWN_KEY_DOWN;
+    if (KEY9_PIN){// == 1 && discharge_f ==1){ //key mode
 
+	   if(discharge_f ==1){
+		 mode_cnt++;
+            if(mode_cnt == LONG_PRESS_TIME  ){
+				tx_event_flags_set(&key_event, KEY_MODE_LONG, TX_OR);
+               
+            }
+	   	}
+    }
+	else{
+		if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME){
+                tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
+		}
+        mode_cnt = 0;
+
+	}
+
+ 
+    if (KEY8_PIN){ //up key
+		//key_i = _UP_KEY_DOWN;
+	   if(discharge_f ==1){
+		up_cnt++;
+        // if(up_cnt == LONG_PRESS_TIME)
+              //  tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
+	   	}
+
+	}
+	else{
+	    if(up_cnt > 1 )
+               tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
+
+          up_cnt = 0;
+	}
+	
+    if (KEY7_PIN){ //dwon key
+		if(discharge_f ==1){
+		  down_cnt++;
+          if(down_cnt == LONG_PRESS_TIME)
+                tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
+		}
+    }
+	else{
+	      if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
+					tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
+	
+				down_cnt = 0;
+
+	}
+  
     tx_thread_sleep(1);//10*1=10 
 	
     } 
@@ -261,12 +307,24 @@ void tx_application_define(void *first_unused_memory)
 
              key_power_short_handler();
 		} 
-	   // else if(flags & KEY_POWER_LONG)  key_power_longk_fun();//handle_power_long_key();
-      //  else if(flags & KEY_MODE_SHORT)  handle_mode_key();
-	 //   else if(flags & KEY_MODE_LONG)   key_mode_long_fun();
-      //  else if(flags & KEY_UP_SHORT)    handle_up_key();
-	  ///  else if(flags & KEY_DOWN_SHORT)  handle_down_key();
-	  ///  else if(flags & KEY_DOWN_LONG)   key_down_long_fun();//handle_down_long_key();
+	    else if(flags & KEY_POWER_LONG){
+             key_power_long_handler();
+		}  
+        else if(flags & KEY_MODE_SHORT){
+             key_mode_short_handler();
+		} 
+	    else if(flags & KEY_MODE_LONG){
+             key_mode_long_handler();
+		}  
+        else if(flags & KEY_UP_SHORT){
+			 key_up_short_handler();
+		}    
+	    else if(flags & KEY_DOWN_SHORT){
+             key_down_short_handler();
+		} 
+	    else if(flags & KEY_DOWN_LONG){
+			key_down_long_handler();
+		}   
 
 	   
      }

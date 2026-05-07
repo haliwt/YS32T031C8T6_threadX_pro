@@ -311,16 +311,134 @@ void System_Status_PowerOff(void)
     TM1639_Display_ON_OFF(0);
 }
 
-
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
 void key_power_short_handler(void)
 {
 
 	if (discharge_f) System_Status_PowerOff();
-     else System_Status_PowerOn();
+    else System_Status_PowerOn();
 
+}
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_power_long_handler(void)
+{
+	key_long_f = 1;
+    if (!key_net_config_f) {
+        key_net_config_f = 1;
+		link_net_step=0;
+	    wifi_connected_success_f =0;
+		wifi_first_connectoed_cloud_f =0;
+        key_net_config_time = 0;
+       
+        if(gpro_t.time_100ms_fast_led_f> 1){
+		  gpro_t.time_100ms_fast_led_f =0;
+			  LED_WIFI_TOGGLE();
+		}
+		Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    }
+}
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_mode_short_handler(void)
+{
+	if(Is_time_setting_f == 1){
+
+	}
+	else{
+		      
+	    Is_time_setting_f = 0;
+	    disp_set_hours_time_f = 1;
+	    LED_AI_OFF();
+		
+		time_set_hours_counter =0;
+	}
+    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+
+}
+
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_mode_long_handler(void)
+{
+	key_long_f = 1;
+    if (discharge_f && !no_fan_load_f) {
+        Is_time_setting_f = 1;
+       
+        time_set_hours_counter =0;
+        Trigger_Simple_Beep(2) ; //Beep(BEEP_ONCE);
+    }
+
+}
+
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_up_short_handler(void)
+{
+	 Handle_Value_Adjustment(1);
+     Trigger_Simple_Beep(2); //Beep(BEEP_ONCE);  
+
+}
+
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_down_short_handler(void)
+{
+  Handle_Value_Adjustment(0);
+  Trigger_Simple_Beep(2); //Beep(BEEP_ONCE);
+
+}
+
+/**
+* @brief  : 
+* @note    
+* @param   None
+* @retval  None
+*/
+void key_down_long_handler(void)
+{
+	key_long_f = 1;
+
+	if(led_strip_open_f==1){
+		led_strip_open_f=0;
+		LED_TAPE_OFF();
+	}
+	else{
+		led_strip_open_f = 1;// 翻转灯带状态
+	 	LED_TAPE_ON();
+	}
+
+	Trigger_Simple_Beep(2) ;	//Beep(BEEP_ONCE);
+	
 
 
 }
+
 
 
 
