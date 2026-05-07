@@ -195,7 +195,7 @@ void tx_application_define(void *first_unused_memory)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 90;   // 300 * 10ms = 3000ms
+    const uint16_t LONG_PRESS_TIME = 200;   // 300 * 10ms = 3000ms
   
   
  
