@@ -205,7 +205,6 @@ void Clear_Ram(void)
     time_5ms_f = 0;
 	
 	  gpro_t.time_100ms_f = 0;
-	  gpro_t.time_100ms_fast_led_f =0;
 	  gpro_t.time_400ms_f =0;
 	  gpro_t.time_500ms_f =0;
 	  gpro_t.time_1s_f = 0;

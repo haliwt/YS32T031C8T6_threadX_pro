@@ -148,7 +148,7 @@ void TIM6_LPTIM_IRQHandler (void)
 
     volatile static uint8_t cnt10 =0,cnt100 =0,cnt1000,cnt1m=0,cnt20ms=0;
 
-	volatile static uint8_t c100ms;
+	volatile static uint8_t c100ms,c200ms;
 	
 	if(TIM_GetITStatus(TIM6,TIM_IT_Update) != RESET ) 
 	{
@@ -160,7 +160,7 @@ void TIM6_LPTIM_IRQHandler (void)
 		if(cnt10 > 1){//5ms*2 =10ms
 
 			cnt10 =0; 
-		
+		  
 		    time_wifi_10ms_f = 1;
 			gpro_t.time_50ms_f++;
 
@@ -170,8 +170,10 @@ void TIM6_LPTIM_IRQHandler (void)
 				gpro_t.time_100ms_f ++;
   
 				gpro_t.time_200ms_f++;
-				gpro_t.time_100ms_fast_led_f++;
-				wifi_fast_led_state();
+	            if(++c200ms ==2){
+					c200ms=0;
+				   wifi_fast_led_state();
+	            }
                 
 			
 

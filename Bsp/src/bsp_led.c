@@ -22,11 +22,8 @@ void all_led_off(void)
 void wifi_fast_led_state(void)
 {
 
-   if(discharge_f ==1 && key_net_config_f && gpro_t.time_100ms_fast_led_f> 1){
-	
-		
-			gpro_t.time_100ms_fast_led_f =0;
-	       LED_WIFI_TOGGLE();
+   if(discharge_f ==1 && key_net_config_f){
+	    LED_WIFI_TOGGLE();
 		
    }
 }

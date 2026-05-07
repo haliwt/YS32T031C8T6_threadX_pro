@@ -70,11 +70,6 @@ void Process_Long_Key(uint16_t key) {
 				    wifi_connected_success_f =0;
 					wifi_first_connectoed_cloud_f =0;
                     key_net_config_time = 0;
-                   
-                    if(gpro_t.time_100ms_fast_led_f> 1){
-					  gpro_t.time_100ms_fast_led_f =0;
-	       			  LED_WIFI_TOGGLE();
-					}
 					Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
                 }
             }
@@ -340,10 +335,6 @@ void key_power_long_handler(void)
 		wifi_first_connectoed_cloud_f =0;
         key_net_config_time = 0;
        
-        if(gpro_t.time_100ms_fast_led_f> 1){
-		  gpro_t.time_100ms_fast_led_f =0;
-			  LED_WIFI_TOGGLE();
-		}
 		Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
     }
 }
