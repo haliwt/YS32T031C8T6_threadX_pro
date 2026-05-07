@@ -900,7 +900,7 @@ void power_onoff_handler(void)
 	      display_digital_3_numbers();
 	      set_temp_compare();
 	 
-	      wifi_fast_led_state();
+	     // wifi_fast_led_state();
 	  
 	       
 	  break;
