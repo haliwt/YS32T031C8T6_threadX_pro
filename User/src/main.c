@@ -6,6 +6,12 @@
   * @version 1.0.0
   * @date    2023.3.20
   * @brief   Main program
+  *
+  * version: 02 .DATA.20260-05-08
+  *          add outside touch IC .
+  *
+  *
+  *
   ******************************************************************************
   * @attention
   ******************************************************************************
@@ -71,14 +77,14 @@ int main(void)
     IWDG_Configuration();          //独立看门狗配置
 
 	
-	  TSC_Lib_Init();                //触摸初始化
+	//  TSC_Lib_Init();                //触摸初始化
 	
         ADC_Configuration();           //ADC配置
 		
 		NVIC_Configuration();          //中断嵌套向量配置
 		
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
-		TSC_StartCmd(ENABLE);          //开始扫描
+		//TSC_StartCmd(ENABLE);          //开始扫描
 		bsp_init();
 		DHT11_Init();
 		beep_power_sound();
@@ -89,22 +95,7 @@ int main(void)
 		
     while(1)
     {
-        //IWDG->KR = 0xAAAA;
-        #if 0
-			
-			  if(TSC_GetFlagStatus(TSC_Flag_TimeSlot) == SET)
-				{
-				    TSC_ClearFlagStatus(TSC_Flag_TimeSlot);
-					  TSC_StartCmd(DISABLE); //停止扫描
-					  TSC_Handle();          //触摸处理
-					  TSC_StartCmd(ENABLE);  //开始扫描;  tk enable
-				}
-
-			  task_scheduler();
-
-			#endif     // 异步通信处理（USART1显示板、USART2 WiFi）
-              //USART1_xdpProcess_Received();
-              //USART2_wifiProcess_Received();
+       
 			  
     }
 }

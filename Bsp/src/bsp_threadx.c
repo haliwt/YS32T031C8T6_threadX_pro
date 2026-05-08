@@ -199,18 +199,8 @@ void tx_application_define(void *first_unused_memory)
  
    while(1){
    	
-
-	if(TSC_GetFlagStatus(TSC_Flag_TimeSlot) == SET){
-		TSC_ClearFlagStatus(TSC_Flag_TimeSlot);
-		TSC_StartCmd(DISABLE); //停止扫描
-		TSC_Handle();		   //触摸处理
-		TSC_StartCmd(ENABLE);  //开始扫描;	tk enable
-	}
-
-	//Key_Scan();
-
 	// 物理层扫描
-    if(KEY10_PIN){ //power key
+    if(KEY_POWER_VALUE() == KEY_DOWN){ //power key
 		  power_cnt++;
             if(power_cnt == LONG_PRESS_TIME && discharge_f == 1){
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
@@ -224,7 +214,7 @@ void tx_application_define(void *first_unused_memory)
 
 	}
 	
-    if (KEY9_PIN){// == 1 && discharge_f ==1){ //key mode
+    if (KEY_MODE_VALUE() == KEY_DOWN){// == 1 && discharge_f ==1){ //key mode
 
 	   if(discharge_f ==1){
 		 mode_cnt++;
@@ -243,7 +233,7 @@ void tx_application_define(void *first_unused_memory)
 	}
 
  
-    if (KEY8_PIN){ //up key
+    if (KEY_UP_VALUE() == KEY_DOWN){ //up key
 		//key_i = _UP_KEY_DOWN;
 	   if(discharge_f ==1){
 		up_cnt++;
@@ -259,7 +249,7 @@ void tx_application_define(void *first_unused_memory)
           up_cnt = 0;
 	}
 	
-    if (KEY7_PIN){ //dwon key
+    if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
 		if(discharge_f ==1){
 		  down_cnt++;
           if(down_cnt == LONG_PRESS_TIME)

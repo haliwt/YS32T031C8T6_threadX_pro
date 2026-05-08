@@ -11,7 +11,7 @@ static uint8_t DHT11_ReadPin(void);
 static void TIM17_Init_1MHz(void);
 static void Delay_US_dht11(uint16_t us);
 
-static uint8_t DHT11_ReadBit(void);
+
 static uint8_t DHT11_ReadByte(void);
 
 /*================= 对外接口实现 =================*/
@@ -212,54 +212,7 @@ static void Delay_US_dht11(uint16_t us)
 
 /*---------------- DHT11 bit/byte 读取 ----------------*/
 
-static uint8_t DHT11_ReadBit(void)
-{
-    #if 0
-	uint32_t timeout = 0;
 
-    /* 等待低电平结束 */
-    while (!DHT11_ReadPin())
-    {
-        if (++timeout > 200) return 0xFF;
-        Delay_US_dht11(1);
-    }
-
-    /* 等待 40us 判断 0/1 */
-    Delay_US_dht11(40);
-
-    return DHT11_ReadPin() ? 1 : 0;
-
-	#else
-
-	uint8_t i,dat=0;
-
-
-	   	
-    for(i=0;i<8;i++) 
-	  {
-		    while(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==0);
-        
-				
-									
-			  
-				Delay_US_dht11(40);
-			
-			  if(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==1)
-				{
-				    while(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==1);
-				 
-					
-				    dat|=(uint8_t)(0x01 << (7 - i)); // ����1
-				}
-				else
-				{
-				    dat&=(uint8_t)~(0x01 << (7 - i)); // ����0
-				}
-    	}
-	  return dat;
-
-	#endif 
-}
 
 static uint8_t DHT11_ReadByte(void)
 {

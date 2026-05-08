@@ -102,11 +102,11 @@ void GPIO_Configuration(void)
     GPIO_WriteBit(GPIOA, GPIO_Pin_12, Bit_SET);
     GPIO_WriteBit(GPIOA, GPIO_Pin_15, Bit_SET);
 	
-	  GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_SET);
+	GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_SET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_8, Bit_SET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_9, Bit_SET);
 	
-	  GPIO_WriteBit(GPIOF, GPIO_Pin_6, Bit_SET);
+	GPIO_WriteBit(GPIOF, GPIO_Pin_6, Bit_SET);
     GPIO_WriteBit(GPIOF, GPIO_Pin_7, Bit_SET);
 
     // GPIO_Output
@@ -207,9 +207,9 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
-	  GPIO_WriteBit(GPIOB, GPIO_Pin_0, Bit_RESET);
+	GPIO_WriteBit(GPIOB, GPIO_Pin_0, Bit_RESET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_2, Bit_RESET);
-	  GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_SET);
+	GPIO_WriteBit(GPIOB, GPIO_Pin_7, Bit_SET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_8, Bit_SET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_9, Bit_SET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_10, Bit_RESET);
@@ -219,6 +219,7 @@ void GPIO_Configuration(void)
     GPIO_WriteBit(GPIOB, GPIO_Pin_14, Bit_RESET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_15, Bit_RESET);
 
+    #if 0
     // TSC_IO7
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
@@ -242,6 +243,18 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	#else 
+    //GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5|GPIO_Pin_6; 
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
+
+    #endif 
+
 
     // TIM14_CH1
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource1, GPIO_AF_0);
