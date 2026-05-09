@@ -54,7 +54,9 @@
 
 #define Enable_EventRecorder  0
 
-#define DEBUG_ENABLE    1
+#define DEBUG_ENABLE    0
+
+#define DEBUG_ENABLE    0
 
 
 

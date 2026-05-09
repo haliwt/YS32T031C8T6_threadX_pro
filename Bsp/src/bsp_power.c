@@ -350,6 +350,7 @@ static void power_on_handler(void)
 
    case 0:
    	  gon_t.off_step = 0;
+     #if 0
       if(wifi_app_timer_power_on_f==0){
 
 	     LED_AI_ON();
@@ -374,6 +375,7 @@ static void power_on_handler(void)
 
 
 	  }
+	  #endif 
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
       gon_t.on_step =1;

@@ -248,6 +248,7 @@ void System_Status_PowerOn(void)
     // 6. 执行开机提示音
    
     Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    power_on_led_open_handler();
 	LED_FUN_ON();
 
 }

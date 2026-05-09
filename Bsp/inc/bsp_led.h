@@ -9,6 +9,8 @@ void wifi_fast_led_state(void);
 
 
 void wifi_normal_led_state(void);
+void power_on_led_open_handler(void);
+
 
 #endif 
 
