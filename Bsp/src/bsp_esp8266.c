@@ -211,7 +211,7 @@ static void auto_connect_wifi_handler(void)
 void wifi_default_handler(void)
 {
    static uint8_t sw_flag=0;
-	static uint8_t counter_1=0,counter=0,send_times=0,beijing_counter=0;
+	static uint8_t counter_1=0,counter=0,send_times=0;
 
 	if(key_net_config_f == 1 || discharge_f == 0 || wifi_connected_success_f==0) return ;
 		

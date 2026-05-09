@@ -59,7 +59,8 @@ static void vTaskKeyEvent(ULONG thread_input);
 #if DEBUG_ENABLE
 ULONG unused =0;
 
-static void debug_stack_check(void);
+static void debug_stack_ui_check(void);
+
 #endif 
 
 /*
@@ -340,7 +341,7 @@ void wifi_semaphore_xtask(void)
 }
 
 #if DEBUG_ENABLE
-static void debug_stack_check(void)
+static void debug_stack_ui_check(void)
 {
     ULONG i;
    // ULONG unused = 0;
