@@ -576,25 +576,28 @@ static void power_off_handler(void)
 		      }
              if(dc_on ==0){
 			 	dc_on++;
-			    gon_t.off_step = 2;
+				fan_one_f =0;
+			    FAN_RUN_OFF();
+			  }
 
-			 }
-			 else{
-				 if(time_1s_counter > 2){
-				 	time_1s_counter =0;
-				    dht11_read_temp_humidity_value();
-				    #if DEBUG_ENABLE
-                      printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
-				    #endif 
-				 }
+			gon_t.off_step = 2;
+			 
+        break;
 
-				 if(fan_one_f == 1  && fan_one_minute_cuonter>59){
+		case 2:
+
+		      if(setting_timing_second>= 1){//
+		        setting_timing_second =0;
+		        LED_POWER_TOGGLE();
+		      }
+			
+			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
 	                 FAN_RUN_OFF();
 
-					#if DEBUG_ENABLE
-                      printf("power_off_fan_stop !!!\n\r");
-					#endif 
+					//#if DEBUG_ENABLE
+                     // printf("power_off_fan_stop !!!\n\r");
+					//#endif 
 
 				 }
 
@@ -604,24 +607,45 @@ static void power_off_handler(void)
 		    	   tx_thread_sleep(20);//delay_ms(100);
 	    
 			      }
-			 }
+			 
+	       gon_t.off_step = 3;
             	
 		break;
 
-		 case 2 :
+		 case 3 :
 
-          if(setting_timing_second> 1){//
+		   if(time_1s_counter > 2){
+				 	time_1s_counter =0;
+				    dht11_read_temp_humidity_value();
+				    //#if DEBUG_ENABLE
+                     /// printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
+				    ///#endif 
+			}
+
+           if(setting_timing_second>= 1){//
 		       setting_timing_second =0;
 		        LED_POWER_TOGGLE();
 		    }
+		    gon_t.off_step = 4;
+
+		  break;
+
+		  case 4:
 
 		     if(time_1s_counter > 2){
 				 	time_1s_counter =0;
 				    dht11_read_temp_humidity_value();
-				    #if DEBUG_ENABLE
-                      printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
-				    #endif 
+				   // #if DEBUG_ENABLE
+                     /// printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
+				    //#endif 
 			}
+		    gon_t.off_step =5;
+
+		  break;
+
+		  case 5:
+
+		  
 
 			 if(wifi_connected_success_f ==1 &&  gpro_t.time_2m_f > 0){
       
@@ -889,7 +913,7 @@ void Heat_Process(void)
   *
 **/
 
-void power_onoff_handler(void)
+void power_on_off_handler(void)
 {
 
   static uint8_t dc_power_f = 0;
@@ -901,9 +925,6 @@ void power_onoff_handler(void)
 	      display_digital_3_numbers();
 	      set_temp_compare();
 	 
-	     // wifi_fast_led_state();
-	  
-	       
 	  break;
 
 	  case 0:
