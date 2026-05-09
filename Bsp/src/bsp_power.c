@@ -564,17 +564,20 @@ static void power_off_handler(void)
 			power_off_peripheral_handler();
 			all_led_off();
 	        TM1639_Display_ON_OFF(0);
+			
+			
 			gon_t.off_step = 1;
 	
 		 break;
 	
 		 case 1:
-
+             power_off_peripheral_handler();
 		    if(setting_timing_second> 1){//
 		       setting_timing_second =0;
 		        LED_POWER_TOGGLE();
 		      }
              if(dc_on ==0){
+			 	beep_power_sound();
 			 	dc_on++;
 				fan_one_f =0;
 			    FAN_RUN_OFF();
@@ -756,7 +759,7 @@ void beep_power_sound(void)
 {
   
 	BEEP_ON();
-	delay_ms_dht11(20);//tx_thread_sleep(2);//2*10ms //delay_ms_dht11(20);//DelayMS(20);
+	tx_thread_sleep(20);//delay_ms_dht11(20);//tx_thread_sleep(2);//2*10ms //delay_ms_dht11(20);//DelayMS(20);
     BEEP_OFF();
 
 }
@@ -916,7 +919,7 @@ void Heat_Process(void)
 void power_on_off_handler(void)
 {
 
-  static uint8_t dc_power_f = 0;
+  
 	 switch(discharge_f){
 
       case 1:
@@ -951,13 +954,7 @@ void power_on_off_handler(void)
 
    	}
 
-	if(dc_power_f ==0){
-	   dc_power_f++;
-
-	   beep_power_sound();
-
-	}
-    
+	
 }
 /**
   * @brief  

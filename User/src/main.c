@@ -78,16 +78,17 @@ int main(void)
 
 	
 	//  TSC_Lib_Init();                //触摸初始化
-	
+	   
         ADC_Configuration();           //ADC配置
 		
 		NVIC_Configuration();          //中断嵌套向量配置
 		
 		RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
+		
 		//TSC_StartCmd(ENABLE);          //开始扫描
 		bsp_init();
 		DHT11_Init();
-		beep_power_sound();
+		
 
 		
 		 tx_kernel_enter(); 
