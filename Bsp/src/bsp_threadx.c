@@ -27,7 +27,7 @@
 
 #define STACK_SIZE_KEY  512//256//512//1792//3072//2048//1024//896//768
 #define STACK_SIZE_DECODER  512//512//256
-#define STACK_SIZE_UI  1024//256
+#define STACK_SIZE_UI    1536//1024//256
 #define STACK_SIZE_EVENT  512
 
 
@@ -46,10 +46,16 @@ TX_EVENT_FLAGS_GROUP key_event;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
 
 
-static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
-static UCHAR stack_key_pro[STACK_SIZE_KEY];
-static UCHAR stack_ui_pro[STACK_SIZE_UI];
-static UCHAR stack_event_pro[STACK_SIZE_EVENT];
+///static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
+///static UCHAR stack_key_pro[STACK_SIZE_KEY];
+///static UCHAR stack_ui_pro[STACK_SIZE_UI];
+//static UCHAR stack_event_pro[STACK_SIZE_EVENT];
+
+__attribute__((aligned(8))) static UCHAR stack_ui_pro[STACK_SIZE_UI];
+__attribute__((aligned(8))) static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
+__attribute__((aligned(8))) static UCHAR stack_start_pro[STACK_SIZE_KEY];
+__attribute__((aligned(8))) static UCHAR stack_key_event[STACK_SIZE_EVENT];
+
 
 
 
