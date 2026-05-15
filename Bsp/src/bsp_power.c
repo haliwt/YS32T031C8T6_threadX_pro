@@ -431,10 +431,10 @@ void power_on_handler(void)
            compare_set_temp_value(); //set_temperature_value_handler(); 
         }
 
-	   if(time_20ms_f ==1){
-         time_20ms_f =0;
+	  // if(time_20ms_f ==1){
+         ///time_20ms_f =0;
 		 display_digital_3_numbers();
-	   }
+	   ///}
 	     
 
 		switch(time_slot){

@@ -144,7 +144,7 @@ void tx_application_define(void *first_unused_memory)
                        stack_ui_pro,                /* 堆栈基地址 */
                        STACK_SIZE_UI,            /* 堆栈空间大小 */  
                        3,                           /* 任务优先级*/
-                       3,                           /* 任务抢占阀值 */
+                       2,                           /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
 
@@ -227,7 +227,7 @@ void tx_application_define(void *first_unused_memory)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 200;   // 300 * 10ms = 3000ms
+    const uint16_t LONG_PRESS_TIME = 100;   // 300 * 10ms = 3000ms
   
   
  
@@ -240,15 +240,13 @@ void tx_application_define(void *first_unused_memory)
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
              }
     }
-	else{
-		 if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
+	else  if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME){
               tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
 
 	}
-	
-    if (KEY_MODE_VALUE() == KEY_DOWN){// == 1 && discharge_f ==1){ //key mode
+	else if(KEY_MODE_VALUE() == KEY_DOWN){// == 1 && discharge_f ==1){ //key mode
 
 	   if(discharge_f ==1){
 		 mode_cnt++;
@@ -258,51 +256,45 @@ void tx_application_define(void *first_unused_memory)
             }
 	   	}
     }
-	else{
-		if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME){
+	else if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME){
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
-		}
+		
         mode_cnt = 0;
 
 	}
-
- 
-    if (KEY_UP_VALUE() == KEY_DOWN){ //up key
+    else if (KEY_UP_VALUE() == KEY_DOWN){ //up key
 		//key_i = _UP_KEY_DOWN;
 	   if(discharge_f ==1){
 		up_cnt++;
-        // if(up_cnt == LONG_PRESS_TIME)
-              //  tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
+        if(up_cnt == LONG_PRESS_TIME)
+               tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
 	   	}
 
 	}
-	else{
-	    if(up_cnt > 1 )
+	else  if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME){
                tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
           up_cnt = 0;
 	}
-	
-    if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
+	else if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
 		if(discharge_f ==1){
 		  down_cnt++;
           if(down_cnt == LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
 		}
     }
-	else{
-	      if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME)
+	else  if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME){
 					tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 	
 				down_cnt = 0;
-
-	}
+		}
+	
   
 	
 #if DEBUG_ENABLE
 	 debug_stack_key_check();
 #endif 
-    tx_thread_sleep(1);//10*1=10 
+    tx_thread_sleep(2);//10*1=10 
 	
     } 
 }
@@ -358,7 +350,7 @@ void tx_application_define(void *first_unused_memory)
 			key_down_long_handler();
 		}   
 
-	   
+	   tx_thread_sleep(1);
 	 
 #if DEBUG_ENABLE
 		  debug_stack_key_event_check();
