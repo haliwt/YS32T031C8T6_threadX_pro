@@ -346,7 +346,7 @@ void AD_Filter(void)
  ************************************************************************/
 static void power_on_initial(void)
 {
-   static uint8_t counter_10s=0;
+
    
    switch(gon_t.on_step){
 
@@ -415,7 +415,7 @@ static void power_on_initial(void)
 void power_on_handler(void)
 {
 
-    static uint8_t time_slot = 0,fan_counter =0;
+    static uint8_t time_slot = 0,fan_counter =0,wifi_check_counter=0;
 
 	
 
@@ -456,7 +456,7 @@ void power_on_handler(void)
 		case 2:
 		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
 	  	   gpro_t.time_4s_f=0;
-		   wifi_default_handler();
+		   wifi_power_on_handler();
          }
 		
 		break;
@@ -513,9 +513,7 @@ void power_on_handler(void)
 
 
 		case 7:
-			
-        
-	        works_nomal_run_time_handler();
+			 works_nomal_run_time_handler();
 
 		break;
 
@@ -554,16 +552,16 @@ void power_on_handler(void)
 		break;
 
 		case 11:
-             wifi_normal_led_state();
+            wifi_led_state_handler();
+			wifi_check_counter++; //20ms * 100
+		    if(wifi_check_counter > 100){
+			  wifi_check_counter =0;
+              wifi_check_ifnot_link_net_handler();
+		    }
 
 		break;
 
 		case 12:
-            wifi_check_ifnot_link_net_handler();
-
-		break;
-
-		case 13:
           set_temp_compare();
 		break;
 
@@ -573,7 +571,7 @@ void power_on_handler(void)
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >13 ) time_slot = 0; 
+           if (time_slot >12 ) time_slot = 0;  //12*20 = 240ms 
 
         
 }
@@ -588,6 +586,12 @@ void power_on_handler(void)
 static void power_off_handler(void)
 {
    static uint8_t dc_on=0,fan_one_f=0;
+   static uint16_t counter_1=0,counter_2=0,counter_0 =0;
+   static uint32_t wait_timeout = 0;
+
+   if(tx_time_get() < wait_timeout){
+       return ;
+   }
 	switch(gon_t.off_step){
 	
 		 case 0:
@@ -609,10 +613,7 @@ static void power_off_handler(void)
 	
 		 case 1:
              power_off_peripheral_handler();
-		    if(setting_timing_second> 1){//
-		       setting_timing_second =0;
-		        LED_POWER_TOGGLE();
-		      }
+		  
              if(dc_on ==0){
 			 	beep_power_sound();
 			 	dc_on++;
@@ -626,10 +627,7 @@ static void power_off_handler(void)
 
 		case 2:
 
-		      if(setting_timing_second>= 1){//
-		        setting_timing_second =0;
-		        LED_POWER_TOGGLE();
-		      }
+		    counter_0++;
 			
 			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
@@ -641,10 +639,11 @@ static void power_off_handler(void)
 
 				 }
 
-				 if(wifi_connected_success_f ==1 &&  gpro_t.time_2m_f > 0){
+				 if(wifi_connected_success_f ==1 &&  counter_0 > 600){
      
-				   Subscriber_Data_FromCloud_Handler();
-		    	   tx_thread_sleep(20);//delay_ms(100);
+				   MqttData_Publish_SetOpen(0);  
+		
+		    	   wait_timeout = tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 	    
 			      }
 			 
@@ -654,6 +653,7 @@ static void power_off_handler(void)
 
 		 case 3 :
 
+		    
 		   if(time_1s_counter > 2){
 				 	time_1s_counter =0;
 				    dht11_read_temp_humidity_value();
@@ -662,10 +662,7 @@ static void power_off_handler(void)
 				    ///#endif 
 			}
 
-           if(setting_timing_second>= 1){//
-		       setting_timing_second =0;
-		        LED_POWER_TOGGLE();
-		    }
+      
 		    gon_t.off_step = 4;
 
 		  break;
@@ -685,16 +682,37 @@ static void power_off_handler(void)
 
 		  case 5:
 
-		  
+		    counter_1++; //10ms
 
-			 if(wifi_connected_success_f ==1 &&  gpro_t.time_2m_f > 0){
+			 if(wifi_connected_success_f ==1 &&  counter_1 > 800 ){//10ms*800 =8000ms =8s
       
-			        gpro_t.time_2m_f=0;
+			        counter_1=0;
 				   Subscriber_Data_FromCloud_Handler();
-		    	   tx_thread_sleep(20);//delay_ms(100);
+		    	   wait_timeout = tx_time_get() + 20 ;//tx_thread_sleep(20);//delay_ms(100);
 	    
 			     }
-		  gon_t.off_step = 2;
+		  gon_t.off_step = 6;
+		break;
+
+		case 6:
+			counter_2++; 
+
+		    if(wifi_connected_success_f ==1 &&  counter_2 > 700){
+				counter_2 =0;
+			    Publish_Data_fan_Warning(0); //fan warning .
+				wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
+		    }
+		    gon_t.off_step = 7;
+
+		break;
+
+		case 7:
+			if(setting_timing_second > 6 && wifi_connected_success_f ==1 ){
+				setting_timing_second =0;
+               MqttData_Publish_PowerOff_Ref(); 
+			   wait_timeout = tx_time_get()+ 20;   
+			}
+          gon_t.off_step = 2;
 		break;
 
    }
@@ -979,7 +997,7 @@ void power_on_off_handler(void)
 
 	  case 0:
 	  	   power_off_handler();
-		   wifi_power_off_handler();
+		  // wifi_power_off_handler();
 
 	  break;
       }

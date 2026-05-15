@@ -196,22 +196,26 @@ void Parse_Tencent_Data(void)
 		    {
 		        Ultra_Sound_open_f =1;
 				wifi_app_timer_power_on_f= 1;
+				wifi_connected_success_f =1;
 		    }
 			else if(strstr((const char *)wifi_t.rx_data_array, "\"sonic\":0")){
 
 			     Ultra_Sound_open_f= 0;
 				 wifi_app_timer_power_on_f= 1;
+			     wifi_connected_success_f =1;
 
 			}
 		    // 寻找 "Anion": 之后的值
 		    if(strstr((const char *)wifi_t.rx_data_array, "\"Anion\":1")){
                    plasma_open_f =1;
 				   wifi_app_timer_power_on_f= 1;
+			       wifi_connected_success_f =1;
 
 			}
 	        else if(strstr((const char *)wifi_t.rx_data_array, "\"Anion\":0")){
 		          plasma_open_f =0;
 				   wifi_app_timer_power_on_f= 1;
+			       wifi_connected_success_f =1;
 	        }
 
 		  #if 0
@@ -241,11 +245,13 @@ void Parse_Tencent_Data(void)
 				PTC_heat_open_f =0; 
 				ptc_prohibit_off_f = 1;
 		        wifi_app_timer_power_on_f= 1;
+				wifi_connected_success_f =1;
 			}
 			else if(strstr((const char *)wifi_t.rx_data_array, "\"ptc\":1")){
 				PTC_heat_open_f =1; 
 				ptc_prohibit_off_f = 0;
 			    wifi_app_timer_power_on_f= 1;
+				wifi_connected_success_f =1;
 
 			}
 			#endif 
@@ -478,7 +484,7 @@ static void evt_open_off(void)
         }
 
         MqttData_Publish_PowerOff_Ref();
-		tx_thread_sleep(10);
+		tx_thread_sleep(20);
        
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -833,19 +839,6 @@ void Wifi_Rx_InputInfo_Handler(void)
  
          
 }
-/*******************************************************************************
-    **
-    *Function Name:void Tencent_Cloud_Rx_Handler(void)
-    *Function: 
-    *Input Ref: +TCMQTTCONN:OK
-    *Return Ref:NO
-    *
-********************************************************************************/
-
-
-
-
-
 /**
  * @brief  UART2_SendByte
  * @param  Data: 数据
@@ -922,11 +915,11 @@ void wifi_check_ifnot_link_net_handler(void)
 		 wifi_app_timer_power_on_f = 0;
 		
     }
-    #if DEBUG_ENABLE
+//    #if DEBUG_ENABLE
 
-		printf("mqtt_status = %d\n\r",mqtt_status);
+//		printf("mqtt_status = %d\n\r",mqtt_status);
 
-	#endif 
+//	#endif 
 
     }
 

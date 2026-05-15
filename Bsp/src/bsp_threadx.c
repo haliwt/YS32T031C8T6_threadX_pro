@@ -207,7 +207,7 @@ void tx_application_define(void *first_unused_memory)
 #if DEBUG_ENABLE
 	 debug_stack_ui_check();
 #endif 
-	tx_thread_sleep(1);//10ms * 10 = 100ms  
+	tx_thread_sleep(1);//10ms * 2 = 20ms  
 	
     } 
 }

@@ -722,6 +722,7 @@ void link_wifi_net_handler(void)
 			  wait_timeout = tx_time_get() + 200;
 
 			  link_net_step  = 7;
+			  
 
                  time_link_net_counter  = 0;
 				  gpro_t.time_1m_wifi_f=0;
@@ -737,7 +738,7 @@ void link_wifi_net_handler(void)
 
              if(wifi_connected_success_f==1){
 			
-	
+	            wifi_run_step=0; //WT.EDIT 2026-05-15
                 
                if(disp_second_f ==1){
 			   	SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.

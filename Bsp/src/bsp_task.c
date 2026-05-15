@@ -156,7 +156,7 @@ void Task_400ms(void)
 void Task_500ms(void)
 {
   if(discharge_f ==1){
-		wifi_normal_led_state();
+		wifi_led_state_handler();
 		Fan_Ctrl_Process();	  // 风扇控制
 	
 	}
@@ -174,7 +174,7 @@ void Task_600ms(void)
     if(discharge_f ==1){
 	
          if(wifi_connected_success_f==1){
-		   wifi_default_handler();
+		   wifi_power_on_handler();
          }
 		 else{
 
