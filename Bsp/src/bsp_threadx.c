@@ -176,8 +176,8 @@ void tx_application_define(void *first_unused_memory)
 						"20msTimer",			   /* 名字 */
 						my_timer_callback,		   /* 回调函数 */
 						0,						   /* 回调参数 */
-						20, 					   /* initial_ticks：首次延迟 20 ticks */
-						20, 					   /* reschedule_ticks：周期 20 ticks */
+						2, 					   /* initial_ticks：首次延迟 20 ticks */
+						2, 					   /* reschedule_ticks：周期 20 ticks */
 						TX_AUTO_ACTIVATE);		   /* 自动启动 */
 	
 
@@ -287,7 +287,7 @@ void tx_application_define(void *first_unused_memory)
 		//key_i = _UP_KEY_DOWN;
 	   if(discharge_f ==1){
 		up_cnt++;
-        if(up_cnt == LONG_PRESS_TIME)
+        if(up_cnt >= LONG_PRESS_TIME)
                tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
 	   	}
 
@@ -300,12 +300,12 @@ void tx_application_define(void *first_unused_memory)
 	else if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
 		if(discharge_f ==1){
 		  down_cnt++;
-          if(down_cnt == LONG_PRESS_TIME)
+          if(down_cnt >= LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
 		}
     }
-	else  if(down_cnt > 1 && down_cnt < LONG_PRESS_TIME){
-					tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
+	else  if(down_cnt > 1 && (down_cnt < LONG_PRESS_TIME) && (KEY_DOWN_VALUE() == KEY_UP)){
+			tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 	
 				down_cnt = 0;
 		}

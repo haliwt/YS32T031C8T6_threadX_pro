@@ -494,7 +494,7 @@ static void evt_ptc_on(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         PTC_heat_open_f = 1;
         ptc_prohibit_off_f = 0;
 
@@ -519,7 +519,7 @@ static void evt_ptc_off(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         PTC_heat_open_f = 0;
         ptc_prohibit_off_f = 1;
 
@@ -544,7 +544,7 @@ static void evt_anion_on(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         plasma_open_f = 1;
 
         if (disp_second_f == 1){
@@ -563,7 +563,7 @@ static void evt_anion_off(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         plasma_open_f = 0;
 
         if (disp_second_f == 1){
@@ -583,7 +583,7 @@ static void evt_sonic_on(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         Ultra_Sound_open_f = 1;
 
         if (disp_second_f == 1){
@@ -602,7 +602,7 @@ static void evt_sonic_off(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         Ultra_Sound_open_f = 0;
 
         if (disp_second_f == 1){
@@ -622,7 +622,7 @@ static void evt_timer_mode(void)
 {
     if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         AI_timing_open_f = 0;
 
         LED_AI_OFF();
@@ -676,7 +676,7 @@ static void evt_temperature(void)
 	}
 	if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
 
         ptc_prohibit_off_f = 0;
         set_temperature_value_f = 1;
@@ -704,7 +704,7 @@ static void evt_fan(void)
 	}
 	if (discharge_f == 1)
     {
-        Trigger_Simple_Beep(2);
+        BEEP_ON();
         MqttData_Publis_SetFan(fan_speed_level);
 		wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(20);
 

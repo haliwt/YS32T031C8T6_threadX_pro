@@ -70,7 +70,7 @@ void Process_Long_Key(uint16_t key) {
 				    wifi_connected_success_f =0;
 					wifi_first_connectoed_cloud_f =0;
                     key_net_config_time = 0;
-					Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+					BEEP_ON() ;//Beep(BEEP_ONCE);
                 }
             }
             break;
@@ -82,7 +82,7 @@ void Process_Long_Key(uint16_t key) {
                     Is_time_setting_f = 1;
                    
                     time_set_hours_counter =0;
-                    Trigger_Simple_Beep(2) ; //Beep(BEEP_ONCE);
+                    BEEP_ON() ; //Beep(BEEP_ONCE);
                 }
             }
             break;
@@ -100,7 +100,7 @@ void Process_Long_Key(uint16_t key) {
                          LED_TAPE_ON();
                     }
                     
-                  Trigger_Simple_Beep(2) ;  //Beep(BEEP_ONCE);
+                  BEEP_ON() ;  //Beep(BEEP_ONCE);
                 }
             }
             break;
@@ -132,18 +132,18 @@ void Process_Short_Key(uint16_t key)
 				
 				time_set_hours_counter =0;
 			}
-             Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+             BEEP_ON() ;//Beep(BEEP_ONCE);
             break;
 
         case _UP_KEY_DOWN:
 		
             Handle_Value_Adjustment(1);
-            Trigger_Simple_Beep(2); //Beep(BEEP_ONCE);
+            BEEP_ON(); //Beep(BEEP_ONCE);
             break;
 
         case _DOWN_KEY_DOWN:
             Handle_Value_Adjustment(0);
-            Trigger_Simple_Beep(2);//Beep(BEEP_ONCE);
+            BEEP_ON();//Beep(BEEP_ONCE);
             break;
     }
 }
@@ -248,7 +248,7 @@ void System_Status_PowerOn(void)
     
     // 6. 执行开机提示音
    
-    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    BEEP_ON() ;//Beep(BEEP_ONCE);
     power_on_led_open_handler();
 	LED_FUN_ON();
 
@@ -303,7 +303,7 @@ void System_Status_PowerOff(void)
 
     
     // 5. 提示音
-    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    BEEP_ON() ;//Beep(BEEP_ONCE);
 	all_led_off();
     TM1639_Display_ON_OFF(0);
 }
@@ -337,7 +337,7 @@ void key_power_long_handler(void)
 		wifi_first_connectoed_cloud_f =0;
         key_net_config_time = 0;
        
-		Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+		BEEP_ON() ;//Beep(BEEP_ONCE);
     }
 }
 /**
@@ -359,7 +359,7 @@ void key_mode_short_handler(void)
 		
 		time_set_hours_counter =0;
 	}
-    Trigger_Simple_Beep(2) ;//Beep(BEEP_ONCE);
+    BEEP_ON() ;//Beep(BEEP_ONCE);
 
 }
 
@@ -376,7 +376,7 @@ void key_mode_long_handler(void)
         Is_time_setting_f = 1;
        
         time_set_hours_counter =0;
-        Trigger_Simple_Beep(2) ; //Beep(BEEP_ONCE);
+        BEEP_ON() ; //Beep(BEEP_ONCE);
     }
 
 }
@@ -390,7 +390,7 @@ void key_mode_long_handler(void)
 void key_up_short_handler(void)
 {
 	 Handle_Value_Adjustment(1);
-     Trigger_Simple_Beep(2); //Beep(BEEP_ONCE);  
+     BEEP_ON(); //Beep(BEEP_ONCE);  
 
 }
 
@@ -403,7 +403,7 @@ void key_up_short_handler(void)
 void key_down_short_handler(void)
 {
   Handle_Value_Adjustment(0);
-  Trigger_Simple_Beep(2); //Beep(BEEP_ONCE);
+  BEEP_ON(); //Beep(BEEP_ONCE);
 
 }
 
@@ -426,7 +426,7 @@ void key_down_long_handler(void)
 	 	LED_TAPE_ON();
 	}
 
-	Trigger_Simple_Beep(2) ;	//Beep(BEEP_ONCE);
+	BEEP_ON() ;	//Beep(BEEP_ONCE);
 	
 
 
