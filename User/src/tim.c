@@ -58,7 +58,7 @@ void TIM1_Configuration(void)
 
 
 
-// TIM3 初始化配置
+// TIM3 FAN IS SET 25KHZ FREQUENCY 
 void TIM3_Configuration(void)
 {
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -68,8 +68,8 @@ void TIM3_Configuration(void)
 
     // 溢出时间 = ((自动重装值319 + 1) * (分频系数 5 + 1)) / 48000000 = 40 μs, 频率= 25 kHz
     TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-    TIM_TimeBaseStructure.TIM_Prescaler = 5;
-    TIM_TimeBaseStructure.TIM_Period = 319;
+    TIM_TimeBaseStructure.TIM_Prescaler = 47;//5; SYSCLOCK IS 48MHZ .
+    TIM_TimeBaseStructure.TIM_Period = 39;//319; //F =1/(39+1)= 0.025MHZ 
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);

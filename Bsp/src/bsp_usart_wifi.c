@@ -385,11 +385,11 @@ void Parse_Tencent_Data(void)
     }
 
 	
-	 if((p=strstr((const char *)wifi_t.rx_data_array,"\"find\":"))!=NULL && discharge_f == 1){ //&& discharge_f == 1){
+	 if((p=strstr((const char *)wifi_t.rx_data_array,"\"find\":"))!=NULL && discharge_f == 1){ //fan){
 
 
 		   fan_speed_level =  atoi(p + 7);
-		  wifi_t.rx_data_array[0]='\0';
+		   wifi_t.rx_data_array[0]='\0';
 	        memset(wifi_t.rx_data_array, 0, wifi_t.rx_recoder_counter);
 		   wifi_t.wifi_rx_signal_f= FAN_ITEM;
 
@@ -707,6 +707,12 @@ static void evt_fan(void)
         Trigger_Simple_Beep(2);
         MqttData_Publis_SetFan(fan_speed_level);
 		wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(20);
+
+		#if 1
+
+		 printf("fan_speed_level = %d \r\n",fan_speed_level);
+
+		#endif 
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }

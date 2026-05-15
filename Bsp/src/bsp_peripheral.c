@@ -21,15 +21,15 @@ void Fan_Ctrl_Process(void)
 		if((fan_open_f)){
 			if(fan_speed_level < 34)
 			{
-			fan_on(287);
+			fan_on(32);
 			}
 			else if(fan_speed_level > 33 && fan_speed_level < 67)
 			{
-			fan_on(303);
+			fan_on(36);
 			}
 			else if(fan_speed_level==100 && fan_speed_level > 66)
 			{
-			fan_on(319);
+			fan_on(40);
 			}
 
 			__NOP();__NOP();__NOP();__NOP();__NOP();
