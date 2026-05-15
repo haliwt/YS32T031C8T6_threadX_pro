@@ -69,7 +69,7 @@ static void vTaskKeyEvent(ULONG thread_input);
 /* 定时器回调函数 */
 void my_timer_callback(ULONG input);
 	
-
+uint8_t down_cnt_long_f= 0;
 
 #if DEBUG_ENABLE
 
@@ -309,15 +309,18 @@ void tx_application_define(void *first_unused_memory)
 	if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
 		if(discharge_f ==1){
 		  down_cnt++;
-          if(down_cnt >= LONG_PRESS_TIME)
+          if(down_cnt >= LONG_PRESS_TIME && down_cnt_long_f ==0){
+		  	    down_cnt_long_f =1;
                 tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
+          	}
 		}
     }
 	else{
-		if(down_cnt > 1 && (down_cnt < LONG_PRESS_TIME) && (KEY_DOWN_VALUE() == KEY_UP))
+		if(down_cnt > 1 && (down_cnt < LONG_PRESS_TIME)){
 			tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
-	
-				down_cnt = 0;
+			}
+	        down_cnt_long_f =0;
+			down_cnt = 0;
 	}
 	
   
@@ -370,9 +373,14 @@ void tx_application_define(void *first_unused_memory)
 		}
 	    else if(flags & KEY_DOWN_SHORT){
              key_down_short_handler();
-		} 
-		else if(flags & KEY_DOWN_LONG){
-			key_down_long_handler();
+		}
+		
+		if(flags & KEY_DOWN_LONG){
+			if(down_cnt_long_f ==1){
+				down_cnt_long_f=2;
+			 key_down_long_handler();
+
+		   }
 		}   
 
 	  // tx_thread_sleep(1);
