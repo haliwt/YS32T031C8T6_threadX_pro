@@ -30,5 +30,7 @@ void power_on_peripheral_handler(void);
 void fan_full_fun(void);
 void fan_stop(void);
 
+void compare_set_temp_value(void);
+
 
 #endif 

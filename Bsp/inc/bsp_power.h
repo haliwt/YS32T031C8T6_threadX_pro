@@ -153,6 +153,11 @@ extern uint8_t disp_switch_temp_humi;
 extern uint8_t key_be_pressed_f;
 extern uint8_t disp_set_hours_time_f;
 extern uint8_t  key_input_temp_f;
+extern uint8_t  time_20ms_f;
+
+extern uint8_t heat_open_close_f;
+
+
 
 //wifi ref
 volatile extern  uint8_t  wifi_rx_numbers;

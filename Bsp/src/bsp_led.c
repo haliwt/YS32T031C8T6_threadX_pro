@@ -48,7 +48,7 @@ void power_on_led_open_handler(void)
 void wifi_fast_led_state(void)
 {
 
-   if(discharge_f ==1 && key_net_config_f){
+   if(discharge_f ==1 && key_net_config_f && wifi_connected_success_f == 0){
 	    LED_WIFI_TOGGLE();
 		
    }

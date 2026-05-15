@@ -58,6 +58,7 @@ uint8_t time_1s_counter;
 
 //display second board
 uint8_t disp_second_f;
+uint8_t heat_open_close_f;
 
 
 
@@ -142,6 +143,7 @@ uint8_t  mqtt_status;
 
 //fan
 uint8_t  fan_one_minute_cuonter;
+uint8_t  time_20ms_f;
 
 
 
@@ -191,7 +193,7 @@ volatile uint16_t timing_diff_value_min;
 volatile uint8_t static beep_sound_f =0;
 static void power_on_handler(void);
 static void power_off_handler(void);
-
+static void power_on_initial(void);
 
 
 /**
@@ -342,7 +344,7 @@ void AD_Filter(void)
  * 参数:无
  * 返回值:无
  ************************************************************************/
-static void power_on_handler(void)
+static void power_on_initial(void)
 {
    static uint8_t counter_10s=0;
    
@@ -350,6 +352,7 @@ static void power_on_handler(void)
 
    case 0:
    	  gon_t.off_step = 0;
+      wifi_off_step =0; //WT.EDT 2026.05.15
      #if 0
       if(wifi_app_timer_power_on_f==0){
 
@@ -399,118 +402,147 @@ static void power_on_handler(void)
 
    break;
 
+   	}
+}
+/************************************************************************
+*
+* Function Name: LED_Power_Breathing(void)
+* 功能:
+* 参数:无
+* 返回值:无
+*
+************************************************************************/
+void power_on_handler(void)
+{
 
+    static uint8_t time_slot = 0,fan_counter =0;
 
-   case 3:
-        if(gpro_t.time_3s_f > 2){
-		  gpro_t.time_3s_f =0;	
-		  Fan_Ctrl_Process();	  // 风扇控制
+	
 
+		power_on_initial();
+	 // ✨【新增：紧急事件拦截响应】✨
+        // 如果按键任务设置完温度，将 g_pro.g_immediate_heat_f 置为 1
+        if (heat_open_close_f == 1)
+        {
+           heat_open_close_f = 0; // 立即清除触发标志，防止重复执行
+            
+            // 强制、立刻执行一次加热控制函数
+            // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
+           compare_set_temp_value(); //set_temperature_value_handler(); 
         }
-        gon_t.on_step =4;
-     
-   break;
 
-   case 4:
+	   if(time_20ms_f ==1){
+         time_20ms_f =0;
+		 display_digital_3_numbers();
+	   }
+	     
 
-      if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
+		switch(time_slot){
+
+		case 0://1* 20ms
+		
+
+		break;
+
+		case 1://2*20m = 40
+		  if(gpro_t.time_3s_f > 2){
+		    gpro_t.time_3s_f =0;	
+		    Fan_Ctrl_Process();	  // 风扇控制
+
+           }
+
+		break;
+		
+		case 2:
+		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_default_handler();
          }
-        gon_t.on_step =5;
-	
-   break;
-
-   case 5:
-   	if(key_net_config_f)
-	{
 		
-		if(key_net_config_time>=130)
-		{
-			key_net_config_time = 0;
+		break;
 
-			key_net_config_f = 0;
+		
+		case 3:
+		if(key_net_config_f)
+		 {
 			
-		}
-		else{ //conneting to wifi net 
-	        
-			link_wifi_net_handler();
-		}
-	} 
-      gon_t.on_step =6;
-	
-   break;
+			if(key_net_config_time>=130)
+			{
+				key_net_config_time = 0;
 
+				key_net_config_f = 0;
+				
+			}
+			else{ //conneting to wifi net 
+		        
+				link_wifi_net_handler();
+			}
+		 } 
+				
+		break;
 
-   case 6:
-   	   if(gpro_t.time_5s_f > 1){
+		
+		case 4:
+		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
 	      peripheral_fun_handler();
 
-   	   }
-       gon_t.on_step =7;
-	
-
-   break;
-
-   case 7:
-   	if(gpro_t.time_6s_f > 3){
-		gpro_t.time_6s_f =0;
-      	dht11_read_temp_humidity_value();
-   	}
-   gon_t.on_step =8;
+   	      }
+				
+		break;
 
 
-   break;
+		case 5:
 
-   case 8:
-	   if(Is_countdown_timer_f ==1){
+		 if(gpro_t.time_6s_f > 3){
+		   gpro_t.time_6s_f =0;
+      	   dht11_read_temp_humidity_value();
+   	      }
+
+		break;
+
+
+		case 6:
+
+		   if(Is_countdown_timer_f ==1){
              Countdown_timer_Handler();
 	   	}
-      gon_t.on_step =9;
-	   
 
-   break;
+		break;
 
 
-   case 9:
-
-        wifi_check_id_handler();
+		case 7:
+			
         
-	    works_nomal_run_time_handler();
-		
-	    gon_t.on_step =10;
+	        works_nomal_run_time_handler();
+
+		break;
 
 
-   break;
+		case 8:
+	       if(gpro_t.time_7s_f > 6){
 
-   case 10:
-    if(gpro_t.time_7s_f > 6){
+		    gpro_t.time_7s_f =0 ;
+		    fan_counter ++ ;
+		    AD_Filter();
+		   Adc_Channel_Sample();
+	       }
 
-	   gpro_t.time_7s_f =0 ;
-	   counter_10s++;
-	   
-       AD_Filter();
-	   Adc_Channel_Sample();
-    }
-	gon_t.on_step =11;
+		break;
 
-	break; 
 
-	case 11:
-
-	   if(counter_10s > 1){
-	   	   counter_10s =0;
-	       Fan_Current_Det();		// 电流检测
-		}
+		case 9:
+		  if(fan_counter > 3) {
+	   	     fan_counter =0;
+	         Fan_Current_Det();		// 电流检测
+		   }
     
-      gon_t.on_step =12;
 
-   break;
+		break;
 
-   case 12:
-     if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
+		case 10:
+			 if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
 		   #if DEBUG_ENABLE
 		     printf("reconnection wifi ! \n\r");
@@ -518,27 +550,32 @@ static void power_on_handler(void)
 		   Reconnection_Wifi_Order();
 
 	 }
-     gon_t.on_step =13;
 
-	
-   break;
+		break;
 
-   case 13:
-       wifi_normal_led_state();
-       gon_t.on_step =3;
+		case 11:
+             wifi_normal_led_state();
 
-   break;
+		break;
+
+		case 12:
+            wifi_check_ifnot_link_net_handler();
+
+		break;
+
+		case 13:
+          set_temp_compare();
+		break;
 
 
-   
+		
+       }
 
-   default :
+	 // ==================== 4. 时间片轮转维护 ====================
+           time_slot++;
+           if (time_slot >13 ) time_slot = 0; 
 
-   break;
-
-    }
- 
-  
+        
 }
 /************************************************************************
  *
@@ -721,7 +758,8 @@ void Countdown_timer_Handler(void)
 **/
 void works_nomal_run_time_handler(void)
 {
- 
+     static uint8_t interval_10m_f = 0;
+	 
 		#if DEBUG_ENABLE 
 			if(gpro_t.time_1m_f >11 && works_interval_f==0){
 		#else 
@@ -733,6 +771,7 @@ void works_nomal_run_time_handler(void)
 		    gpro_t.time_base_1s_counter=0;
 			works_interval_f=1;
 			fan_one_minute_cuonter =0;
+			
 		#if DEBUG_ENABLE 
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
@@ -741,9 +780,20 @@ void works_nomal_run_time_handler(void)
 				gpro_t.time_1m_f = 0;  
 				works_interval_f =0;
 		        gpro_t.time_base_1s_counter=0;
+				interval_10m_f = 1;
 		#if DEBUG_ENABLE 
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
+		}
+
+
+		if(interval_10m_f == 1){
+             interval_10m_f ++;
+		  if(ptc_prohibit_off_f == 0 &&  PTC_heat_open_f == 1){
+			 // 立即open
+		       LED_PTC_ON();
+		      RELAY_ON();
+		  	}
 		}
 		
  }
@@ -924,9 +974,6 @@ void power_on_off_handler(void)
 
       case 1:
            power_on_handler();
-	 
-	      display_digital_3_numbers();
-	      set_temp_compare();
 	 
 	  break;
 

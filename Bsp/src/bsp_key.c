@@ -192,6 +192,7 @@ void Handle_Value_Adjustment(uint8_t is_up)
 	    time_set_hours_counter =0;
 		key_be_pressed_f =0;
 		key_input_temp_f= 1;
+		heat_open_close_f= 1;//WT.EDIT 2026.05-15
       
     }
 }

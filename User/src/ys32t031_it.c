@@ -140,7 +140,7 @@ void SysTick_Handler(void)
 
 /**
   * @brief  This function handles TIM6_LPTIM_IRQHandler.
-  * @param  None
+  * @param  timer 5ms 
   * @retval None
   */
 void TIM6_LPTIM_IRQHandler (void)
@@ -160,7 +160,9 @@ void TIM6_LPTIM_IRQHandler (void)
 		if(cnt10 > 1){//5ms*2 =10ms
 
 			cnt10 =0; 
-		  
+		    if(++cnt20ms){
+				time_20ms_f = 1;
+		    }
 		    time_wifi_10ms_f = 1;
 			gpro_t.time_50ms_f++;
 
