@@ -21,7 +21,7 @@ void Reconnection_Wifi_Order(void);
 
 
 void Parse_Tencent_Data(void) ;
-void wifi_check_id_handler(void);
+void wifi_check_ifnot_link_net_handler(void);
 
 
 #endif 

@@ -210,8 +210,15 @@ static void auto_connect_wifi_handler(void)
 ************************************************************************/
 void wifi_default_handler(void)
 {
-   static uint8_t sw_flag=0;
+    static uint8_t sw_flag=0;
 	static uint8_t counter_1=0,counter=0,send_times=0;
+	static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
+    
+    
+    // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
+    if (tx_time_get() < wait_timeout) {
+        return; 
+    }
 
 	if(key_net_config_f == 1 || discharge_f == 0 || wifi_connected_success_f==0) return ;
 		
@@ -222,14 +229,14 @@ void wifi_default_handler(void)
     
 		     if(discharge_f){
 		         MqttData_Publish_SetOpen(1);  
-				 tx_thread_sleep(20);
+				 wait_timeout=tx_time_get()+20;// tx_thread_sleep(20);
 				 //delay_ms(100);
 		     }
 			 else{
 			    MqttData_Publish_SetOpen(0);  
-				tx_thread_sleep(20);//delay_ms(100);
+				wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 			 	Publish_Data_fan_Warning(0); //fan warning .
-			    tx_thread_sleep(20);///delay_ms(200);
+			    wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
 			    //delay_ms(100);
 			
 
@@ -239,7 +246,7 @@ void wifi_default_handler(void)
 		 }
 		 else if(wifi_app_timer_power_on_f ==1 && discharge_f == 1){
 		     	smartphone_timer_power_on_handler();
-				tx_thread_sleep(20);//Publish_Data_fan_Warning(2);//fan warning 
+				 wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//Publish_Data_fan_Warning(2);//fan warning 
 			   //delay_ms(100);
 			 	
 		 }
@@ -557,13 +564,19 @@ static void smartphone_timer_power_on_handler(void)
 {
 
 	//Parse_Json_Statement();
+	static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
+    
+    // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
+    if (tx_time_get() < wait_timeout) {
+        return; 
+    }
 
 	if(plasma_open_f==1){ //Anion
 
 
 	if(disp_second_f == 1){
 		SendWifiData_To_Cmd(0x03,0x01);
-	   tx_thread_sleep(10);//delay_ms(100);
+	    wait_timeout = tx_time_get() + 10; //tx_thread_sleep(10);//delay_ms(100);
 		}
 
 	}
@@ -571,7 +584,7 @@ static void smartphone_timer_power_on_handler(void)
 	plasma_open_f =0;
 	if(disp_second_f == 1){
 		SendWifiData_To_Cmd(0x03,0x0);
-	    tx_thread_sleep(10);//delay_ms(100);
+	    wait_timeout = tx_time_get() + 10;//tx_thread_sleep(10);//delay_ms(100);
 		}
 	}
 
@@ -580,14 +593,14 @@ static void smartphone_timer_power_on_handler(void)
 
 	if(disp_second_f == 1){
 		SendWifiData_To_Cmd(0x04,0x01);
-	    tx_thread_sleep(10);//delay_ms(100);
+	    wait_timeout = tx_time_get() + 10;//tx_thread_sleep(10);//delay_ms(100);
 		}
 	}
 	else {
 	Ultra_Sound_open_f=0;
 	if(disp_second_f == 1){
 		SendWifiData_To_Cmd(0x04,0x0);
-	     tx_thread_sleep(10);//delay_ms(100);
+	    wait_timeout = tx_time_get() + 10; //tx_thread_sleep(10);//delay_ms(100);
 		}
 	}
 
@@ -604,14 +617,17 @@ static void smartphone_timer_power_on_handler(void)
 		ptc_prohibit_off_f =1;
 		LED_PTC_OFF();
 		RELAY_OFF();
-		if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x0);
-		//delay_ms(100);
+		if(disp_second_f == 1){
+			SendWifiData_To_Cmd(0x02,0x0);
+
+		    wait_timeout = tx_time_get() + 10;
+		}
 
 	}
 
 
 	MqttData_Publish_Update_Data();
-	tx_thread_sleep(20);//delay_ms(200);
+	wait_timeout = tx_time_get() + 20;//tx_thread_sleep(20);//delay_ms(200);
 
 }
 			

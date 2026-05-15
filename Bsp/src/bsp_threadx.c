@@ -53,7 +53,7 @@ TX_EVENT_FLAGS_GROUP key_event;
 
 __attribute__((aligned(8))) static UCHAR stack_ui_pro[STACK_SIZE_UI];
 __attribute__((aligned(8))) static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
-__attribute__((aligned(8))) static UCHAR stack_start_pro[STACK_SIZE_KEY];
+__attribute__((aligned(8))) static UCHAR stack_key_pro[STACK_SIZE_KEY];
 __attribute__((aligned(8))) static UCHAR stack_key_event[STACK_SIZE_EVENT];
 
 
@@ -98,7 +98,7 @@ void tx_application_define(void *first_unused_memory)
     memset(stack_ui_pro, 0xEF, sizeof(stack_ui_pro));
     memset(stack_key_pro, 0xEF, sizeof(stack_key_pro));
 	memset(stack_decoder_pro, 0xEF, sizeof(stack_decoder_pro));
-	memset(stack_event_pro, 0xEF, sizeof(stack_event_pro));
+	memset(stack_key_event, 0xEF, sizeof(stack_key_event));
     #endif 
 
     /* 3. 注册堆栈错误回调（推荐保持） */
@@ -153,7 +153,7 @@ void tx_application_define(void *first_unused_memory)
                        "EventPro",                     /* 任务名 */
                        vTaskKeyEvent,                  /* 启动任务函数地址 */
                        0,                           /* 传递给任务的参数 */
-                       stack_event_pro,                /* 堆栈基地址 */
+                       stack_key_event,                /* 堆栈基地址 */
                        STACK_SIZE_EVENT,            /* 堆栈空间大小 */  
                        2,                           /* 任务优先级*/
                        2,                           /* 任务抢占阀值 */
@@ -183,10 +183,7 @@ void tx_application_define(void *first_unused_memory)
           decoder_handler() ;
 		    
        }
-	 
-	   
-
-	}
+	 }
       
  }
  /**
@@ -336,22 +333,28 @@ void tx_application_define(void *first_unused_memory)
 
              key_power_short_handler();
 		} 
-	    else if(flags & KEY_POWER_LONG){
+		
+	    if(flags & KEY_POWER_LONG){
              key_power_long_handler();
-		}  
-        else if(flags & KEY_MODE_SHORT){
+		} 
+		
+        if(flags & KEY_MODE_SHORT){
              key_mode_short_handler();
 		} 
-	    else if(flags & KEY_MODE_LONG){
+		
+	    if(flags & KEY_MODE_LONG){
              key_mode_long_handler();
-		}  
-        else if(flags & KEY_UP_SHORT){
+		} 
+		
+        if(flags & KEY_UP_SHORT){
 			 key_up_short_handler();
-		}    
-	    else if(flags & KEY_DOWN_SHORT){
+		}
+		
+	    if(flags & KEY_DOWN_SHORT){
              key_down_short_handler();
 		} 
-	    else if(flags & KEY_DOWN_LONG){
+		
+	    if(flags & KEY_DOWN_LONG){
 			key_down_long_handler();
 		}   
 

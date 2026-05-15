@@ -597,18 +597,24 @@ void MqttData_Publis_SetTime(uint8_t time)
 void link_wifi_net_handler(void)
 {
     static uint32_t uid;
-//	uint8_t wifi_step_f=0;
+    static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
 	message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
+
+	// 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
+    if (tx_time_get() < wait_timeout) {
+        return; 
+    }
+
+	
     switch(link_net_step){
 
-
-
-	        case 0:
+			case 0:
 
               send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
               //delay_ms(200);//delay_ms(1000);
-               tx_thread_sleep(300);//10ms * 100 = 1000s 
+               //tx_thread_sleep(300);//10ms * 100 = 1000s 
+               wait_timeout = tx_time_get() + 300;
   				gpro_t.time_1m_wifi_f=0;
 			  	link_net_step  = 1;
 			  
@@ -618,8 +624,8 @@ void link_wifi_net_handler(void)
                // WIFI_IC_ENABLE();
               
                 send_usart2_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-                //delay_ms(100);
-                tx_thread_sleep(200);
+               
+                wait_timeout = tx_time_get() + 200;//tx_thread_sleep(200);
                 uid =Get_Unique_ID_32bit();
 			  
                  link_net_step  = 2;
@@ -639,9 +645,10 @@ void link_wifi_net_handler(void)
             			
                        message_len = sprintf((char *)message, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,uid);
             		   send_usart2_data((const uint8_t *)message,message_len);
-            	  	   //delay_ms(1000);
+            	  	
                       
-                        tx_thread_sleep(300);//10ms * 100 
+                        //tx_thread_sleep(300);//10ms * 100 
+                        wait_timeout = tx_time_get() + 300;//10ms * 300 =3s
                         gpro_t.time_1m_wifi_f=0;
 						link_net_step  = 3;
 
@@ -657,8 +664,9 @@ void link_wifi_net_handler(void)
                   
                 send_usart2_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
-			   // delay_ms(1000);
-			     tx_thread_sleep(100);//10ms * 100 
+			     //tx_thread_sleep(100);//10ms * 100 
+
+				 wait_timeout = tx_time_get() + 100;
 
 				 link_net_step  = 4;
 				  gpro_t.time_1m_wifi_f=0;
@@ -690,7 +698,8 @@ void link_wifi_net_handler(void)
             //  uid =Get_Unique_ID_32bit();
 	          message_len =  sprintf((char *)message, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",uid);
               send_usart2_data((const uint8_t *)message,message_len);
-	            tx_thread_sleep(300);//10ms * 100 
+	            //tx_thread_sleep(300);//10ms * 100 
+	            wait_timeout = tx_time_get() + 300;
 				link_net_step  = 6;
 			     gpro_t.time_1m_wifi_f=0;
              
@@ -706,10 +715,11 @@ void link_wifi_net_handler(void)
             if(wifi_cofig_success_f==1){
 
               wifi_connected_success_f=0;
- //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//�?始连�?
+
              send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-			 //delay_ms(1000);
-			   tx_thread_sleep(200);//10ms * 100 
+	
+			  // tx_thread_sleep(200);//10ms * 100 
+			  wait_timeout = tx_time_get() + 200;
 
 			  link_net_step  = 7;
 
@@ -729,21 +739,25 @@ void link_wifi_net_handler(void)
 			
 	
                 
-               if(disp_second_f ==1)SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-               //delay_ms(100);
-			
+               if(disp_second_f ==1){
+			   	SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+                wait_timeout = tx_time_get() + 10;//tx_thread_sleep(10);
+               	}
 			    link_net_step= 8;
 			     gpro_t.time_1m_wifi_f=0;
                
 				
-		     }
-		     else{
+		        }
+		         else{
                 
                   key_net_config_f =0;
                   link_net_step = 11;
-                  if(disp_second_f == 1)SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
-                 // delay_ms(100);
-                  gpro_t.time_1m_wifi_f=0;
+                  if(disp_second_f == 1){
+				  	SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
+                    wait_timeout = tx_time_get() + 10;
+				  }
+                      gpro_t.time_1m_wifi_f=0;
+                  	
                   
                 }
                 
@@ -757,8 +771,8 @@ void link_wifi_net_handler(void)
              
 			 
 				MqttData_Publish_SetOpen(0x01);
-		      
-		        tx_thread_sleep(10);//10ms*10 =100ms
+		        wait_timeout = tx_time_get() + 20;
+		        //tx_thread_sleep(10);//10ms*10 =100ms
 		        
 				
 			  link_net_step = 9; // this is flag: link wifi times 119s is over.
@@ -777,8 +791,8 @@ void link_wifi_net_handler(void)
 
 			Subscriber_Data_FromCloud_Handler();
 		
-	           tx_thread_sleep(10);//  delay_ms(200);
-        
+	           //tx_thread_sleep(10);//  delay_ms(200);
+             wait_timeout = tx_time_get() + 20;
 			 link_net_step = 0xfe;
 			  gpro_t.time_1m_wifi_f=0;
 
