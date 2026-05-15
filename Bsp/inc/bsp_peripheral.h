@@ -32,5 +32,10 @@ void fan_stop(void);
 
 void compare_set_temp_value(void);
 
+void BEEP_OFF(void);
+
+void BEEP_ON(void);
+
+
 
 #endif 

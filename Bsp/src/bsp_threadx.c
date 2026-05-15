@@ -40,6 +40,9 @@ TX_SEMAPHORE wifi_semaphore;
 
 TX_EVENT_FLAGS_GROUP key_event;
 
+TX_TIMER beep_timer;
+	
+	
 
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
@@ -63,6 +66,9 @@ static void vTaskDecoderPro(ULONG thread_input);
 static void vTaskKeyPro(ULONG thread_input);
 static void vTaskUiPro(ULONG thread_input);
 static void vTaskKeyEvent(ULONG thread_input);
+/* 定时器回调函数 */
+void my_timer_callback(ULONG input);
+	
 
 
 #if DEBUG_ENABLE
@@ -159,6 +165,21 @@ void tx_application_define(void *first_unused_memory)
                        2,                           /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
+
+	
+
+	
+	
+	
+		/* 创建一个 20ms 周期的软件定时器 */
+		tx_timer_create(&beep_timer,				   /* 定时器控制块 */
+						"20msTimer",			   /* 名字 */
+						my_timer_callback,		   /* 回调函数 */
+						0,						   /* 回调参数 */
+						20, 					   /* initial_ticks：首次延迟 20 ticks */
+						20, 					   /* reschedule_ticks：周期 20 ticks */
+						TX_AUTO_ACTIVATE);		   /* 自动启动 */
+	
 
 	
 			   
@@ -361,6 +382,17 @@ void tx_application_define(void *first_unused_memory)
 
 	}
       
+ }
+
+ void my_timer_callback(ULONG input)
+ {
+    (void) input;
+	BEEP_OFF();
+
+ }
+ void open_beep_sound(void)
+ {
+   tx_timer_activate(&beep_timer);
  }
 /********************************************************************************
 	**

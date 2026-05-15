@@ -24,8 +24,8 @@ extern void TIM1_Configuration(void);
 extern void TIM3_Configuration(void);
 extern void TIM6_Configuration(void);
 extern void TIM14_Configuration(void);
-extern void BEEP_ON(void);
-extern void BEEP_OFF(void);
+//extern void BEEP_ON(void);
+
 extern void fan_on(uint16_t fan_duty);
 extern void fan_off(void);
 extern void ultra_sound_on(uint16_t us_duty);

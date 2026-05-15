@@ -18,8 +18,8 @@ void TIM1_Configuration(void);
 void TIM3_Configuration(void);
 void TIM6_Configuration(void);
 void TIM14_Configuration(void);
-void BEEP_ON(void);
-void BEEP_OFF(void);
+//void BEEP_ON(void);
+//void BEEP_OFF(void);
 void fan_on(uint16_t fan_duty);
 void fan_off(void);
 void ultra_sound_on(uint16_t us_duty);
@@ -139,26 +139,26 @@ void TIM14_Configuration(void)
 
 
 //·äÃùÆ÷¿ª
-void BEEP_ON(void)
-{
-    TIM_SetCompare1(TIM14,374);
-    TIM_Cmd(TIM14, ENABLE);
-    TIM_CtrlPWMOutputs(TIM14, ENABLE);
-	tx_thread_sleep(2);//2*10ms =20ms
-	//TIM_SetCompare1(TIM14,0);
+//void BEEP_ON(void)
+//{
+//    TIM_SetCompare1(TIM14,374);
+//    TIM_Cmd(TIM14, ENABLE);
+//    TIM_CtrlPWMOutputs(TIM14, ENABLE);
+//	tx_thread_sleep(2);//2*10ms =20ms
+//	//TIM_SetCompare1(TIM14,0);
 	
-	TIM_Cmd(TIM14, DISABLE);
-}
+//	TIM_Cmd(TIM14, DISABLE);
+//}
 
 
-//·äÃùÆ÷¹Ø
-void BEEP_OFF(void)
-{
-    TIM_SetCompare1(TIM14,0);
+////·äÃùÆ÷¹Ø
+//void BEEP_OFF(void)
+//{
+//    TIM_SetCompare1(TIM14,0);
 	
-	TIM_Cmd(TIM14, DISABLE);
-    //TIM_CtrlPWMOutputs(TIM14, ENABLE);
-}
+//	TIM_Cmd(TIM14, DISABLE);
+//    //TIM_CtrlPWMOutputs(TIM14, ENABLE);
+//}
 
 
 

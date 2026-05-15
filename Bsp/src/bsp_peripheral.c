@@ -269,8 +269,54 @@ void Ultra_Sound_Ctrl(void)
 		}
    
 }
+/**
+*
+*@brief 
+*@notice
+*@param
+*
+**/
+#if 0
+void BEEP_ON(void)
+{
+  static uint32_t next_time = 0;
+
+	TIM_SetCompare1(TIM14,374);
+    TIM_Cmd(TIM14, ENABLE);
+    TIM_CtrlPWMOutputs(TIM14, ENABLE);
+    if(tx_time_get() >= next_time){
+       
+
+	}
+	
+	
+	TIM_SetCompare1(TIM14,0);
+	
+	TIM_Cmd(TIM14, DISABLE);
+}
+#else 
+void BEEP_ON(void)
+{
+    
+            TIM_SetCompare1(TIM14, 374);
+            TIM_Cmd(TIM14, ENABLE);
+            TIM_CtrlPWMOutputs(TIM14, ENABLE);
+			open_beep_sound();
+          
+   }
 
 
+
+#endif 
+
+//·äÃùÆ÷¹Ø
+void BEEP_OFF(void)
+{
+    TIM_SetCompare1(TIM14,0);
+	
+	TIM_Cmd(TIM14, DISABLE);
+    //TIM_CtrlPWMOutputs(TIM14, ENABLE);
+}
 
 /**
 *
