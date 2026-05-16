@@ -460,8 +460,11 @@ void set_temp_compare(void)
 		if(works_interval_f == 0)RELAY_ON();
 		 
 	
-		if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x01);
+		if(disp_second_f == 1){
+			SendWifiData_To_Cmd(0x02,0x01);
+			wait_timeout = tx_time_get() + 10;//waiting 200ms 
 		//delay_ms(20);//HAL_Delay(5);
+			}
 		if(wifi_connected_success_f == 1){
 			MqttData_Publish_SetPtc(1);
 		   wait_timeout = tx_time_get() + 20;//waiting 200ms 
@@ -550,7 +553,7 @@ void Fan_Current_Det(void)
 	{
 		if(fan_current<_NO_FAN_LOAD_CURRENT){
 			fan_current_det_time++;
-			if(fan_current_det_time>=300){
+			if(fan_current_det_time>=2){
 				fan_current_det_time = 0;
 
 				if(!no_fan_load_f)

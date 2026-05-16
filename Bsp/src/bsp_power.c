@@ -780,7 +780,7 @@ void works_nomal_run_time_handler(void)
 {
      static uint8_t interval_10m_f = 0;
 	 
-		#if DEBUG_ENABLE 
+		#if  1 //DEBUG_ENABLE 
 			if(gpro_t.time_1m_f >11 && works_interval_f==0){
 		#else 
 			if(gpro_t.time_1m_f > 119 && works_interval_f==0){
