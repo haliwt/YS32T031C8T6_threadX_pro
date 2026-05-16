@@ -123,8 +123,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                             /* 传递给任务的参数 */
                        stack_key_pro,                 /* 堆栈基地址 */
                        STACK_SIZE_KEY,                /* 堆栈空间大小 */  
-                       1,                             /* 任务优先级*/
-                       1,                             /* 任务抢占阀值 */
+                       0,                             /* 任务优先级*/
+                       0,                             /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,              /* 不开启时间片 */
                        TX_AUTO_START);                /* 创建后立即启动 */
    	   
@@ -135,8 +135,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                               /* 传递给任务的参数 */
                        stack_decoder_pro,                   /* 堆栈基地址 */
                        STACK_SIZE_DECODER,                  /* 堆栈空间大小 */  
-                       0,                               /* 任务优先级*/
-                       0,                               /* 任务抢占阀值 */
+                       2,                               /* 任务优先级*/
+                       1,                               /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,                /* 不开启时间片 */
                        TX_AUTO_START);                  /* 创建后立即启动 */
 
@@ -150,7 +150,7 @@ void tx_application_define(void *first_unused_memory)
                        stack_ui_pro,                /* 堆栈基地址 */
                        STACK_SIZE_UI,            /* 堆栈空间大小 */  
                        3,                           /* 任务优先级*/
-                       3,                           /* 任务抢占阀值 */
+                       1,                           /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
 
@@ -161,8 +161,8 @@ void tx_application_define(void *first_unused_memory)
                        0,                           /* 传递给任务的参数 */
                        stack_key_event,                /* 堆栈基地址 */
                        STACK_SIZE_EVENT,            /* 堆栈空间大小 */  
-                       2,                           /* 任务优先级*/
-                       2,                           /* 任务抢占阀值 */
+                       1,                           /* 任务优先级*/
+                       1,                           /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
 
@@ -228,7 +228,7 @@ void tx_application_define(void *first_unused_memory)
 #if DEBUG_ENABLE
 	 debug_stack_ui_check();
 #endif 
-	tx_thread_sleep(1);//10ms * 2 = 20ms  
+	tx_thread_sleep(2);//10ms * 2 = 20ms  
 	
     } 
 }

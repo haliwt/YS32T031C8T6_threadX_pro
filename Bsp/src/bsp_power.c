@@ -796,7 +796,7 @@ void works_nomal_run_time_handler(void)
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
 		}
-		else if(works_interval_f==1 && gpro_t.time_1m_f >10){
+		else if(works_interval_f==1 && gpro_t.time_1m_f >9){
 				gpro_t.time_1m_f = 0;  
 				works_interval_f =0;
 		        gpro_t.time_base_1s_counter=0;
