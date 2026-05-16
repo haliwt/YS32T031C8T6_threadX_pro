@@ -383,7 +383,7 @@ void tx_application_define(void *first_unused_memory)
 		   }
 		}   
 
-	  // tx_thread_sleep(1);
+	    tx_thread_sleep(1);
 	 
 #if DEBUG_ENABLE
 		  debug_stack_key_event_check();
