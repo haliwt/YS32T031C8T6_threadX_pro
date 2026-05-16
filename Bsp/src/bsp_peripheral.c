@@ -21,11 +21,11 @@ void Fan_Ctrl_Process(void)
 		if((fan_open_f)){
 			if(fan_speed_level < 34)
 			{
-			fan_on(0);
+			fan_on(32);
 			}
 			else if(fan_speed_level > 33 && fan_speed_level < 67)
 			{
-			fan_on(10);
+			fan_on(36);
 			}
 			else if(fan_speed_level==100 && fan_speed_level > 66)
 			{
@@ -46,6 +46,7 @@ void Fan_Ctrl_Process(void)
 		else{
 		  fan_stop_f =2;
 		  FAN_RUN_OFF(); 
+		  fan_off();
 		#if DEBUG_ENABLE 
 
 		printf("fan_stop !!! \n\r");
@@ -60,20 +61,30 @@ void Fan_Ctrl_Process(void)
     }
  }
 
+void wifi_fan_speed_handler(void)
+{
+
+
+
+}
+
 
 void fan_full_fun(void)
 {
 
-	fan_on(319);
+	fan_on(40);
 	FAN_RUN_ON();
 
 }
 
 void fan_stop(void)
 {
-	FAN_RUN_OFF();
-
+    FAN_RUN_OFF();
+	 fan_off();
 }
+
+
+
 
 #if 0
         else

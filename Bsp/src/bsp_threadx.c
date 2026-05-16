@@ -395,8 +395,15 @@ void tx_application_define(void *first_unused_memory)
 	}
       
  }
-
- void my_timer_callback(ULONG input)
+ /********************************************************************************
+	 **
+	 *Function Name:
+	 *Function : threadx software timer is callback function.
+	 *Input Ref: 
+	 *Return Ref:NO
+	 *
+ *******************************************************************************/
+void my_timer_callback(ULONG input)
  {
     (void) input;
 	BEEP_OFF();

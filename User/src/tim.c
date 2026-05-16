@@ -167,7 +167,7 @@ void fan_on(uint16_t fan_duty)
 {
     TIM_SetCompare1(TIM3,fan_duty);
 	
-	  TIM_Cmd(TIM3, ENABLE);
+	TIM_Cmd(TIM3, ENABLE);
     TIM_CtrlPWMOutputs(TIM3, ENABLE);
 }
 
@@ -177,8 +177,8 @@ void fan_off(void)
 {
     TIM_SetCompare1(TIM3,0);
 	
-	  TIM_Cmd(TIM3, ENABLE);
-    TIM_CtrlPWMOutputs(TIM3, ENABLE);
+	TIM_Cmd(TIM3, DISABLE);
+    TIM_CtrlPWMOutputs(TIM3, DISABLE);
 }
 
 
