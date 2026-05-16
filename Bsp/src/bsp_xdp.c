@@ -309,9 +309,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
                 
 		        gon_t.on_step=0;
 				
-		        buzzer_sound();//buzzer_sound_fun();
+		        BEEP_ON();//buzzer_sound_fun();
 	            SendWifiData_Answer_Cmd(0x01,0x01);
-	            tx_thread_sleep(100);
+	            tx_thread_sleep(10);
 				if(soft_version > 2)soft_version =0;
 				if(soft_version ==0 && wifi_app_timer_power_on_f==0){
 				   discharge_f  = 1;//gpro_t.gpower_on = power_on;
@@ -328,15 +328,15 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
         else if(pdata[3] == 0x0){ //close 
 
 		     counter_power_flag ++;
-			 buzzer_sound();
+			 BEEP_ON();
 		     gon_t.off_step=0;
              discharge_f  = 0 ;//gpro_t.gpower_on = power_off;
 			 RELAY_OFF();
              
               SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-              tx_thread_sleep(100); 
+              tx_thread_sleep(10); 
 			  SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
-	           tx_thread_sleep(100);
+	           tx_thread_sleep(10);
            
 			  	
 			
@@ -351,7 +351,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
        if(pdata[3] == 0x01 ){//phone_cmd_power
 
-	     buzzer_sound();
+	     BEEP_ON();
 	
 			ptc_prohibit_off_f =1; //ptc_prohibit_off_f = 1;
 			 
@@ -362,7 +362,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
             }
              
            SendWifiData_Answer_Cmd(0x02,0x01); //
-           tx_thread_sleep(100); 
+           tx_thread_sleep(10); 
 		
            }
 
@@ -371,14 +371,14 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
        else if(pdata[3]== 0x0 ){
 	   
 		 
-          buzzer_sound();
+          BEEP_ON();
 		
 	          ptc_prohibit_off_f = 0;
 		      RELAY_OFF();
 			 ptc_prohibit_off_f =1;
 		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
-          tx_thread_sleep(100); 
+          tx_thread_sleep(10); 
      
        }
       break;
@@ -388,7 +388,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
    
 		  if(pdata[3]== 0x01){
 			 
-			buzzer_sound();
+			BEEP_ON();
 			
 			 plasma_open_f = 1;
 			 if(works_interval_f==0){
@@ -398,18 +398,18 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 
 			SendWifiData_Answer_Cmd(0x03,0x01); //
-			tx_thread_sleep(100); 
+			tx_thread_sleep(10); 
 			 
 		  }
 		  else if(pdata[3]  == 0x0){
-			 buzzer_sound();
+			 BEEP_ON();
 			
 			 
 			 plasma_open_f = 0;
 			  PLASMA_OFF();
 
 			SendWifiData_Answer_Cmd(0x03,0x0); //
-			tx_thread_sleep(100); 
+			tx_thread_sleep(10); 
 			  
 		  
 		  }
@@ -421,7 +421,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
    	case 0x04: //ultrasonic	ACTIVE OPEN OR CLOSE
           
 		  if(pdata[3]  == 0x01){  //open 
-			 buzzer_sound();
+			 BEEP_ON();
 			Ultra_Sound_open_f =1;
    
 			if(works_interval_f==0){
@@ -430,17 +430,17 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			}
 			
 			SendWifiData_Answer_Cmd(0x04,0x01); //
-			tx_thread_sleep(100); 
+			tx_thread_sleep(10); 
    
 		  }
 		  else if(pdata[3] == 0x0){ //close 
-              buzzer_sound();
+              BEEP_ON();
 			Ultra_Sound_open_f = 0;
    
 			ultra_sound_off();
 			
 			SendWifiData_Answer_Cmd(0x04,0x0); //
-			tx_thread_sleep(100); 
+			tx_thread_sleep(10); 
    
 		  }
    
@@ -452,7 +452,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
        if(pdata[3] == 0x01){  // link wifi 
         
-          buzzer_sound();
+          BEEP_ON();
           link_net_step =0;
 	      wifi_connected_success_f=0;
           key_net_config_f =1;
@@ -460,7 +460,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
          
 		
           SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
-          tx_thread_sleep(100);
+          tx_thread_sleep(10);
          
       
         }
@@ -470,7 +470,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  case buzzer_sound_s: //buzzer sound command 
           if(pdata[3] == 0x01)
-            buzzer_sound();
+            BEEP_ON();
 		 
      break;
 
@@ -482,7 +482,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		   gon_t.on_step=0;
 	      discharge_f = 1;
 		   SendWifiData_Answer_Cmd(0x10,0x01);
-	       tx_thread_sleep(100);
+	       tx_thread_sleep(10);
 		    fan_full_fun();//WT.EDIT 2026.01.26
 		    if(wifi_app_timer_power_on_f ==0){
 			    PLASMA_ON();;
@@ -499,7 +499,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	            ultra_sound_off();
 			
               SendWifiData_Answer_Cmd(0x10,0x0); //power off .
-              tx_thread_sleep(100); 
+              tx_thread_sleep(10); 
       
              gon_t.off_step=0;
               discharge_f = 0;
@@ -522,7 +522,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
                fan_stop();
 			   RELAY_OFF(); //ptc off;
-			   tx_thread_sleep(100);
+			   tx_thread_sleep(10);
 			     PLASMA_OFF() ; //plasma turn off.
 	           ultra_sound_off();
          }
@@ -536,11 +536,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  
 	  case 0x16 : //buzzer sound command with answer .
 
-        buzzer_sound();
+        BEEP_ON();
         
          //SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
 
-		 /// tx_thread_sleep(100);
+	
 		  
        break;
 	  
@@ -553,7 +553,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
           AI_timing_open_f =0;
            if(wifi_connected_success_f ==1){
 	          MqttData_Publish_AitState(2);
-			   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+			   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
 	       }
         
           
@@ -564,7 +564,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
          if(wifi_connected_success_f ==1){
 	         MqttData_Publish_AitState(1);
-			 tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+			 tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
 	      }
 		 
        }
@@ -640,7 +640,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		         tx_thread_sleep(10);
 				 if(wifi_connected_success_f==1){ 
 					  MqttData_Publish_SetPtc(0x01);
-					  tx_thread_sleep(200);
+					  tx_thread_sleep(20);
 					
 				  }
 			   	
@@ -658,7 +658,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
 		  if(wifi_connected_success_f==1){ 
 			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(200);
+			tx_thread_sleep(20);
 		  }
          
 	   }
@@ -695,7 +695,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				 	ptc_set_wifi =ptc_prohibit_off_f;
 					 if(wifi_connected_success_f==1){ 
 						  MqttData_Publish_SetPtc(0x01);
-						tx_thread_sleep(200);
+						tx_thread_sleep(20);
 						
 					  }
 				 }
@@ -711,13 +711,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	          RELAY_OFF();
          if(soft_version == 0x02){
 //		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-//           tx_thread_sleep(pdMS_TO_TICKS(100));
+
          	}
 		  if(ptc_set_wifi !=ptc_prohibit_off_f){
 				 	ptc_set_wifi =ptc_prohibit_off_f;
 		  if(wifi_connected_success_f==1){ 
 			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(200);
+			tx_thread_sleep(20);
 		  }
 		  }
          
@@ -755,7 +755,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		
 				   if(wifi_connected_success_f==1){
 					   MqttData_Publis_SetTemp(setting_temperature);
-					   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+					   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
 					}
 			   	
 			  }

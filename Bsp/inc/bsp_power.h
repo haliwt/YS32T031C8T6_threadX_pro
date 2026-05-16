@@ -179,6 +179,8 @@ volatile extern  uint8_t  rx_wifi_data_success;
 volatile extern  uint8_t   rx_wifi_data_counter;
 extern  uint8_t  mqtt_status;
 extern  uint8_t  time_autolink_counter;
+extern  uint8_t  key_pressed_set_temp_f; //WT.EDIT 2026-05-16
+
 
 /*end*/
 
@@ -345,7 +347,7 @@ extern void LED_Strip_Ctrl(void);
 void Countdown_timer_Handler(void);
 
 
-void Trigger_Simple_Beep(uint8_t ms_10) ;
+
 
 void Task_Beep_Simple_10ms(void);
 
@@ -356,7 +358,7 @@ void beep_power_sound(void);
 void power_on_off_handler(void);
 
 	
-void buzzer_sound(void);
+void BEEP_ON(void);
 
 
 

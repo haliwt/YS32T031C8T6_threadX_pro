@@ -59,6 +59,7 @@ uint8_t time_1s_counter;
 //display second board
 uint8_t disp_second_f;
 uint8_t heat_open_close_f;
+uint8_t  key_pressed_set_temp_f;
 
 
 
@@ -440,7 +441,7 @@ void power_on_handler(void)
 		switch(time_slot){
 
 		case 0://1* 20ms
-		
+		    peripheral_fun_handler();
 
 		break;
 
@@ -486,9 +487,7 @@ void power_on_handler(void)
 		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
-	      peripheral_fun_handler();
-
-   	      }
+	      }
 				
 		break;
 
@@ -781,7 +780,7 @@ void works_nomal_run_time_handler(void)
      static uint8_t interval_10m_f = 0;
 	 
 		#if  1 //DEBUG_ENABLE 
-			if(gpro_t.time_1m_f >11 && works_interval_f==0){
+			if(gpro_t.time_1m_f >3 && works_interval_f==0){
 		#else 
 			if(gpro_t.time_1m_f > 119 && works_interval_f==0){
 
@@ -796,24 +795,34 @@ void works_nomal_run_time_handler(void)
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
 		}
-		else if(works_interval_f==1 && gpro_t.time_1m_f >9){
+
+		#if 1
+		  else if(works_interval_f==1 && gpro_t.time_1m_f >2){
+		#else 
+		  else if(works_interval_f==1 && gpro_t.time_1m_f >9){
+
+		#endif 
 				gpro_t.time_1m_f = 0;  
 				works_interval_f =0;
 		        gpro_t.time_base_1s_counter=0;
 				interval_10m_f = 1;
+				
 		#if DEBUG_ENABLE 
 			printf("works_interval_f = %d \n\r",works_interval_f);
 		#endif 
 		}
 
 
-		if(interval_10m_f == 1){
+		if(interval_10m_f == 1 && works_interval_f==0){
              interval_10m_f ++;
+		   fan_full_fun();
 		  if(ptc_prohibit_off_f == 0 &&  PTC_heat_open_f == 1){
 			 // 立即open
-		       LED_PTC_ON();
+		      LED_PTC_ON();
 		      RELAY_ON();
+		  
 		  	}
+		 
 		}
 		
  }
@@ -840,25 +849,9 @@ void beep_power_sound(void)
   * @param: 
   *
 **/
-void Trigger_Simple_Beep(uint8_t ms_10) 
-{
-    //time_beep_counter = 0;
-	//beep_sound_f = 1;
-	BEEP_ON();
-	tx_thread_sleep(2);//DelayMS(20);
-    BEEP_OFF();
-   // BEEP_ON();//BEEP_PWM_ON(); // 立即响
-}
-
-void buzzer_sound(void)
-{
-   
-	BEEP_ON();
-    tx_thread_sleep(2);//DelayMS(20);
-	BEEP_OFF();
 
 
-}
+
 
 /**
   * @brief 
@@ -884,7 +877,8 @@ void buzzer_sound(void)
 **/
 void Heat_Process(void)
 {
-      static uint8_t default_init = 0xff;   // 第一次比较标志
+     static uint8_t default_init = 0xff;   // 第一次比较标志
+     
      if(discharge_f == 1){
 	   if(ptc_prohibit_off_f == 1 || set_temperature_value_f ==1 ) return ;
 
@@ -899,9 +893,13 @@ void Heat_Process(void)
 	    if(default_init != PTC_heat_open_f || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init= PTC_heat_open_f;
 					key_input_temp_f++;
-				if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0);
+				if(disp_second_f == 1){
+					SendWifiData_To_Cmd(0x02,0);
 		        //delay_ms(100);//HAL_Delay(5);
-		        if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(0);
+					}
+		        if(wifi_connected_success_f == 1){
+					MqttData_Publish_SetPtc(0);
+		        }
 
 				}
 	  
@@ -1010,7 +1008,7 @@ void power_on_off_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-	if(key_net_config_f==0 && gpro_t.time_50ms_f > 5){// 处理腾讯连连通信
+	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
 	     gpro_t.time_50ms_f=0;
          wifi_parse_tencennt_hadler();//
        

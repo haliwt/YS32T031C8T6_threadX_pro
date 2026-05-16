@@ -644,11 +644,7 @@ static void evt_timer_mode(void)
 
 static void evt_ai_mode(void)
 {
-  static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
-		 // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
-	if (tx_time_get() < wait_timeout) {
-		 return; 
-	}
+ 
 	if (discharge_f == 1)
     {
      
@@ -657,11 +653,11 @@ static void evt_ai_mode(void)
 
         if (disp_second_f == 1){
             SendWifiData_To_Cmd(0x27, 0x01);
-			wait_timeout = tx_time_get()+ 10;//tx_thread_sleep(10);
+			tx_thread_sleep(10);//wait_timeout = tx_time_get()+ 10;//tx_thread_sleep(10);
         }
 
         MqttData_Publish_AitState(1);
-		wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(20);
+		tx_thread_sleep(20);
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -669,11 +665,7 @@ static void evt_ai_mode(void)
 
 static void evt_temperature(void)
 {
-    static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
-		 // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
-	if (tx_time_get() < wait_timeout) {
-		 return; 
-	}
+  
 	if (discharge_f == 1)
     {
         BEEP_ON();
@@ -685,11 +677,11 @@ static void evt_temperature(void)
 
         if (disp_second_f == 1){
             SendWifiData_To_Data(0x2A, setting_temperature);
-			wait_timeout = tx_time_get()+10;//tx_thread_sleep(10);
+			tx_thread_sleep(10);
         }
 
         MqttData_Publis_SetTemp(setting_temperature);
-		wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(20);
+		tx_thread_sleep(20);
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -697,16 +689,12 @@ static void evt_temperature(void)
 
 static void evt_fan(void)
 {
-   static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
-		 // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
-	if (tx_time_get() < wait_timeout) {
-		 return; 
-	}
+
 	if (discharge_f == 1)
     {
         BEEP_ON();
         MqttData_Publis_SetFan(fan_speed_level);
-		wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(20);
+		tx_thread_sleep(20);
 
 		#if 1
 

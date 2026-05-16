@@ -422,9 +422,8 @@ void Subscriber_Data_FromCloud_Handler(void)
       
         message_len = sprintf((char *)message,"AT+TCMQTTSUB=\"$thing/down/property/%s/UYIJIA01-%d\",0\r\n", PRODUCT_ID,uid);
 
-         //delay_ms(50);
-         tx_thread_sleep(1);//10ms.
-        // free(device_massage);
+       
+    
          send_usart2_data((const uint8_t *)message,message_len);
        //  delay_ms(300);
 }

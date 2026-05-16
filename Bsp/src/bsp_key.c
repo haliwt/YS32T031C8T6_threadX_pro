@@ -193,6 +193,7 @@ void Handle_Value_Adjustment(uint8_t is_up)
 		key_be_pressed_f =0;
 		key_input_temp_f= 1;
 		heat_open_close_f= 1;//WT.EDIT 2026.05-15
+		key_pressed_set_temp_f =1;
       
     }
 }
@@ -263,7 +264,7 @@ void System_Status_PowerOff(void)
     
     discharge_f = 0;
 	wifi_app_timer_power_on_f =0; //smart app power on by timer timing clear .
-    PTC_heat_open_f = 0;
+   
 	first_temp_compare_f=0;
     Ultra_Sound_open_f = 0;
     led_strip_open_f = 0;
@@ -271,10 +272,10 @@ void System_Status_PowerOff(void)
     fan_open_f = 0;
 	key_net_config_f =0;
 
-	 discharge_f = 0;            // 总输出使能
-	 PTC_heat_open_f = 0;        // 默认开启加热
-	 Ultra_Sound_open_f = 0;     // 默认开启超声波
-	 plasma_open_f = 0;          // 默认开启等离子
+
+	 PTC_heat_open_f = 0;        // 默认--from smart phone define.
+	 Ultra_Sound_open_f = 0;     // 默
+	 plasma_open_f = 0;          // 默
      set_temperature_value_f =0; 
     // 2. 重置所有功能模式标志
     AI_timing_open_f = 0;
