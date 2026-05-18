@@ -166,12 +166,7 @@ void tx_application_define(void *first_unused_memory)
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
 
-	
-
-	
-	
-	
-		/* 创建一个 20ms 周期的软件定时器 */
+	    /* 创建一个 20ms 周期的软件定时器 */
 		tx_timer_create(&beep_timer,				   /* 定时器控制块 */
 						"20msTimer",			   /* 名字 */
 						my_timer_callback,		   /* 回调函数 */
@@ -181,8 +176,6 @@ void tx_application_define(void *first_unused_memory)
 						TX_AUTO_ACTIVATE);		   /* 自动启动 */
 	
 
-	
-			   
 }
 
 /**

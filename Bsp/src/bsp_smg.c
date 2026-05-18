@@ -201,15 +201,18 @@ void display_digital_3_numbers(void)
 					LED_TEMP_ON();
 					LED_HUMI_OFF();
 
-					DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+					//DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
+	                   TM1639_Display_Humidity(humidity);
+           
+           
 					
 				}
 				else {
                    	LED_TEMP_OFF();
 					LED_HUMI_ON(); //LED_TEMP_ICON_OFF();
+					 TM1639_Display_Temperature(temperature);
 					
-					
-				    DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+				   // DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
 					
 					
                 }
@@ -341,44 +344,20 @@ void set_timer_timing_value_handler(void)
  * @param  mode: 0-显示温度�??1-显示湿度
  * @retval DHT11_Status 类型的操作结�??
  */
+ #if 0
 void  DHT11_Display_Data(uint8_t mode)
 {
 
-    static uint8_t  copy_temp_value, copy_humidity_value;
-    uint8_t  status;
-   
-    // 读取DHT11数据
-    //status = dht11_read_data(&dht11_data.temperature,&dht11_data.humidity);
-   status =  dht11_read_temp_humidity_value();
-
-	if(status !=0){
-	    if(mode == 0)
-	    {
-	    	 LED_TEMP_ON();//LED_TEMP_ICON_ON();
-	         LED_HUMI_OFF();//LED_HUM_ICON_OFF();
-	           
-	         TM1639_Display_Temperature(copy_temp_value);
-	    }
-	    else
-	    {
-	        // 显示湿度
-	    	LED_TEMP_OFF();//LED_TEMP_ICON_OFF();
-	    	LED_HUMI_ON();//LED_HUM_ICON_ON();
-	        TM1639_Display_Humidity(copy_humidity_value);
-		}
-    }
-	else if(status==0){
-   
     // 根据模式显示温度或湿�??
     if(mode == 0)
     {
         // 显示温度
 
-              LED_TEMP_ON();//LED_TEMP_ICON_ON();
+             LED_TEMP_ON();//LED_TEMP_ICON_ON();
 	         LED_HUMI_OFF();//LED_HUM_ICON_OFF();
            
             TM1639_Display_Temperature(temperature);
-		    copy_temp_value = temperature;
+		   
 				
         
     }
@@ -388,12 +367,12 @@ void  DHT11_Display_Data(uint8_t mode)
     	LED_TEMP_OFF();//LED_TEMP_ICON_OFF();
 	    LED_HUMI_ON();//LED_HUM_ICON_ON();
         TM1639_Display_Humidity(humidity);
-		copy_humidity_value = humidity;
+	
     }
-	}
-    
-    
 }
+    
+#endif  
+
 
 
 /************************************************************************
