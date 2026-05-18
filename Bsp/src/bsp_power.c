@@ -12,7 +12,13 @@
 
 power_state gon_t;
 
+#define DEFAULT_TEMP    40 
 
+typedef enum{
+
+  PTC_STATE_OFF = 0,
+  PTC_STATE_ON  = 1
+}PTC_State;
 
 volatile uint8_t Times5msCnt;
 uint8_t Times10msCnt;
@@ -195,7 +201,7 @@ volatile uint8_t static beep_sound_f =0;
 static void power_on_handler(void);
 static void power_off_handler(void);
 static void power_on_initial(void);
-
+static void UpdateTempStateAndSend(uint8_t state);
 
 /**
   * @brief  fan run is error
@@ -413,6 +419,7 @@ static void power_on_initial(void)
 * 返回值:无
 *
 ************************************************************************/
+uint16_t disp_counter;
 void power_on_handler(void)
 {
 
@@ -425,7 +432,7 @@ void power_on_handler(void)
         // 如果按键任务设置完温度，将 g_pro.g_immediate_heat_f 置为 1
         if (heat_open_close_f == 1)
         {
-           heat_open_close_f = 0; // 立即清除触发标志，防止重复执行
+           heat_open_close_f ++; // 立即清除触发标志，防止重复执行
             
             // 强制、立刻执行一次加热控制函数
             // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
@@ -440,19 +447,25 @@ void power_on_handler(void)
 
 		switch(time_slot){
 
-		case 0://1* 20ms
+        
+		case 1:
+			 peripheral_fun_handler();
+		
+		
+		break;
+
+		
+
+		case 2://1* 20ms
+		    disp_counter ++;
 		    display_digital_3_numbers();
 		   
 
 		break;
 
-		case 1:
-		 peripheral_fun_handler();
+	
 
-
-		break;
-
-		case 2://2*20m = 40
+		case 3://2*20m = 40
 		  if(gpro_t.time_3s_f > 2){
 		    gpro_t.time_3s_f =0;	
 		    Fan_Ctrl_Process();	  // 风扇控制
@@ -461,8 +474,8 @@ void power_on_handler(void)
 
 		break;
 		
-		case 3:
-		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
+		case 4:
+		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0 && discharge_f == 1){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_power_on_handler();
          }
@@ -470,7 +483,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 4:
+		case 5:
 		if(key_net_config_f)
 		 {
 			
@@ -490,7 +503,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 5:
+		case 6:
 		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
@@ -499,9 +512,9 @@ void power_on_handler(void)
 		break;
 
 
-		case 6:
+		case 7:
 
-		 if(gpro_t.time_6s_f > 3){
+		 if(gpro_t.time_6s_f > 9){
 		   gpro_t.time_6s_f =0;
       	   dht11_read_temp_humidity_value();
    	      }
@@ -509,7 +522,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 7:
+		case 8:
 
 		   if(Is_countdown_timer_f ==1){
              Countdown_timer_Handler();
@@ -518,13 +531,13 @@ void power_on_handler(void)
 		break;
 
 
-		case 8:
+		case 9:
 			 works_nomal_run_time_handler();
 
 		break;
 
 
-		case 9:
+		case 10:
 	       if(gpro_t.time_7s_f > 6){
 
 		    gpro_t.time_7s_f =0 ;
@@ -536,7 +549,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 10:
+		case 11:
 		  if(fan_counter > 3) {
 	   	     fan_counter =0;
 	         Fan_Current_Det();		// 电流检测
@@ -545,7 +558,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 11:
+		case 12:
 			 if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
 		   #if DEBUG_ENABLE
@@ -557,7 +570,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 12:
+		case 13:
             wifi_led_state_handler();
 			wifi_check_counter++; //20ms * 100
 		    if(wifi_check_counter > 100){
@@ -567,9 +580,6 @@ void power_on_handler(void)
 
 		break;
 
-		case 13:
-          set_temp_compare();
-		break;
 
 
 		
@@ -849,32 +859,6 @@ void beep_power_sound(void)
     BEEP_OFF();
 
 }
-
-/**
-  * @brief  // 按键按下时调用
-  * @note  
-  * @param: 
-  *
-**/
-
-
-
-
-/**
-  * @brief 
-  * @note  // 10ms 任务
-  * @param: 
-  *
-**/
-
-
-//  if( beep_sound_f ==2){
-
-//	   BEEP_OFF();
-//	    beep_sound_f ++;
-
-//  }
-
 /**
 	*
 	*@brief environment temperature value compare set temperater value
@@ -882,108 +866,318 @@ void beep_power_sound(void)
 	*@param
 	*
 **/
+
+#if 0
 void Heat_Process(void)
 {
-     static uint8_t default_init = 0xff;   // 第一次比较标志
-     
+    uint32_t wait_timeout = 0;
+	static uint8_t default_init = 0xff;   // 第一次比较标志
+	static uint8_t send_step_f;
+    uint8_t target_temp;
+
      if(discharge_f == 1){
 	   if(ptc_prohibit_off_f == 1 || set_temperature_value_f ==1 ) return ;
 
-	  uint8_t target_temp;
+	   if (tx_time_get() < wait_timeout) {
+         return;
+       }
 
-	  target_temp = setting_temperature;
+	   if(heat_open_close_f == 2){
+		 
+		 target_temp = setting_temperature;
+		}
+		else{
+		  target_temp = DEFAULT_TEMP;
+		}
+	
 
 	  if(temperature > 39){
 
         PTC_heat_open_f = 0;   // 立即关闭
 	    first_temp_compare_f = 1; 
+		LED_PTC_OFF();
+		RELAY_OFF();
 	    if(default_init != PTC_heat_open_f || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init= PTC_heat_open_f;
-					key_input_temp_f++;
-				if(disp_second_f == 1){
+					if(key_input_tempf ==2)key_input_temp_f =3;
+					else if(key_input_temp_f ==1) key_input_temp_f =3;
+					send_step_f = 0;
+					  if(wifi_connected_success_f == 1){
+                       MqttData_Publis_SetTemp(setting_temperature);
+				       wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			          }
+				}
+				
+				if(disp_second_f == 1 && send_step_f == 0 && tx_time_get() >= wait_timeout){
+					send_step_f = 1;
 					SendWifiData_To_Cmd(0x02,0);
-		        //delay_ms(100);//HAL_Delay(5);
+                    wait_timeout = tx_time_get()+ 10;   
 					}
-		        if(wifi_connected_success_f == 1){
+
+		        if(( send_step_f ==0 || send_step_f==1) && wifi_connected_success_f == 1){
+					 send_step_f = 2;
 					MqttData_Publish_SetPtc(0);
+					
 		        }
 
-				}
+				
 	  
 	     return ;
 
-	  }
+	   }
 
-      // -----------------------------
-    // 2. 第一次比较：必须立即决定 PTC 开关
-    // -----------------------------
-	  if(first_temp_compare_f == 0){
+       //key input set temperature value process
 
-		if(temperature >= target_temp){
+	   switch(first_temp_compare_f){
+
+		case 0: 
+           if(temperature >= target_temp){ //close PTC heat !!!.
             PTC_heat_open_f = 0;   // 立即关闭
-
+            LED_PTC_OFF();
+			RELAY_OFF();
 		       if(default_init != PTC_heat_open_f  || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init = PTC_heat_open_f;
-					key_input_temp_f ++;
-				if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0);
-		        //delay_ms(100);//HAL_Delay(5);
-		        if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(0);
+					if(key_input_temp_f ==2)key_input_temp_f =3;
+					else if(key_input_temp_f ==1) key_input_temp_f =3;
+					send_step_f = 0;
+					if(wifi_connected_success_f == 1){
+                    MqttData_Publis_SetTemp(setting_temperature);
+				    wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			       }
+			   }
 
+				if(disp_second_f == 1 && (send_step_f == 0 || send_step_f == 2)&& tx_time_get() >= wait_timeout){
+					send_step_f = 3;
+					SendWifiData_To_Cmd(0x02,0);
+		         // tx_thread_sleep(10); //delay_ms(100);//HAL_Delay(5);
 				}
+		        if((send_step_f == 0 || send_step_f == 3 || send_step_f == 1) && wifi_connected_success_f == 1){
+					 send_step_f = 4
+					MqttData_Publish_SetPtc(0);
+					 wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+				 }
+			  
 		}
-        else{
+	    else{ //open PTC heat !!!.
+            first_temp_compare_f = 1; 
             PTC_heat_open_f = 1;   // 立即打开
-            first_temp_compare_f = 1;         // 以后进入滞后控制
+			LED_PTC_ON();
+			if(works_interval_f == 0)RELAY_ON(); //WT.EDIT 2026.05.18
             if(default_init!= PTC_heat_open_f || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init = PTC_heat_open_f;
-					key_input_temp_f++;
-				if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x01);
+					if(key_input_temp_f ==2)key_input_temp_f =3;
+					else if(key_input_temp_f ==1) key_input_temp_f =3;
+					send_step_f = 0;
+					if(wifi_connected_success_f == 1){
+                    MqttData_Publis_SetTemp(setting_temperature);
+				    wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			       }
+			   }	
+				if(disp_second_f == 1 && (send_step_f == 0 || send_step_f == 2)){
+					send_step_f = 3;
+					SendWifiData_To_Cmd(0x02,0x01);
+		             wait_timeout = tx_time_get()+ 10; //tx_thread_sleep(10);
+					}	
 		        //delay_ms(100);//HAL_Delay(5);
-		        if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(0x01);
-
-			}
+		        if((send_step_f == 0 || send_step_f == 3 || send_step_f == 1) && wifi_connected_success_f == 1){
+					send_step_f = 4;
+					MqttData_Publish_SetPtc(0x01);
+					wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			   }	
+		
+        
+	
         }
-        return;
+       break;
 
-
-	  }
-
-		// -----------------------------
-		// 3. 第二次及以后：使用 -2°C 滞后控制
-		// -----------------------------
-		if(first_temp_compare_f == 1)
-		{
+	   case 1:
+	
 			// 当前是开启状态 → 高于设定温度则关闭
 			if(temperature >= target_temp){
 					PTC_heat_open_f = 0;
+					LED_PTC_OFF();
+					RELAY_OFF();
 				if(default_init != PTC_heat_open_f  || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init = PTC_heat_open_f;
-					key_input_temp_f++;
-				if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0);
-		       // delay_ms(100);//HAL_Delay(5);
-		        if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(0);
-
+					if(key_input_temp_f ==2)key_input_temp_f =3;
+					else if(key_input_temp_f ==1) key_input_temp_f =3;
+					send_step_f = 0;
+					if(wifi_connected_success_f == 1){
+                    MqttData_Publis_SetTemp(setting_temperature);
+				    wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			       }
 				}
-			}
-			else
-			{
+				if(disp_second_f == 1 && (send_step_f == 0 || send_step_f == 2)){
+					send_step_f = 3;
+					SendWifiData_To_Cmd(0x02,0);
+		             wait_timeout = tx_time_get()+ 10; //tx_thread_sleep(10);
+					}	
+		       // delay_ms(100);//HAL_Delay(5);
+		        if((send_step_f == 0 || send_step_f == 1 || send_step_f == 3) && wifi_connected_success_f == 1){
+					 send_step_f = 4;
+					MqttData_Publish_SetPtc(0);
+					//tx_thread_sleep(20);
+					wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+				 }
+
+			  }
+			else{  //open PTC heat !!!.
 				// 当前是关闭状态 → 低于设定温度 - 2 才重新打开
 				if(temperature <  (target_temp - 2))
 				PTC_heat_open_f = 1;
+				LED_PTC_ON();
+                if(works_interval_f == 0)RELAY_ON(); //WT.EDIT 2026.05.18
 				if(default_init!= PTC_heat_open_f || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init = PTC_heat_open_f;
-					key_input_temp_f++;
-				if(disp_second_f == 1)SendWifiData_To_Cmd(0x02,0x01);
-		       // delay_ms(100);//HAL_Delay(5);
-		        if(wifi_connected_success_f == 1)MqttData_Publish_SetPtc(0x01);
-
+					if(key_input_temp_f ==2)key_input_temp_f =3;
+					else if(key_input_temp_f ==1) key_input_temp_f =3;
+					send_step_f = 0;
+				   if(wifi_connected_success_f == 1){
+                    MqttData_Publis_SetTemp(setting_temperature);
+				    wait_timeout = tx_time_get()+ 20; //tick is 20ms .
+			       }
 				}
+
+				if(disp_second_f == 1 && (send_step_f == 0 || send_step_f == 2) && tx_time_get() >= wait_timeout){
+					send_step_f = 3;
+					SendWifiData_To_Cmd(0x02,0x01);
+					// ??????????????????
+				     wait_timeout = tx_time_get()+10;//tick is 10ms .
+				}
+                // ????????????????
+				if((send_step_f == 1 || send_step_f == 0 || send_step_f == 3) && tx_time_get() >= wait_timeout && wifi_connected_success_f == 1){
+					send_step_f = 4;
+					MqttData_Publish_SetPtc(0x01);
+					wait_timeout = tx_time_get()+20;//tick is 10ms .
+				}
+				
 			}
+		break;
 		}
-
-       }
-
+	}
 }
+#else 
+/**
+ * @brief ????????????
+ * @note  ????????????????
+ */
+void Heat_Process(void)
+{
+    static uint8_t default_init = 0xff;     // ??????
+    static uint8_t send_step_f = 0;         // WiFi????
+    static uint32_t wait_timeout = 0;       // ????????????????
+    
+    uint8_t target_temp;
+    
+    // ==================== ?????? ====================
+    if(discharge_f != 1) return;
+    
+    if(ptc_prohibit_off_f == 1 || set_temperature_value_f == 1) return;
+    
+    // ???????
+    if(tx_time_get() < wait_timeout) return;
+    
+    // ==================== ?????? ====================
+    target_temp = (heat_open_close_f == 2) ? setting_temperature : DEFAULT_TEMP;
+    
+    // ==================== 1. ?????>=40�C ???? ====================
+    if(temperature >= 40){
+        PTC_heat_open_f = 0;
+        LED_PTC_OFF();
+        RELAY_OFF();
+        first_temp_compare_f = 1;
+        
+        UpdateTempStateAndSend(0);  // ??????
+        return;
+    }
+    
+    // ==================== 2. ?????????? ====================
+    if(first_temp_compare_f == 0){
+        if(temperature >= target_temp){
+            PTC_heat_open_f = 0;
+            LED_PTC_OFF();
+            RELAY_OFF();
+            UpdateTempStateAndSend(0);
+        } else {
+            PTC_heat_open_f = 1;
+			first_temp_compare_f =1;
+            LED_PTC_ON();
+            if(works_interval_f == 0) RELAY_ON();
+            first_temp_compare_f = 1;  // ????????
+            UpdateTempStateAndSend(1);
+        }
+        return;
+    }
+    
+    // ==================== 3. ?????? -2�C ??? ====================
+    if(first_temp_compare_f == 1){
+        if(temperature >= target_temp){
+            // ???????????
+            PTC_heat_open_f = 0;
+            LED_PTC_OFF();
+            RELAY_OFF();
+            UpdateTempStateAndSend(0);
+        } else if(temperature < (target_temp - 2)){
+            // ??????2�C?????
+            PTC_heat_open_f = 1;
+            LED_PTC_ON();
+            if(works_interval_f == 0) RELAY_ON();
+            UpdateTempStateAndSend(1);
+        }
+        // ??? [target_temp-2, target_temp) ??????????
+    }
+}
+
+/**
+ * @brief ????????? WiFi ???????????
+ * @param state: 0=????, 1=????
+ */
+static void UpdateTempStateAndSend(uint8_t state)
+{
+    static uint8_t send_step_f = 0,default_init_f = 0xff,default_init=0xff;
+    static uint32_t wait_timeout = 0;
+	
+    if(default_init_f !=  PTC_heat_open_f){
+        default_init_f = PTC_heat_open_f;
+        send_step_f = 0;
+    }
+    // ??????
+    if(default_init != PTC_heat_open_f || key_input_temp_f == 1 || key_input_temp_f == 2){
+        default_init = PTC_heat_open_f;
+        if(key_input_temp_f == 1 || key_input_temp_f == 2){
+            key_input_temp_f = 3;
+        }
+        send_step_f = 0;
+    }
+    
+    // ??1???????
+    if(disp_second_f == 1 && send_step_f == 0){
+        SendWifiData_To_Cmd(0x02, state);
+        send_step_f = 1;
+        wait_timeout = tx_time_get() + 10;
+        return;
+    }
+    
+    // ??2??? MQTT ??
+    if(wifi_connected_success_f == 1 && (send_step_f == 1 || send_step_f == 0) && tx_time_get() >= wait_timeout){
+        MqttData_Publish_SetPtc(state);
+        send_step_f = 2;
+        wait_timeout = tx_time_get() + 20;
+        return;
+    }
+    
+    // ??3?????????????
+    if(state == 1 && key_input_temp_f == 3 && send_step_f == 2 && tx_time_get() >= wait_timeout){
+        key_input_temp_f++;
+        MqttData_Publis_SetTemp(setting_temperature);
+        send_step_f = 3;
+    }
+}
+
+
+
+#endif 
+
 /**
   * @brief  
   * @note  

@@ -707,7 +707,7 @@ static void evt_fan(void)
 }
 /*******************************************************************************
 **
-*Function Name:void Subscribe_Rx_IntHandler(void)
+*Function Name:void Subscribe_Rx_Int Handler(void)
 *Function: interrupt USART2 receive data fun
 *Input Ref: 
 *Return Ref:NO

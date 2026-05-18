@@ -390,6 +390,7 @@ void key_mode_long_handler(void)
 */
 void key_up_short_handler(void)
 {
+
 	 Handle_Value_Adjustment(1);
      BEEP_ON(); //Beep(BEEP_ONCE);  
 
