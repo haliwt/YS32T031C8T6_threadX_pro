@@ -193,7 +193,7 @@ void TIM6_LPTIM_IRQHandler (void)
 					fan_one_minute_cuonter++;
 					key_net_config_time++;
 				
-					gpro_t.time_2s_f++;
+					//gpro_t.time_2s_f++;
 					gpro_t.time_3s_f++;
 					gpro_t.time_4s_f++;
 					gpro_t.time_5s_f++;

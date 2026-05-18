@@ -136,7 +136,7 @@ void tx_application_define(void *first_unused_memory)
                        stack_decoder_pro,                   /* 堆栈基地址 */
                        STACK_SIZE_DECODER,                  /* 堆栈空间大小 */  
                        2,                               /* 任务优先级*/
-                       1,                               /* 任务抢占阀值 */
+                       2,                               /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,                /* 不开启时间片 */
                        TX_AUTO_START);                  /* 创建后立即启动 */
 
