@@ -77,7 +77,7 @@ extern uint16_t disp_temperature;
 extern uint16_t disp_timing_time;
 extern uint16_t disp_humidity;
 
-extern uint8_t AI_timing_open_f;
+extern uint8_t AI_led_open_f;
 extern uint8_t PTC_heat_open_f;
 extern uint8_t first_temp_compare_f;
 

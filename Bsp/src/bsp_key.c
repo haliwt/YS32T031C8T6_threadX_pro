@@ -168,8 +168,8 @@ void Handle_Value_Adjustment(uint8_t is_up)
         }
         
         // 逻辑关联：如果定时不为0，开启定时标志
-        // AI_timing_open_f = (setting_timing_hour > 0) ? 1 : 0;
-        AI_timing_open_f=0;
+        // AI_led_open_f = (setting_timing_hour > 0) ? 1 : 0;
+        
         // 只要动了时间，秒和分计数值都要清零重新开始
         timing_min_cnt = 0;
       
@@ -217,7 +217,7 @@ void System_Status_PowerOn(void)
 	
     fan_open_f = 1;             // 默认开启风扇
     led_strip_open_f = 1;       // 默认开启灯带
-    AI_timing_open_f = 1;       // 默认AI 开启
+    AI_led_open_f = 1;       // 默认AI 开启
     fan_speed_level =100;       // 默认风扇最大风速 
     set_temperature_value_f =0; 
 	//wifi
@@ -278,7 +278,7 @@ void System_Status_PowerOff(void)
 	 plasma_open_f = 0;          // 默
      set_temperature_value_f =0; 
     // 2. 重置所有功能模式标志
-    AI_timing_open_f = 0;
+    AI_led_open_f = 0;
     Is_time_setting_f = 0;
  
     Is_countdown_timer_f = 0;

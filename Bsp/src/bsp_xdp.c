@@ -550,7 +550,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  if(pdata[3] == 0x02){
 	 
 		
-          AI_timing_open_f =0;
+          AI_led_open_f =0;
            if(wifi_connected_success_f ==1){
 	          MqttData_Publish_AitState(2);
 			   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
@@ -560,7 +560,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
        }
        else if(pdata[3] == 0x01){ //AI mode 
        
-	      AI_timing_open_f=1;
+	      AI_led_open_f=1;
 
          if(wifi_connected_success_f ==1){
 	         MqttData_Publish_AitState(1);

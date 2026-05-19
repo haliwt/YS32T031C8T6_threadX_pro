@@ -476,6 +476,13 @@ void set_temp_compare(void)
 
 	}
 
+
+   
+	if(set_temperature_value_f == 1 && time_1s_counter >5){ //WT.EDIT 2026.05.19
+           set_temperature_value_f ++; 
+
+	}
+
 }
 /************************************************************************
 *
@@ -595,7 +602,7 @@ void peripheral_fun_handler(void)
 
 	 if(disp_set_hours_time_f == 1 || Is_time_setting_f ==1) return ;
 	  
-      if(AI_timing_open_f==1){
+      if(AI_led_open_f==1){
 	  	LED_AI_ON();
 	  }
 	  else{
@@ -610,7 +617,7 @@ void peripheral_fun_handler(void)
 	   workd_interval_turn_off_handle();
 	   
 	   if(disp_set_hours_time_f == 1 || Is_time_setting_f ==1) return ;
-	   if(AI_timing_open_f==1){
+	   if(AI_led_open_f==1){
 	  	LED_AI_ON();
 	   }
 	   else{

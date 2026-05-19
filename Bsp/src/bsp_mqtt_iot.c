@@ -93,7 +93,7 @@ static void Mqtt_Value_update_data(void)
 {
     
     sg_info.open = 1;
-	if(AI_timing_open_f==1)gmode =1;
+	if(AI_led_open_f==1)gmode =1;
 	sg_info.state = gmode;
 	sg_info.ptc  = PTC_heat_open_f;//esp_t.gDry;
     //sg_info.ptc = g_dry_open_flag;

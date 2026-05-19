@@ -36,7 +36,7 @@ uint16_t disp_temperature;
 uint16_t disp_timing_time;
 uint16_t disp_humidity;
 
-uint8_t AI_timing_open_f;
+uint8_t AI_led_open_f;
 uint8_t PTC_heat_open_f;
 uint8_t first_temp_compare_f;
 
@@ -236,7 +236,7 @@ void Clear_Ram(void)
 		fan_open_f = 0;
 	
 		
-		AI_timing_open_f = 0;
+		AI_led_open_f = 0;
 		PTC_heat_open_f = 0;
 		first_temp_compare_f=0;
 		Ultra_Sound_open_f = 0;

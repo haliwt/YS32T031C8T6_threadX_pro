@@ -143,11 +143,12 @@ void display_digital_3_numbers(void)
 							Is_countdown_timer_f = 1;
 							real_hours_counter=0;
 						    setting_timing_second = 0;
+							AI_led_open_f=0;  //WT.EDIT 2026.05.19
 						   
 						 }
 						 else if(setting_timing_hour ==0){
 						 	Is_countdown_timer_f = 0;
-
+                            AI_led_open_f=1;  //WT.EDIT 2026.05.19
 						 }
 
 				   }
@@ -166,12 +167,12 @@ void display_digital_3_numbers(void)
              key_be_pressed_f =0;
             
 		     if(setting_timing_hour > 0 || timing_min_cnt> 0){ // && g_key.key_mode_long_flag != 1){
-                  AI_timing_open_f=0;
+                  AI_led_open_f=0;
     	 		  LED_AI_OFF(); 
 			  
 			 }
 			 else {
-			    AI_timing_open_f=1;
+			    AI_led_open_f=1;
 				LED_AI_ON(); 
 			
 
@@ -186,39 +187,37 @@ void display_digital_3_numbers(void)
 	       TM1639_Display_Temperature(setting_temperature);
 		   
 	 }
-	 else{ //display temperature value 
-          
-   
-		 //if(key_long_f == 1) return ;
+     else{
+		 
+		  if(set_temperature_value_f == 1) return ;
 
+		  if(AI_led_open_f == 0){//if(g_pro.set_timing_or_timer_time_flag ==TIMER_TIME){
+			         
+		     LED_AI_OFF(); 
+		  }
+		  else{
+		     LED_AI_ON(); 
+
+		  }
+             // 检查是否需要切换显示模式
             if (disp_switch_temp_humi > SWITCH_THRESHOLD ){
-			    disp_switch_temp_humi = 0; // 重置计时�??
+			    disp_switch_temp_humi = 0; // 重置计数器
+			    disp_temp_hum = disp_temp_hum ^ 0x01; // 切换显示模式
+            }
 
-			    disp_temp_hum = disp_temp_hum ^ 0x01;
+            // 始终更新显示，无论是否切换模式
+            if(disp_temp_hum == 1){
+				LED_TEMP_ON();
+				LED_HUMI_OFF();
+				TM1639_Display_Humidity(humidity);
+            }
+			else {
+               	LED_TEMP_OFF();
+				LED_HUMI_ON();
+				TM1639_Display_Temperature(temperature);
+			}
 
-			    if(disp_temp_hum==1){
-				
-					LED_TEMP_ON();
-					LED_HUMI_OFF();
-
-			         TM1639_Display_Humidity(humidity);
-					 tx_thread_sleep(1);
-           
-           
-					
-				}
-				else {
-                   	LED_TEMP_OFF();
-					LED_HUMI_ON(); //LED_TEMP_ICON_OFF();
-					 TM1639_Display_Temperature(temperature);
-					 
-				    tx_thread_sleep(1);
-					
-					
-                }
-       
-
-          }
+			tx_thread_sleep(1);
       
      	}
 
@@ -249,7 +248,7 @@ void set_timer_timing_value_handler(void)
             g_pro.key_add_dec_be_pressed_flag ++ ;
 			if(g_pro.gdisp_timer_hours_value>0){
 			timerbuf[0] = g_pro.gdisp_timer_hours_value;
-			AI_timing_open_f = 0;
+			AI_led_open_f = 0;
 			LED_AI_OFF();
 			g_pro.switch_disp_time_or_temp_item = temperature_mode; //define UP and down key is set temperature value 
 			g_pro.set_timing_or_timer_time_flag=TIMER_TIME;
@@ -264,7 +263,7 @@ void set_timer_timing_value_handler(void)
 			}
 			else if(g_pro.gdisp_timer_hours_value ==0){
 			
-				AI_timing_open_f = 1;
+				AI_led_open_f = 1;
 				LED_AI_ON();
 				g_pro.gdisp_timer_hours_value=0;
 				g_pro.gdisp_timer_minutes_value =0;

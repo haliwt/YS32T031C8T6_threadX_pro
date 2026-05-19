@@ -359,7 +359,7 @@ void Parse_Tencent_Data(void)
     }
 	else if(strstr((const char *)wifi_t.rx_data_array,"\"state\":1") && discharge_f == 1){
           
-            AI_timing_open_f = 1;//esp_t.gModel=1;
+            AI_led_open_f = 1;//esp_t.gModel=1;
             
 			wifi_t.rx_data_array[0]='\0';
 	        memset(wifi_t.rx_data_array, 0, wifi_t.rx_recoder_counter);
@@ -373,7 +373,7 @@ void Parse_Tencent_Data(void)
     }
     else if(strstr((const char *)wifi_t.rx_data_array,"\"state\":2") && discharge_f == 1){
         
-            AI_timing_open_f = 0; //esp_t.gModel=2;
+            AI_led_open_f = 0; //esp_t.gModel=2;
             
 			wifi_t.rx_data_array[0]='\0';
 	        memset(wifi_t.rx_data_array, 0, wifi_t.rx_recoder_counter);
@@ -623,7 +623,7 @@ static void evt_timer_mode(void)
     if (discharge_f == 1)
     {
         BEEP_ON();
-        AI_timing_open_f = 0;
+        AI_led_open_f = 0;
 
         LED_AI_OFF();
         disp_set_hours_time_f = 1;
