@@ -434,11 +434,7 @@ void power_on_handler(void)
            compare_set_temp_value(); //set_temperature_value_handler(); 
         }
 
-	  // if(time_20ms_f ==1){
-         ///time_20ms_f =0;
-        
-	
-	   ///}
+	   
 	     
 
 		switch(time_slot){
@@ -450,7 +446,8 @@ void power_on_handler(void)
 		break;
 
 		case 1:
-	         display_digital_3_numbers();
+	         wifi_led_state_handler();
+			 display_digital_3_numbers();
 
 		break;
 
@@ -493,7 +490,7 @@ void power_on_handler(void)
 
 		
 		case 5:
-		if(gpro_t.time_5s_f > 1){
+		if(gpro_t.time_5s_f > 3){
 	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
 	      }
@@ -560,7 +557,7 @@ void power_on_handler(void)
 		break;
 
 		case 12:
-            wifi_led_state_handler();
+           
 			wifi_check_counter++; //20ms * 100
 		    if(wifi_check_counter > 100){
 			  wifi_check_counter =0;
@@ -664,7 +661,7 @@ static void power_off_handler(void)
 		 case 3 :
 
 		    
-		   if(time_1s_counter > 2){
+		   if(time_1s_counter > 1){
 				 	time_1s_counter =0;
 				    dht11_read_temp_humidity_value();
 				    //#if DEBUG_ENABLE
@@ -672,7 +669,7 @@ static void power_off_handler(void)
 				    ///#endif 
 			}
 
-      
+       
 		    gon_t.off_step = 4;
 
 		  break;

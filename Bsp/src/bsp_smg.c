@@ -194,15 +194,15 @@ void display_digital_3_numbers(void)
             if (disp_switch_temp_humi > SWITCH_THRESHOLD ){
 			    disp_switch_temp_humi = 0; // 重置计时�??
 
-			  disp_temp_hum = disp_temp_hum ^ 0x01;
+			    disp_temp_hum = disp_temp_hum ^ 0x01;
 
 			    if(disp_temp_hum==1){
 				
 					LED_TEMP_ON();
 					LED_HUMI_OFF();
 
-					//DHT11_Display_Data(DISPLAY_TEMP); // 显示温度
-	                   TM1639_Display_Humidity(humidity);
+			         TM1639_Display_Humidity(humidity);
+					 tx_thread_sleep(1);
            
            
 					
@@ -211,8 +211,8 @@ void display_digital_3_numbers(void)
                    	LED_TEMP_OFF();
 					LED_HUMI_ON(); //LED_TEMP_ICON_OFF();
 					 TM1639_Display_Temperature(temperature);
-					
-				   // DHT11_Display_Data(DISPLAY_HUM);  // 显示湿度
+					 
+				    tx_thread_sleep(1);
 					
 					
                 }
