@@ -376,7 +376,7 @@ void tx_application_define(void *first_unused_memory)
 		   }
 		}   
 
-	    tx_thread_sleep(1);
+	    tx_thread_sleep(2);//WT.EDIT 2026-05-26
 	 
 #if DEBUG_ENABLE
 		  debug_stack_key_event_check();

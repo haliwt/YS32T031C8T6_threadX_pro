@@ -399,7 +399,7 @@ static void power_on_initial(void)
    	 
        dht11_read_temp_humidity_value();
 	   display_digital_3_numbers();
-	   gon_t.on_step =3;
+	   gon_t.on_step =0xfe;
 
    break;
 
@@ -421,8 +421,9 @@ void power_on_handler(void)
     static uint8_t time_slot = 0,fan_counter =0,wifi_check_counter=0;
 
 	
-
-		power_on_initial();
+        if(gon_t.on_step  < 8){
+		  power_on_initial();
+        }
 	 // ✨【新增：紧急事件拦截响应】✨
         // 如果按键任务设置完温度，将 g_pro.g_immediate_heat_f 置为 1
         if (heat_open_close_f == 1)
@@ -447,11 +448,16 @@ void power_on_handler(void)
 
 		case 1:
 	         wifi_led_state_handler();
+
+		break;
+
+		case 2:
+			
 			 display_digital_3_numbers();
 
 		break;
 
-		case 2://2*20m = 40
+		case 3://2*20m = 40
 		  if(gpro_t.time_3s_f > 2){
 		    gpro_t.time_3s_f =0;	
 		    Fan_Ctrl_Process();	  // 风扇控制
@@ -460,7 +466,7 @@ void power_on_handler(void)
 
 		break;
 		
-		case 3:
+		case 4:
 		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_power_on_handler();
@@ -469,7 +475,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 4:
+		case 5:
 		if(key_net_config_f)
 		 {
 			
@@ -489,7 +495,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 5:
+		case 6:
 		if(gpro_t.time_5s_f > 3){
 	   	  gpro_t.time_5s_f=0;
           Heat_Process(); 
@@ -498,7 +504,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 6:
+		case 7:
 
 		 if(gpro_t.time_6s_f > 9){
 		   gpro_t.time_6s_f =0;
@@ -508,7 +514,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 7:
+		case 8:
 
 		   if(Is_countdown_timer_f ==1){
              Countdown_timer_Handler();
@@ -517,13 +523,13 @@ void power_on_handler(void)
 		break;
 
 
-		case 8:
+		case 9:
 			 works_nomal_run_time_handler();
 
 		break;
 
 
-		case 9:
+		case 10:
 	       if(gpro_t.time_7s_f > 6){
 
 		    gpro_t.time_7s_f =0 ;
@@ -535,7 +541,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 10:
+		case 11:
 		  if(fan_counter > 3) {
 	   	     fan_counter =0;
 	         Fan_Current_Det();		// 电流检测
@@ -544,7 +550,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 11:
+		case 12:
 			 if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
 		   #if DEBUG_ENABLE
@@ -556,7 +562,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 12:
+		case 13:
            
 			wifi_check_counter++; //20ms * 100
 		    if(wifi_check_counter > 100){
@@ -566,7 +572,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 13:
+		case 14:
           set_temp_compare();
 		break;
 
@@ -576,7 +582,7 @@ void power_on_handler(void)
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >13 ) time_slot = 0;  //13*20 = 260ms 
+           if (time_slot >14 ) time_slot = 0;  //14*20 = 260ms 
 
         
 }
@@ -993,7 +999,7 @@ void Heat_Process(void)
 void power_on_off_handler(void)
 {
 
-  
+ 
 	 switch(discharge_f){
 
       case 1:
@@ -1019,7 +1025,7 @@ void power_on_off_handler(void)
          wifi_parse_tencennt_hadler();//
        
     }
-
+    
 	if(key_net_config_f==0 ){
       wifi_auto_detected_link_state();
 

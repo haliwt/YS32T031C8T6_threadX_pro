@@ -25,13 +25,7 @@ static void Update_Dht11_Totencent_Value(void);
 **********************************************************************/
 void wifi_auto_detected_link_state(void)
 {
-    static uint32_t wait_timeout = 0;
 
-	if(tx_time_get()< wait_timeout){
-
-	    return ;
-
-	}
 
 	if(wifi_connected_success_f ==0 && key_net_config_f ==0){
 		
