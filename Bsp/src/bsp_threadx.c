@@ -254,27 +254,26 @@ void tx_application_define(void *first_unused_memory)
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
              }
     }
-	else{
-		if(power_cnt > 1 && power_cnt < LONG_PRESS_TIME)
+	else if(power_cnt > 1){
+		    if(power_cnt < LONG_PRESS_TIME)
               tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
 
 	}
 	
-	if(KEY_MODE_VALUE() == KEY_DOWN){// == 1 && discharge_f ==1){ //key mode
+	if(KEY_MODE_VALUE() == KEY_DOWN && discharge_f ==1){// == 1 && discharge_f ==1){ //key mode
 
-	   if(discharge_f ==1){
+	   
 		 mode_cnt++;
             if(mode_cnt == LONG_PRESS_TIME  ){
 				tx_event_flags_set(&key_event, KEY_MODE_LONG, TX_OR);
                
             }
-	   	}
+	   	
     }
-	else{
-		
-		if(mode_cnt > 1 && mode_cnt < LONG_PRESS_TIME)
+	else  if(mode_cnt > 1){
+		       if(mode_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
 		
         mode_cnt = 0;
@@ -282,36 +281,35 @@ void tx_application_define(void *first_unused_memory)
 	}
 
 	
-    if (KEY_UP_VALUE() == KEY_DOWN){ //up key
+    if (KEY_UP_VALUE() == KEY_DOWN && discharge_f ==1){ //up key
 		//key_i = _UP_KEY_DOWN;
-	   if(discharge_f ==1){
+	  
 		up_cnt++;
-        if(up_cnt >= LONG_PRESS_TIME)
+        if(up_cnt == LONG_PRESS_TIME)
                tx_event_flags_set(&key_event, KEY_UP_LONG, TX_OR);
-	   	}
+	   	
 
 	}
-	else{
-		
-		if(up_cnt > 1 && up_cnt < LONG_PRESS_TIME)
+	else if(up_cnt > 1){
+	         if(up_cnt < LONG_PRESS_TIME)
                tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
           up_cnt = 0;
 	}
 	
-	if (KEY_DOWN_VALUE() == KEY_DOWN){ //dwon key
-		if(discharge_f ==1){
+	if (KEY_DOWN_VALUE() == KEY_DOWN && discharge_f ==1){ //dwon key
+		
 		  down_cnt++;
-          if(down_cnt >= LONG_PRESS_TIME && down_cnt_long_f ==0){
+          if(down_cnt == LONG_PRESS_TIME && down_cnt_long_f ==0){
 		  	    down_cnt_long_f =1;
                 tx_event_flags_set(&key_event, KEY_DOWN_LONG, TX_OR);
           	}
-		}
+		
     }
-	else{
-		if(down_cnt > 1 && (down_cnt < LONG_PRESS_TIME)){
+	else  if(down_cnt > 1){
+		 if(down_cnt < LONG_PRESS_TIME)
 			tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
-			}
+			
 	        down_cnt_long_f =0;
 			down_cnt = 0;
 	}
