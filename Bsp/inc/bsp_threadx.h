@@ -6,7 +6,7 @@
 
 void wifi_semaphore_xtask(void);
 
-void open_beep_sound(void);
+//void open_beep_sound(void);
 
 
 #endif 

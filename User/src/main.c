@@ -12,7 +12,8 @@
   * version: 03. DATA.2026-05-14 Modify.
   * version: 031. DATA.2026-025-26 ,the second freeze in only temperature or 
   *          humidity of scree. is bug .
-  *
+  * version: 032  DATA.2026-05-29
+  *          be solved run one hour , touch IWDG,reset .
   *
   ******************************************************************************
   * @attention

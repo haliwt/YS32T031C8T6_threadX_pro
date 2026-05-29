@@ -87,7 +87,7 @@
 #define TX_MAX_PRIORITIES                       8//32
 //#define TX_MINIMUM_STACK                        ????
 //#define TX_THREAD_USER_EXTENSION                ????
-#define TX_TIMER_THREAD_STACK_SIZE              128
+//#define TX_TIMER_THREAD_STACK_SIZE              128
 //#define TX_TIMER_THREAD_PRIORITY                ????
 
 
