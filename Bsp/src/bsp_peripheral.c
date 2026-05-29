@@ -308,7 +308,7 @@ void BEEP_ON(void)
         TIM_Cmd(TIM14, ENABLE);
         TIM_CtrlPWMOutputs(TIM14, ENABLE);
 		tx_thread_sleep(2);//open_beep_sound();
-       TIM_SetCompare1(TIM14,0);
+        TIM_SetCompare1(TIM14,0);
 
         TIM_Cmd(TIM14, DISABLE);
    }

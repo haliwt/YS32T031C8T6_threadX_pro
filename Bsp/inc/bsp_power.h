@@ -22,7 +22,11 @@ extern "C" {
 
 #define _AD_FCUR      0
 
+#define _AD_PTCCUR    0
+
 #define _FCUR_CH      2
+
+#define _PTCCUR_CH    3   //WT.EDIT 2025-05-29
 
 
 #define _DEVICE_WORK_TIME         120
@@ -64,8 +68,11 @@ extern uint8_t disp_second_f ;
 extern uint8_t time_wifi_10ms_f;
 
 extern uint16_t ad_value[1];
+extern uint16_t ad_ptc_value[1];
 
 extern uint16_t fan_current;
+extern uint16_t ptc_current;
+
 
 extern uint8_t discharge_f;
 
@@ -103,6 +110,7 @@ extern uint8_t Is_time_setting_f;
 extern uint8_t Is_countdown_timer_f;
 extern uint8_t set_temperature_value_f;
 extern uint8_t time_1s_counter;
+extern uint8_t read_ntc_temperature_value;
 
 
 
@@ -338,7 +346,13 @@ extern power_state gon_t;
 void Clear_Ram(void);
 
 extern void Adc_Channel_Sample(void);
+
+void Adc_PTC_Channel_Sample(void);
+
 extern void AD_Filter(void);
+
+void AD_PTC_Filter(void);
+
 
 extern void LED_Strip_Ctrl(void);
 

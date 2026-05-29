@@ -24,6 +24,7 @@ uint8_t dht11_read_temp_humidity_value(void);
 
 void delay_ms_dht11(uint16_t ms);
 
+void Delay_US_dht11(uint16_t us);
 
 
 

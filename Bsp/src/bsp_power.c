@@ -26,7 +26,9 @@ volatile uint8_t time_5ms_f;
 uint8_t time_wifi_10ms_f;
 
 uint16_t ad_value[1];
+uint16_t ad_ptc_value[1];
 uint16_t fan_current;
+uint16_t ptc_current;
 uint8_t discharge_f;
 
 
@@ -46,6 +48,8 @@ uint8_t Ultra_Sound_open_f;
 uint8_t plasma_open_f;
 
 uint16_t timing_is_reach_disptime;
+
+uint8_t read_ntc_temperature_value;
 
 
 
@@ -315,6 +319,15 @@ void Adc_Channel_Sample(void)
     ad_value[_AD_FCUR] = ad_temp;
 }
 
+//ADC  PTC 
+void Adc_PTC_Channel_Sample(void)
+{
+    volatile uint16_t ad_ptc_temp;
+	
+    ad_ptc_temp = ADC_GetValue(_PTCCUR_CH,VREFBUF_ADC_VCC);
+	
+    ad_ptc_value[_AD_PTCCUR] = ad_ptc_temp;
+}
 
 
 /**
@@ -328,7 +341,13 @@ void Adc_Channel_Sample(void)
 void AD_Filter(void)
 {
     //FAN_CURRENT
-	  fan_current=(ad_value[_AD_FCUR]*2+fan_current*18)/20;
+	  ptc_current=(ad_value[_AD_FCUR]*2+fan_current*18)/20;
+}
+
+void AD_PTC_Filter(void)
+{
+  ptc_current=(ad_ptc_value[_AD_PTCCUR]*2+ptc_current*18)/20;
+
 }
 
 
@@ -418,7 +437,10 @@ uint16_t disp_counter;
 void power_on_handler(void)
 {
 
-    static uint8_t time_slot = 0,fan_counter =0,wifi_check_counter=0;
+    static uint8_t time_slot = 0,fan_counter =0,ptc_counter=0;
+	static uint8_t smg_counter = 0,per_counter=0;
+
+	static uint16_t wifi_check_counter=0;
 
 	
         if(gon_t.on_step  < 8){
@@ -441,8 +463,11 @@ void power_on_handler(void)
 		switch(time_slot){
 
 		case 0://1* 20ms
-		     disp_counter++;
-		    peripheral_fun_handler();
+		     per_counter++;
+		     if(per_counter > 100){ //10ms * 100
+			 	per_counter =0;
+		       peripheral_fun_handler();
+		     }
 
 		break;
 
@@ -452,8 +477,11 @@ void power_on_handler(void)
 		break;
 
 		case 2:
-			
-			 display_digital_3_numbers();
+			 smg_counter ++;
+			 if(smg_counter > 20){ //10ms * 30 =500ms
+			 	smg_counter =0;
+			    display_digital_3_numbers();
+			 }
 
 		break;
 
@@ -534,15 +562,16 @@ void power_on_handler(void)
 
 		    gpro_t.time_7s_f =0 ;
 		    fan_counter ++ ;
+		    Adc_Channel_Sample();
 		    AD_Filter();
-		   Adc_Channel_Sample();
+		 
 	       }
 
 		break;
 
 
 		case 11:
-		  if(fan_counter > 3) {
+		  if(fan_counter > 150) {
 	   	     fan_counter =0;
 	         Fan_Current_Det();		// 电流检测
 		   }
@@ -565,7 +594,7 @@ void power_on_handler(void)
 		case 13:
            
 			wifi_check_counter++; //20ms * 100
-		    if(wifi_check_counter > 100){
+		    if(wifi_check_counter > 300){
 			  wifi_check_counter =0;
               wifi_check_ifnot_link_net_handler();
 		    }
@@ -577,12 +606,27 @@ void power_on_handler(void)
 		break;
 
 
+		case 15:
+		   ptc_counter++ ;
+		   if(ptc_counter > 200 && ptc_counter < 220){
+		      Adc_PTC_Channel_Sample();
+		      AD_PTC_Filter();
+            }
+		    else if(ptc_counter > 230){
+                 ptc_counter  =0;
+				 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
+                 
+			 }
+
+		break;
+
+
 		
        }
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >14 ) time_slot = 0;  //14*20 = 260ms 
+           if (time_slot >15 ) time_slot = 0;  //14*10 = 260ms 
 
         
 }

@@ -160,7 +160,7 @@ static void TIM17_Init_1MHz(void)
     TIM_Cmd(TIM17, ENABLE);
 }
 
-static void Delay_US_dht11(uint16_t us)
+void Delay_US_dht11(uint16_t us)
 {
    #if 1
 

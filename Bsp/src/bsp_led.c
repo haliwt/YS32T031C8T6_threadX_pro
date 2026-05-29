@@ -72,7 +72,7 @@ void wifi_fast_led_state(void)
 }
 
 
-void  wifi_led_state_handler(void)
+void wifi_led_state_handler(void)
 {
 	
      if(key_net_config_f==1) return ;

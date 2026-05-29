@@ -70,8 +70,8 @@ void ADC_Channel_Init(uint8_t CH)
     switch(CH)  //—°‘Ò≤‚ ‘Õ®µ¿
     {
         case 1:    ADC_RegularChannelConfig(ADC, ADC_Channel_1, 1, ADC_SampleTime_31_5Cycles);   break;          //CH1  PF4  
-			  case 2:    ADC_RegularChannelConfig(ADC, ADC_Channel_2, 1, ADC_SampleTime_31_5Cycles);   break;          //CH2  PA0
-			  case 3:    ADC_RegularChannelConfig(ADC, ADC_Channel_3, 1, ADC_SampleTime_31_5Cycles);   break;          //CH3  PA1
+		case 2:    ADC_RegularChannelConfig(ADC, ADC_Channel_2, 1, ADC_SampleTime_31_5Cycles);   break;          //CH2  PA0
+		case 3:    ADC_RegularChannelConfig(ADC, ADC_Channel_3, 1, ADC_SampleTime_31_5Cycles);   break;          //CH3  PA1
         case 5:    ADC_RegularChannelConfig(ADC, ADC_Channel_5, 1, ADC_SampleTime_31_5Cycles);   break;          //CH5  PA3      
         case 6:    ADC_RegularChannelConfig(ADC, ADC_Channel_6, 1, ADC_SampleTime_31_5Cycles);   break;          //CH6  PA4      
         case 7:    ADC_RegularChannelConfig(ADC, ADC_Channel_7, 1, ADC_SampleTime_31_5Cycles);   break;          //CH7  PA5      

@@ -27,7 +27,7 @@
 
 #define STACK_SIZE_KEY  256//512//256//512//1792//3072//2048//1024//896//768
 #define STACK_SIZE_DECODER  256//512//512//256
-#define STACK_SIZE_UI    1280//1536//1024//256
+#define STACK_SIZE_UI    1536//1536//1024//256
 #define STACK_SIZE_EVENT  512
 //#define  TX_TIMER_THREAD_STACK_SIZE   128
 
@@ -150,7 +150,7 @@ void tx_application_define(void *first_unused_memory)
                        stack_ui_pro,                /* 堆栈基地址 */
                        STACK_SIZE_UI,            /* 堆栈空间大小 */  
                        3,                           /* 任务优先级*/
-                       0,                           /* 任务抢占阀值 */
+                       3,                           /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,            /* 不开启时间片 */
                        TX_AUTO_START);              /* 创建后立即启动 */
 

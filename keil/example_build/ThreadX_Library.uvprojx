@@ -719,6 +719,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Bsp\src\bsp_sensor.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_ntc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Bsp\src\bsp_ntc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
