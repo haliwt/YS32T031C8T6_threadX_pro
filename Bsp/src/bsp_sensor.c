@@ -187,28 +187,12 @@ static void Delay_US_dht11(uint16_t us)
 }
 
 /*---------------- DHT11 bit/byte ?? ----------------*/
-
-
-
+#if 0
 static uint8_t DHT11_ReadByte(void)
 {
 
     #if 0
-	uint8_t i, val = 0;
-
-    for (i = 0; i < 8; i++)
-    {
-        uint8_t bit = DHT11_ReadBit();
-        if (bit == 0xFF) return 0xFF;
-
-        val <<= 1;
-        val |= bit;
-    }
-    return val;
-
-	#else
-	
-	uint8_t i,dat=0;
+     uint8_t i,dat=0;
 	 for(i=0;i<8;i++) 
 		  {
 				while(GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT,DHT11_DATA_PIN)==0);
@@ -228,9 +212,60 @@ static uint8_t DHT11_ReadByte(void)
 					}
 			}
 		  return dat;
+    #else 
 
 
 	#endif 
+}
+#endif 
+static uint8_t DHT11_ReadByte(void)
+{
+    uint8_t i, dat = 0;
+    volatile uint32_t timeout; // 使用 volatile 防止被编译器优化
+
+    for (i = 0; i < 8; i++) 
+    {
+        // ------------------ 预防卡死点 1 ------------------
+        // 等待引脚变为高电平（跳过起始的低电平阶段）
+        timeout = 0;
+        while (GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN) == 0)
+        {
+            timeout++;
+            if (timeout > 10000) // 门槛值，防止硬件损坏时死循环
+            {
+                return 0xFF; // 返回错误标志
+            }
+        }
+        
+        // 延时 40微秒 区分信号是 0 还是 1
+        Delay_US_dht11(40);
+        
+        // 如果 40us 后依然是高电平，说明这一位是数据 "1"
+        if (GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN) == 1)
+        {
+            // ------------------ 预防卡死点 2 ------------------
+            // 数据是 1，需要等待引脚变回低电平，才能开始下一位的接收
+            timeout = 0;
+            while (GPIO_ReadInputDataBit(DHT11_DATA_GPIO_PORT, DHT11_DATA_PIN) == 1)
+            {
+                timeout++;
+                if (timeout > 10000) 
+                {
+                    return 0xFF; // 返回错误标志
+                }
+            }
+            
+            dat |= (uint8_t)(0x01 << (7 - i)); // 写入 1
+        }
+        else
+        {
+            // 40us 后变回了低电平，说明这一位是数据 "0"
+            //（此时引脚已经是低电平了，无需等待，直接清零对应位即可）
+            dat &= (uint8_t)~(0x01 << (7 - i)); // 写入 0
+        }
+    }
+    
+    return dat;
 }
 
 

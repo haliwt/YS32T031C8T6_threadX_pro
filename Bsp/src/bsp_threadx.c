@@ -315,7 +315,7 @@ void tx_application_define(void *first_unused_memory)
 #if DEBUG_ENABLE
 	 debug_stack_key_check();
 #endif 
-    tx_thread_sleep(6);//10*1=10 
+    tx_thread_sleep(6);//10ms*6=60 
 	
     } 
 }
