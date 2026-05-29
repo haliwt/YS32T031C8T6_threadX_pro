@@ -9,7 +9,7 @@ static void DHT11_WritePin(uint8_t val);
 static uint8_t DHT11_ReadPin(void);
 
 static void TIM17_Init_1MHz(void);
-static void Delay_US_dht11(uint16_t us);
+//static void Delay_US_dht11(uint16_t us);
 
 
 static uint8_t DHT11_ReadByte(void);

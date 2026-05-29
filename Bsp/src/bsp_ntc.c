@@ -194,7 +194,7 @@ static const uint8_t R10K_Init_0_81_simple[23]={
 
 
 
-static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
+//static uint16_t Get_Adc_Average(uint32_t ch,uint8_t times);
 
 
 
