@@ -136,7 +136,7 @@ void tx_application_define(void *first_unused_memory)
                        stack_decoder_pro,                   /* 堆栈基地址 */
                        STACK_SIZE_DECODER,                  /* 堆栈空间大小 */  
                        2,                               /* 任务优先级*/
-                       1,                               /* 任务抢占阀值 */
+                       2,                               /* 任务抢占阀值 */
                        TX_NO_TIME_SLICE,                /* 不开启时间片 */
                        TX_AUTO_START);                  /* 创建后立即启动 */
 
@@ -221,7 +221,7 @@ void tx_application_define(void *first_unused_memory)
 #if DEBUG_ENABLE
 	 debug_stack_ui_check();
 #endif 
-	tx_thread_sleep(2);//10ms * 2 = 20ms  
+	tx_thread_sleep(1);//10ms * 2 = 20ms  
 	
     } 
 }
@@ -241,7 +241,7 @@ void tx_application_define(void *first_unused_memory)
     static uint16_t down_cnt = 0;
     static uint16_t power_cnt = 0;
 
-    const uint16_t LONG_PRESS_TIME = 120;   // 300 * 10ms = 3000ms
+    const uint16_t LONG_PRESS_TIME = 40;   // 300 * 10ms = 3000ms
   
   
  
@@ -254,15 +254,14 @@ void tx_application_define(void *first_unused_memory)
                 tx_event_flags_set(&key_event, KEY_POWER_LONG, TX_OR);
              }
     }
-	else if(power_cnt > 1){
-		    if(power_cnt < LONG_PRESS_TIME)
+	else if(power_cnt > 0 && KEY_POWER_VALUE() == KEY_UP){
+		    if(power_cnt > 0 && power_cnt < LONG_PRESS_TIME)
               tx_event_flags_set(&key_event, KEY_POWER_SHORT, TX_OR);
 
             power_cnt = 0;
 
 	}
-	
-	if(KEY_MODE_VALUE() == KEY_DOWN && discharge_f ==1){// == 1 && discharge_f ==1){ //key mode
+	else if(KEY_MODE_VALUE() == KEY_DOWN && discharge_f ==1){// == 1 && discharge_f ==1){ //key mode
 
 	   
 		 mode_cnt++;
@@ -272,16 +271,14 @@ void tx_application_define(void *first_unused_memory)
             }
 	   	
     }
-	else  if(mode_cnt > 1){
-		       if(mode_cnt < LONG_PRESS_TIME)
+	else  if(mode_cnt > 0 && KEY_MODE_VALUE() == KEY_UP ){
+		       if(mode_cnt > 0 && mode_cnt < LONG_PRESS_TIME)
                 tx_event_flags_set(&key_event, KEY_MODE_SHORT, TX_OR);
 		
         mode_cnt = 0;
 
 	}
-
-	
-    if (KEY_UP_VALUE() == KEY_DOWN && discharge_f ==1){ //up key
+    else if (KEY_UP_VALUE() == KEY_DOWN && discharge_f ==1){ //up key
 		//key_i = _UP_KEY_DOWN;
 	  
 		up_cnt++;
@@ -290,14 +287,13 @@ void tx_application_define(void *first_unused_memory)
 	   	
 
 	}
-	else if(up_cnt > 1){
-	         if(up_cnt < LONG_PRESS_TIME)
+	else if(up_cnt > 0 && (KEY_UP_VALUE() == KEY_UP)){
+	         if(up_cnt > 0 && up_cnt < LONG_PRESS_TIME)
                tx_event_flags_set(&key_event, KEY_UP_SHORT, TX_OR);
 
           up_cnt = 0;
 	}
-	
-	if (KEY_DOWN_VALUE() == KEY_DOWN && discharge_f ==1){ //dwon key
+	else if (KEY_DOWN_VALUE() == KEY_DOWN && discharge_f ==1){ //dwon key
 		
 		  down_cnt++;
           if(down_cnt == LONG_PRESS_TIME && down_cnt_long_f ==0){
@@ -306,8 +302,8 @@ void tx_application_define(void *first_unused_memory)
           	}
 		
     }
-	else  if(down_cnt > 1){
-		 if(down_cnt < LONG_PRESS_TIME)
+	else  if(down_cnt > 0 && KEY_DOWN_VALUE() == KEY_UP){
+		 if( down_cnt > 0 && down_cnt < LONG_PRESS_TIME)
 			tx_event_flags_set(&key_event, KEY_DOWN_SHORT, TX_OR);
 			
 	        down_cnt_long_f =0;
@@ -319,7 +315,7 @@ void tx_application_define(void *first_unused_memory)
 #if DEBUG_ENABLE
 	 debug_stack_key_check();
 #endif 
-    tx_thread_sleep(2);//10*1=10 
+    tx_thread_sleep(6);//10*1=10 
 	
     } 
 }
@@ -374,7 +370,7 @@ void tx_application_define(void *first_unused_memory)
 		   }
 		}   
 
-	    tx_thread_sleep(2);//WT.EDIT 2026-05-26
+	    tx_thread_sleep(1);//WT.EDIT 2026-05-26
 	 
 #if DEBUG_ENABLE
 		  debug_stack_key_event_check();
