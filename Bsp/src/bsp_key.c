@@ -252,6 +252,10 @@ void System_Status_PowerOn(void)
     BEEP_ON() ;//Beep(BEEP_ONCE);
     power_on_led_open_handler();
 	LED_FUN_ON();
+	#if 1
+	 FAN_RUN_OFF();
+     fan_off();
+	#endif 
 
 }
 /**

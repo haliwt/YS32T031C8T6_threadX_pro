@@ -161,7 +161,7 @@ extern uint8_t disp_switch_temp_humi;
 extern uint8_t key_be_pressed_f;
 extern uint8_t disp_set_hours_time_f;
 extern uint8_t  key_input_temp_f;
-extern uint8_t  time_20ms_f;
+extern uint8_t  time_10ms_f;
 
 extern uint8_t heat_open_close_f;
 
@@ -373,6 +373,11 @@ void power_on_off_handler(void);
 
 	
 void BEEP_ON(void);
+
+void printf_ptc_adc_numbers(void);
+
+void ptc_adc_detected_voltage(void);
+void ptc_switch_temperature(void);
 
 
 

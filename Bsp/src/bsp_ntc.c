@@ -38,7 +38,7 @@ uint8_t disp_ntc_value[DISP_VALUE];
 
 
 
-//static uint16_t Read_NTC_Temperature_Voltage(void);
+
 
 static int8_t  Binary_Search(const uint8_t *array ,uint8_t key,uint8_t length);
 
@@ -46,16 +46,17 @@ static int8_t  Binary_Search(const uint8_t *array ,uint8_t key,uint8_t length);
 
 
 
-//static void Read_Ntc_Decimal_Point_Numbers(void);
+
 
 //static uint8_t Calculate_Display_Temperature_Value(const uint16_t *pt,uint16_t ntc_res,uint8_t length);
 
 static uint8_t Calculate_Display_Temperature_Value(const uint16_t *pt,uint8_t key,uint16_t ntc_res_value,uint8_t length);
 
+static void Calculate_zero_Temperature_Value(uint8_t idata);
 
 
 
-//static void Calculate_Speicial_Temperature_Value(uint8_t temp);
+
 
 
 
@@ -162,20 +163,25 @@ static const uint16_t R10K_89_100[12] ={391,382,373,364,356,348,340,332,324,317,
 
 static const uint16_t R10K_101_118[18] ={295,289,282,276,270,264,258,252,246,241,235,230,225,220,215,211,206,201}; //array[16]:error range = 4
 
-static const uint16_t R10K_119_120[2]={197,193}; //array[17] error range = 4
+static const uint16_t R10K_119_151[33]={197,193,188,184,180,176,172,169,165,162,158,154,152,
+	                  148,145,142,139,137,134,131,128,126,123,121,118,116,114,111,109,107,105,103,101}; //array[17] error range = 4
 
+
+static const uint16_t R10K_152_180[29]={99,97,95,93,91,90,88,86,85,83,81,80,79,77,76,74,73,72,70,69,68,67,65,64,63,62,
+	                   61,60,59};
+	                  
 
 
 ///
 
 
-static const uint8_t R10K_Init_0_120_simple[24]={
+static const uint8_t R10K_Init_0_120_simple[25]={
 
     24,23,22,21,20,
 	19,18,17,16,15,
 	14,13,12,11,10,
 	9,8,7,6,5,
-	4,3,2,1
+	4,3,2,1,0
 };
 
 
@@ -231,9 +237,18 @@ void Get_Ntc_Resistance_Temperature_Handler(uint16_t voltage)
 	
 	length_simple =  sizeof(R10K_Init_0_120_simple)/sizeof(R10K_Init_0_120_simple[0]);
     
-   	 disp_temp_degree = Binary_Search(R10K_Init_0_120_simple,temp_vlue,length_simple);
-    
-	Calculate_Speicial_Temperature_Value(disp_temp_degree);
+     if(temp_vlue >0){
+	    disp_temp_degree = Binary_Search(R10K_Init_0_120_simple,temp_vlue,length_simple);
+
+	 }
+	
+
+     if(temp_vlue == 0){
+	 	
+	    Calculate_zero_Temperature_Value(0);
+
+	 }
+     else Calculate_Speicial_Temperature_Value(disp_temp_degree);
 	
      read_ntc_temperature_value =ntc_t.read_ntc_tem_value;
    // g_pro.read_ntc_temperature_value = ntc_res_linear_value(ntc_t.read_ntc_tem_value);
@@ -1180,9 +1195,9 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
 
    break;
 
-    case degree_twenty_three: //119````120 degree
-   	   	 array_subscript =  Calculate_Display_Temperature_Value(R10K_119_120,23,ntc_t.ntc_res_read_adc_value,2);
-	     if(array_subscript > 1)array_subscript=1;
+    case degree_twenty_three: //119````140 degree//22GE 
+   	   	 array_subscript =  Calculate_Display_Temperature_Value(R10K_119_151,23,ntc_t.ntc_res_read_adc_value,33);
+	     if(array_subscript > 33)array_subscript=33;
 		 switch(array_subscript){
    
 		   case 0:
@@ -1195,10 +1210,344 @@ static void Calculate_Speicial_Temperature_Value(uint8_t temp)
    
 		   break;
 
+		   
+		   case 2:
+			  ntc_t.read_ntc_tem_value = 121 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 3:
+			  ntc_t.read_ntc_tem_value = 122 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 4:
+			  ntc_t.read_ntc_tem_value = 123 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		   
+		   case 5:
+			  ntc_t.read_ntc_tem_value = 124 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 6:
+			  ntc_t.read_ntc_tem_value = 125 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+			   
+			case 7:
+			ntc_t.read_ntc_tem_value = 126 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+
+			case 8:
+			ntc_t.read_ntc_tem_value = 127 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 9:
+			ntc_t.read_ntc_tem_value = 128 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 10:
+			ntc_t.read_ntc_tem_value = 129 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+
+			case 11:
+			ntc_t.read_ntc_tem_value = 130 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 12:
+			ntc_t.read_ntc_tem_value = 131 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 13:
+			  ntc_t.read_ntc_tem_value = 132 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		   
+		   case 14:
+			  ntc_t.read_ntc_tem_value = 133 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 15:
+			  ntc_t.read_ntc_tem_value = 134 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 16:
+			  ntc_t.read_ntc_tem_value = 135 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		   
+		   case 17:
+			  ntc_t.read_ntc_tem_value = 136 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 18:
+			  ntc_t.read_ntc_tem_value = 137 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+			   
+			case 19:
+			ntc_t.read_ntc_tem_value = 138 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+
+			case 20:
+			ntc_t.read_ntc_tem_value = 139 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 21:
+			ntc_t.read_ntc_tem_value = 140 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+			
+			case 22:
+			ntc_t.read_ntc_tem_value = 141 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 23:
+			  ntc_t.read_ntc_tem_value = 142 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		   
+		   case 24:
+			  ntc_t.read_ntc_tem_value = 143 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 25:
+			  ntc_t.read_ntc_tem_value = 144 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 26:
+			  ntc_t.read_ntc_tem_value = 145 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		   
+		   case 27:
+			  ntc_t.read_ntc_tem_value = 146 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+		    case 28:
+			  ntc_t.read_ntc_tem_value = 147 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+   
+		   break;
+
+			   
+			case 29:
+			ntc_t.read_ntc_tem_value = 148 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+
+			case 30:
+			ntc_t.read_ntc_tem_value = 149 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 31:
+			ntc_t.read_ntc_tem_value = 150 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			case 32:
+			ntc_t.read_ntc_tem_value = 151 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+			break;
+
+			
+
+			
+
 		 }
 
    }
 }
+
+
+
+
+static void Calculate_zero_Temperature_Value(uint8_t idata)
+{
+  
+           // zero_d =2;
+          array_subscript =  Calculate_Display_Temperature_Value(R10K_152_180,24,ntc_t.ntc_res_read_adc_value,29);
+		 if(array_subscript > 29)array_subscript=29;
+
+         switch(array_subscript){
+
+         case 0:
+        		 ntc_t.read_ntc_tem_value = 152 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 1:
+  		 	ntc_t.read_ntc_tem_value = 153 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 2:
+        		 ntc_t.read_ntc_tem_value = 154 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 3:
+  		 	ntc_t.read_ntc_tem_value = 155 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 4:
+        		 ntc_t.read_ntc_tem_value = 156 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 5:
+  		 	ntc_t.read_ntc_tem_value = 157 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 6:
+        		 ntc_t.read_ntc_tem_value = 158 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 7:
+  		 	ntc_t.read_ntc_tem_value = 159 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		   case 8:
+  		 	ntc_t.read_ntc_tem_value = 160 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		 
+		case 9:
+		     ntc_t.read_ntc_tem_value = 161 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		case 10:
+		   ntc_t.read_ntc_tem_value = 162 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		 case 11:
+				ntc_t.read_ntc_tem_value = 163 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		case 12:
+		   ntc_t.read_ntc_tem_value = 164 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		 case 13:
+				ntc_t.read_ntc_tem_value = 165 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		case 14:
+		   ntc_t.read_ntc_tem_value = 166 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		 case 15:
+				ntc_t.read_ntc_tem_value = 167 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		case 16:
+		   ntc_t.read_ntc_tem_value = 168 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+		case 17:
+		   ntc_t.read_ntc_tem_value = 169 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+
+		 case 18:
+        		 ntc_t.read_ntc_tem_value = 152 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 19:
+  		 	ntc_t.read_ntc_tem_value = 153 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 20:
+        		 ntc_t.read_ntc_tem_value = 154 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 21:
+  		 	ntc_t.read_ntc_tem_value = 155 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 22:
+        		 ntc_t.read_ntc_tem_value = 156 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 23:
+  		 	ntc_t.read_ntc_tem_value = 157 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		  case 24:
+        		 ntc_t.read_ntc_tem_value = 158 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+         break;
+
+         case 25:
+  		 	ntc_t.read_ntc_tem_value = 159 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		   case 26:
+  		 	ntc_t.read_ntc_tem_value = 160 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+  		 break;
+
+		 
+		case 27:
+		     ntc_t.read_ntc_tem_value = 161 + ntc_t.temperature_rectify_value +COMPENSATION_VALUE;
+
+		break;
+
+  		}
+
+    
+
+}
+
 /******************************************************************************
 	*
 	*Function Name: static uint8_t Calculate_Display_Temperature_Value(const uin16_t *pt,uint8_t length)

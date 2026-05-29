@@ -160,10 +160,8 @@ void TIM6_LPTIM_IRQHandler (void)
 		if(cnt10 > 1){//5ms*2 =10ms
 
 			cnt10 =0; 
-		    if(++cnt20ms == 2){
-				time_20ms_f = 1;
-		    }
-		    time_wifi_10ms_f = 1;
+		   time_10ms_f = 1;
+		
 			gpro_t.time_50ms_f++;
 
 			if(++cnt100 >=10){ //10* 10 = 100ms .

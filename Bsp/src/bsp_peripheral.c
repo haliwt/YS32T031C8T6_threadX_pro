@@ -423,6 +423,7 @@ void workd_interval_turn_off_handle(void)
 **/
 void set_temp_compare(void)
 {
+      #if 0
    static uint8_t  send_data_f=0xff;
    if(discharge_f == 1 && (set_temperature_value_f ==1 && time_1s_counter > 1 &&  key_input_temp_f != 4)|| ( key_input_temp_f == 4 && time_1s_counter  > 2)){//1
 	    set_temperature_value_f ++;
@@ -484,7 +485,7 @@ void set_temp_compare(void)
            set_temperature_value_f ++; 
 
 	}
-
+  #endif 
 }
 /************************************************************************
 *
@@ -573,7 +574,7 @@ void Fan_Current_Det(void)
 			}
 		}
 		else{
-		fan_current_det_time = 0;
+		   fan_current_det_time = 0;
 		}
 	}
 	else

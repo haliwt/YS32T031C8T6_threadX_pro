@@ -217,7 +217,7 @@ void display_digital_3_numbers(void)
 				TM1639_Display_Temperature(temperature);
 			}
 
-			tx_thread_sleep(1);
+			
       
      	}
 

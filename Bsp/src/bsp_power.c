@@ -148,7 +148,7 @@ uint8_t  mqtt_status;
 
 //fan
 uint8_t  fan_one_minute_cuonter;
-uint8_t  time_20ms_f;
+uint8_t  time_10ms_f;
 
 
 
@@ -336,21 +336,47 @@ void Adc_PTC_Channel_Sample(void)
   * @param: 
   *
 **/
-
+uint16_t ptc_adc;
 //AD����һ�׻����˲�
 void AD_Filter(void)
 {
     //FAN_CURRENT
-	  ptc_current=(ad_value[_AD_FCUR]*2+fan_current*18)/20;
+	  fan_current=(ad_value[_AD_FCUR]*2+fan_current*18)/20;
 }
 
 void AD_PTC_Filter(void)
 {
-  ptc_current=(ad_ptc_value[_AD_PTCCUR]*2+ptc_current*18)/20;
+   // uint16_t tem_ptc;
+	ptc_adc=(ad_ptc_value[_AD_PTCCUR]*2+ptc_current*18)/20;
+
+	ptc_current = (ptc_adc * 3300 )/4095;
+
 
 }
 
+void printf_ptc_adc_numbers(void)
+{
+  printf("ptc_adc_numbers = %d \n\r",ptc_adc);
 
+}
+
+void ptc_adc_detected_voltage(void)
+{
+   ADC_SoftwareStartConvCmd(ADC);
+   tx_thread_sleep(10);//while(!ADC_GetFlagStatus(ADC,ADC_FLAG_EOC));  //等待转换完成
+    ptc_adc = ADC_GetConversionValue(ADC);
+       // printf("VSense = %d\n",ptc_adc);
+        ADC_ClearFlag(ADC, ADC_FLAG_EOC);
+        ADC_SoftwareStartConvCmd(ADC);
+        //DelayMS(50);
+
+}
+
+void ptc_switch_temperature(void)
+{
+   ptc_current = (ptc_adc * 3300 )/4095;
+
+}
 /**
   * @brief  fan run is ok
   * @note  
@@ -438,7 +464,7 @@ void power_on_handler(void)
 {
 
     static uint8_t time_slot = 0,fan_counter =0,ptc_counter=0;
-	static uint8_t smg_counter = 0,per_counter=0;
+	static uint8_t per_counter=0,switch_done =0;
 
 	static uint16_t wifi_check_counter=0;
 
@@ -456,8 +482,11 @@ void power_on_handler(void)
             // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
            compare_set_temp_value(); //set_temperature_value_handler(); 
         }
+         if(time_10ms_f ==1){
+		    time_10ms_f=0;
+           display_digital_3_numbers();
 
-	   
+         }
 	     
 
 		switch(time_slot){
@@ -478,15 +507,15 @@ void power_on_handler(void)
 
 		case 2:
 			
-			 display_digital_3_numbers();
-			
+			//display_digital_3_numbers();
+			  
 
 		break;
 
 		case 3://2*20m = 40
 		  if(gpro_t.time_3s_f > 2){
 		    gpro_t.time_3s_f =0;	
-		    Fan_Ctrl_Process();	  // 风扇控制
+		   // Fan_Ctrl_Process();	  // 风扇控制
 
            }
 
@@ -524,7 +553,7 @@ void power_on_handler(void)
 		case 6:
 		if(gpro_t.time_5s_f > 3){
 	   	  gpro_t.time_5s_f=0;
-          Heat_Process(); 
+        //  Heat_Process(); 
 	      }
 				
 		break;
@@ -571,7 +600,7 @@ void power_on_handler(void)
 		case 11:
 		  if(fan_counter > 150) {
 	   	     fan_counter =0;
-	         Fan_Current_Det();		// 电流检测
+	        // Fan_Current_Det();		// 电流检测
 		   }
     
 
@@ -585,7 +614,7 @@ void power_on_handler(void)
 		   #endif 
 		   Reconnection_Wifi_Order();
 
-	 }
+	 		}
 
 		break;
 
@@ -606,18 +635,31 @@ void power_on_handler(void)
 
 		case 15:
 		   ptc_counter++ ;
-		   if(ptc_counter > 200 && ptc_counter < 220){
-		      Adc_PTC_Channel_Sample();
-		      AD_PTC_Filter();
+		   if(ptc_counter > 10 ){
+		   	   ptc_counter =0;
+			   switch_done=1;
+		      //Adc_PTC_Channel_Sample();
+		     /// AD_PTC_Filter();
+		     ptc_adc_detected_voltage();
+
+			  printf_ptc_adc_numbers();
+			 
             }
-		    else if(ptc_counter > 230){
-                 ptc_counter  =0;
-				 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
-			      #if 1
-		           printf(" ntc_temp = %d \n\r",read_ntc_temperature_value);
-		          #endif 
-                 
-			 }
+		   
+
+		break;
+
+		case 16:
+		    if(switch_done==1){
+				switch_done =0;
+				ptc_switch_temperature();
+						 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
+				 #if 1
+						  printf("ntc_temp_v = %d \n\r",ptc_current);
+						  printf("temperature = %d \n\r",read_ntc_temperature_value);
+				 #endif 
+						
+			}
 
 		break;
 
@@ -627,7 +669,7 @@ void power_on_handler(void)
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >15 ) time_slot = 0;  //14*10 = 260ms 
+           if (time_slot >16 ) time_slot = 0;  //14*10 = 260ms 
 
         
 }

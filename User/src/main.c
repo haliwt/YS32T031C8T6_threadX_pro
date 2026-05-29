@@ -81,7 +81,7 @@ int main(void)
 
 	
 	//  TSC_Lib_Init();                //触摸初始化
-	   
+	    ADC_Channel_Init(3);
         ADC_Configuration();           //ADC配置
 		
 		NVIC_Configuration();          //中断嵌套向量配置
