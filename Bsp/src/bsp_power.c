@@ -477,11 +477,9 @@ void power_on_handler(void)
 		break;
 
 		case 2:
-			 smg_counter ++;
-			 if(smg_counter > 20){ //10ms * 30 =500ms
-			 	smg_counter =0;
-			    display_digital_3_numbers();
-			 }
+			
+			 display_digital_3_numbers();
+			
 
 		break;
 
@@ -615,6 +613,9 @@ void power_on_handler(void)
 		    else if(ptc_counter > 230){
                  ptc_counter  =0;
 				 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
+			      #if 1
+		           printf(" ntc_temp = %d \n\r",read_ntc_temperature_value);
+		          #endif 
                  
 			 }
 
