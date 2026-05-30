@@ -225,6 +225,141 @@ void display_digital_3_numbers(void)
 	   	
   
 }
+/******************************************************************************
+	*
+	*Function Name:
+	*Function:
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
+void disp_key_input_handler(void)
+{
+	
+	
+	   // If any warning is active, do nothing
+	   if (no_fan_load_f ==1) return;
+	
+	   
+	   
+		if(Is_time_setting_f ==1 || disp_set_hours_time_f ==1){//display set timer timing hours.
+	
+		 
+		   if(time_set_hours_counter < 4){
+				   
+					  LED_AI_OFF();
+					  LED_HUMI_OFF();//HUMIDITY_ICON_OFF();
+					  LED_TEMP_OFF();//TEMP_ICON_OFF();//WT.EDIT 2025.04.28
+					  if(key_be_pressed_f == 1){
+							TM1639_Display_setTimerHours_3_Digit(setting_timing_hour);
+							if(setting_timing_hour > 0){
+							   temporary_timer_hours = setting_timing_hour;
+							   Is_countdown_timer_f = 1;
+							   real_hours_counter=0;
+							   setting_timing_second = 0;
+							   AI_led_open_f=0;  //WT.EDIT 2026.05.19
+							  
+							}
+							else if(setting_timing_hour ==0){
+							   Is_countdown_timer_f = 0;
+							   AI_led_open_f=1;  //WT.EDIT 2026.05.19
+							}
+	
+					  }
+					  else{
+						  if(setting_timing_hour > 0)
+							  TM1639_Display_setTimerHours_3_Digit(setting_timing_hour);
+						  else
+							  TM1639_Display_setTimerMinutes_3_Digit(timing_min_cnt);
+					  }
+					 
+					 
+			}
+			else{
+				disp_set_hours_time_f = 0;
+				Is_time_setting_f=0;// g_pro.g_disp_smg_timer_or_temp_hours_item = temperature_mode; //WT.EDIT 2025.010.06
+				key_be_pressed_f =0;
+			   
+				if(setting_timing_hour > 0 || timing_min_cnt> 0){ // && g_key.key_mode_long_flag != 1){
+					 AI_led_open_f=0;
+					 LED_AI_OFF(); 
+				 
+				}
+				else {
+				   AI_led_open_f=1;
+				   LED_AI_ON(); 
+			   
+	
+			   }
+		   
+		   }
+		 
+		}
+		else if((set_temperature_value_f == 1 && time_set_hours_counter < 3  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 4)){//set up temperature value 
+	
+		   
+			  TM1639_Display_Temperature(setting_temperature);
+			  
+		}
+
+		if((set_temperature_value_f ==1 || set_temperature_value_f > 2)  && time_1s_counter > 5 )set_temperature_value_f =0;
+
+        
+		if((Is_time_setting_f ==1 || disp_set_hours_time_f ==1) && time_set_hours_counter > 6 ){//display set timer timing hours.
+	          disp_set_hours_time_f = 0;
+	          Is_time_setting_f=0;// g_pro.g_disp_smg_timer_or_temp_hours_item = temperature_mode; //WT.EDIT 2025.010.06
+			   key_be_pressed_f =0;  
+		}
+		   
+}
+
+
+/******************************************************************************
+	*
+	*Function Name:
+	*Function:
+	*Input Ref: NO
+	*Return Ref:NO
+	*
+******************************************************************************/
+void display_temperature_humidigy_handler(void)
+{
+   volatile static uint8_t disp_temp_hum;//,switch_adc;
+		 
+		  if(set_temperature_value_f == 1 || Is_time_setting_f ==1 || disp_set_hours_time_f ==1) return ;
+
+		  if(AI_led_open_f == 0){//if(g_pro.set_timing_or_timer_time_flag ==TIMER_TIME){
+			         
+		     LED_AI_OFF(); 
+		  }
+		  else{
+		     LED_AI_ON(); 
+
+		  }
+             // 检查是否需要切换显示模式
+            if (disp_switch_temp_humi > SWITCH_THRESHOLD ){
+			    disp_switch_temp_humi = 0; // 重置计数器
+			    disp_temp_hum = disp_temp_hum ^ 0x01; // 切换显示模式
+            }
+
+            // 始终更新显示，无论是否切换模式
+            if(disp_temp_hum == 1){
+				LED_TEMP_ON();
+				LED_HUMI_OFF();
+				TM1639_Display_Humidity(humidity);
+            }
+			else {
+               	LED_TEMP_OFF();
+				LED_HUMI_ON();
+				TM1639_Display_Temperature(temperature);
+			}
+
+			
+      
+ }
+
+
+
 #if 0
 /******************************************************************************
 	*

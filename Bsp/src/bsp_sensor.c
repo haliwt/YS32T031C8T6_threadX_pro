@@ -275,9 +275,10 @@ uint8_t dht11_read_temp_humidity_value(void)
     uint8_t dht11_read_flag;
 	
 	dht11_read_flag = DHT11_ReadData(&humidity,&temperature);
-
-	return dht11_read_flag;
-
+    if(dht11_read_flag==0) 
+		return dht11_read_flag;
+	
+}
   #if 0
 	if(dht11_read_flag==0){
       
@@ -303,5 +304,5 @@ uint8_t dht11_read_temp_humidity_value(void)
 	}
 
   #endif 
-}
+
 

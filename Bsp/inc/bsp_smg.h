@@ -21,6 +21,9 @@ void DHT11_Display_Data(uint8_t mode);
 
 void LED_FUN_ON(void);
 
+void display_temperature_humidigy_handler(void);
+
+void disp_key_input_handler(void);
 
 
 #endif 

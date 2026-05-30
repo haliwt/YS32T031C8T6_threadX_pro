@@ -368,7 +368,7 @@ void ptc_adc_detected_voltage(void)
        // printf("VSense = %d\n",ptc_adc);
         ADC_ClearFlag(ADC, ADC_FLAG_EOC);
         ADC_SoftwareStartConvCmd(ADC);
-        //DelayMS(50);
+        tx_thread_sleep(5);//DelayMS(50);
 
 }
 
@@ -463,10 +463,10 @@ uint16_t disp_counter;
 void power_on_handler(void)
 {
 
-    static uint8_t time_slot = 0,fan_counter =0,ptc_counter=0;
-	static uint8_t per_counter=0,switch_done =0;
+  volatile  static uint8_t time_slot = 0,fan_counter =0,ptc_counter=0;
+  volatile static uint8_t per_counter=0,switch_done =0,disp_counter=0;
 
-	static uint16_t wifi_check_counter=0;
+  volatile static uint16_t wifi_check_counter=0;
 
 	
         if(gon_t.on_step  < 8){
@@ -484,7 +484,8 @@ void power_on_handler(void)
         }
          if(time_10ms_f ==1){
 		    time_10ms_f=0;
-           display_digital_3_numbers();
+           
+		    disp_key_input_handler();
 
          }
 	     
@@ -506,8 +507,12 @@ void power_on_handler(void)
 		break;
 
 		case 2:
-			
-			//display_digital_3_numbers();
+			 disp_counter ++;
+			 if(disp_counter > 30){
+			 disp_counter=0;	
+			  display_temperature_humidigy_handler();
+
+			 }
 			  
 
 		break;
@@ -515,7 +520,7 @@ void power_on_handler(void)
 		case 3://2*20m = 40
 		  if(gpro_t.time_3s_f > 2){
 		    gpro_t.time_3s_f =0;	
-		   // Fan_Ctrl_Process();	  // 风扇控制
+		    Fan_Ctrl_Process();	  // 风扇控制
 
            }
 
@@ -553,7 +558,7 @@ void power_on_handler(void)
 		case 6:
 		if(gpro_t.time_5s_f > 3){
 	   	  gpro_t.time_5s_f=0;
-        //  Heat_Process(); 
+            Heat_Process(); 
 	      }
 				
 		break;
@@ -561,7 +566,7 @@ void power_on_handler(void)
 
 		case 7:
 
-		 if(gpro_t.time_6s_f > 9){
+		 if(gpro_t.time_6s_f > 2){
 		   gpro_t.time_6s_f =0;
       	   dht11_read_temp_humidity_value();
    	      }
@@ -573,7 +578,7 @@ void power_on_handler(void)
 
 		   if(Is_countdown_timer_f ==1){
              Countdown_timer_Handler();
-	   	}
+	   	    }
 
 		break;
 
@@ -600,7 +605,7 @@ void power_on_handler(void)
 		case 11:
 		  if(fan_counter > 150) {
 	   	     fan_counter =0;
-	        // Fan_Current_Det();		// 电流检测
+	        Fan_Current_Det();		// 电流检测
 		   }
     
 
@@ -629,18 +634,18 @@ void power_on_handler(void)
 		break;
 
 		case 14:
-          set_temp_compare();
+ 
 		break;
 
 
 		case 15:
 		   ptc_counter++ ;
-		   if(ptc_counter > 10 ){
+		   if(ptc_counter > 20 ){
 		   	   ptc_counter =0;
 			   switch_done=1;
-		      //Adc_PTC_Channel_Sample();
-		     /// AD_PTC_Filter();
-		     ptc_adc_detected_voltage();
+		      Adc_PTC_Channel_Sample();
+		      AD_PTC_Filter();
+		     //ptc_adc_detected_voltage();
 
 			  printf_ptc_adc_numbers();
 			 
@@ -1082,7 +1087,6 @@ void Heat_Process(void)
   * @param: 
   *
 **/
-
 void power_on_off_handler(void)
 {
 

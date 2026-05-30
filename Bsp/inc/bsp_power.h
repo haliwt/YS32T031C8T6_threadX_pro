@@ -366,7 +366,7 @@ void Countdown_timer_Handler(void);
 void Task_Beep_Simple_10ms(void);
 
 void works_nomal_run_time_handler(void);
-void set_temp_compare(void);
+
 void beep_power_sound(void);
 
 void power_on_off_handler(void);

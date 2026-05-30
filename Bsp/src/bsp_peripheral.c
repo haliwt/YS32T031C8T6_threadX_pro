@@ -421,72 +421,7 @@ void workd_interval_turn_off_handle(void)
 *@retrval 
 *
 **/
-void set_temp_compare(void)
-{
-      #if 0
-   static uint8_t  send_data_f=0xff;
-   if(discharge_f == 1 && (set_temperature_value_f ==1 && time_1s_counter > 1 &&  key_input_temp_f != 4)|| ( key_input_temp_f == 4 && time_1s_counter  > 2)){//1
-	    set_temperature_value_f ++;
 
-    if(temperature >= setting_temperature){
-	     ptc_prohibit_off_f = 0;
-	     PTC_heat_open_f = 0;   // 立即关闭
-	     RELAY_OFF();
-		 LED_PTC_OFF();
-		 if(disp_second_f == 1){
-		   SendWifiData_To_Cmd(0x02,0);
-		   tx_thread_sleep(10);//wait_timeout = tx_time_get() + 10;// waiting 100ms 
-		 }
-		 if(wifi_connected_success_f ==1 && send_data_f != PTC_heat_open_f){
-		 	send_data_f = PTC_heat_open_f;
-		 	MqttData_Publish_SetPtc(0);
-			tx_thread_sleep(20);//wait_timeout = tx_time_get() + 20;
-
-		 }
-
-    }
-	else{
-		if(key_pressed_set_temp_f ==1){//WT.EDIT 2026-05-16
-		   key_pressed_set_temp_f ++;
-	       ptc_prohibit_off_f = 0;
-		}
-		PTC_heat_open_f = 1;   // 立即open
-		LED_PTC_ON();
-		if(works_interval_f == 0){
-			 RELAY_ON();
-		}
-		 
-	
-		if(disp_second_f == 1){
-			SendWifiData_To_Cmd(0x02,0x01);
-			tx_thread_sleep(10);//wait_timeout = tx_time_get() + 10;//waiting 200ms 
-		//delay_ms(20);//HAL_Delay(5);
-			}
-		if(wifi_connected_success_f == 1 && send_data_f != PTC_heat_open_f){
-			send_data_f = PTC_heat_open_f;
-			MqttData_Publish_SetPtc(1);
-		    tx_thread_sleep(20);//wait_timeout = tx_time_get() + 20;//waiting 200ms 
-		}
-        
-
-	}
-	if(wifi_connected_success_f == 1 && key_input_temp_f == 1 && key_pressed_set_temp_f ==2){
-		key_pressed_set_temp_f ++;
-		MqttData_Publis_SetTemp(setting_temperature);
-		tx_thread_sleep(20);//wait_timeout = tx_time_get() + 20;//waiting 200ms 
-		}
-    if(key_input_temp_f == 4) key_input_temp_f =2;
-
-	}
-
-
-   
-	if(set_temperature_value_f == 1 && time_1s_counter >5){ //WT.EDIT 2026.05.19
-           set_temperature_value_f ++; 
-
-	}
-  #endif 
-}
 /************************************************************************
 *
 * Function Name: LED_Power_Breathing(void)

@@ -194,6 +194,14 @@ void Handle_Value_Adjustment(uint8_t is_up)
 		key_input_temp_f= 1;
 		heat_open_close_f= 1;//WT.EDIT 2026.05-15
 		key_pressed_set_temp_f =1;
+		if(AI_led_open_f == 0){//if(g_pro.set_timing_or_timer_time_flag ==TIMER_TIME){
+			         
+		     LED_AI_OFF(); 
+		 }
+		  else{
+		     LED_AI_ON(); 
+
+		}
       
     }
 }
@@ -252,10 +260,7 @@ void System_Status_PowerOn(void)
     BEEP_ON() ;//Beep(BEEP_ONCE);
     power_on_led_open_handler();
 	LED_FUN_ON();
-	#if 1
-	 FAN_RUN_OFF();
-     fan_off();
-	#endif 
+	
 
 }
 /**
