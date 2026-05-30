@@ -277,6 +277,8 @@ uint8_t dht11_read_temp_humidity_value(void)
 	dht11_read_flag = DHT11_ReadData(&humidity,&temperature);
     if(dht11_read_flag==0) 
 		return dht11_read_flag;
+    else 
+        return 0xff;
 	
 }
   #if 0

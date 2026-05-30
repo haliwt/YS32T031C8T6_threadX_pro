@@ -228,6 +228,8 @@ void System_Status_PowerOn(void)
     AI_led_open_f = 1;       // 默认AI 开启
     fan_speed_level =100;       // 默认风扇最大风速 
     set_temperature_value_f =0; 
+	ptc_high_temperature_f =0;  //高温报警标志位,清零
+	read_ntc_temperature_value =0;
 	//wifi
 	wifi_run_step=0;
 	wifi_off_step=0;
@@ -298,6 +300,7 @@ void System_Status_PowerOff(void)
 	//wifi
 	wifi_run_step=0;
 	wifi_off_step =0;
+	ptc_high_temperature_f =0;
     
     // 3. 重置所有时间/计数器
     timing_min_cnt = 0;

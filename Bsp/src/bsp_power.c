@@ -158,7 +158,7 @@ uint8_t key_be_pressed_f;
 uint8_t disp_set_hours_time_f;
 uint8_t key_input_temp_f;
 
-
+uint8_t ptc_high_temperature_f ;
 
 
 
@@ -399,6 +399,7 @@ static void power_on_initial(void)
    case 0:
    	  gon_t.off_step = 0;
       wifi_off_step =0; //WT.EDT 2026.05.15
+      
      #if 0
       if(wifi_app_timer_power_on_f==0){
 
@@ -465,6 +466,7 @@ void power_on_handler(void)
 
   volatile  static uint8_t time_slot = 0,fan_counter =0,ptc_counter=0;
   volatile static uint8_t per_counter=0,switch_done =0,disp_counter=0;
+  volatile static uint8_t high_tmep_counter = 0,warning_counter=0,has_warning_counter=0;
 
   volatile static uint16_t wifi_check_counter=0;
 
@@ -474,7 +476,7 @@ void power_on_handler(void)
         }
 	 // ✨【新增：紧急事件拦截响应】✨
         // 如果按键任务设置完温度，将 g_pro.g_immediate_heat_f 置为 1
-        if (heat_open_close_f == 1)
+        if (heat_open_close_f == 1 && ptc_high_temperature_f == 0 && no_fan_load_f ==0)
         {
            heat_open_close_f = 0; // 立即清除触发标志，防止重复执行
             
@@ -482,7 +484,7 @@ void power_on_handler(void)
             // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
            compare_set_temp_value(); //set_temperature_value_handler(); 
         }
-         if(time_10ms_f ==1){
+         if(time_10ms_f ==1 &&  ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 		    time_10ms_f=0;
            
 		    disp_key_input_handler();
@@ -494,7 +496,7 @@ void power_on_handler(void)
 
 		case 0://1* 20ms
 		     per_counter++;
-		     if(per_counter > 40){ //10ms * 100
+		     if(per_counter > 40 &&  ptc_high_temperature_f == 0 && no_fan_load_f ==0){ //10ms * 100
 			 	per_counter =0;
 		       peripheral_fun_handler();
 		     }
@@ -508,7 +510,7 @@ void power_on_handler(void)
 
 		case 2:
 			 disp_counter ++;
-			 if(disp_counter > 30){
+			 if(disp_counter > 30 && ptc_high_temperature_f == 0 && no_fan_load_f ==0 ){
 			 disp_counter=0;	
 			  display_temperature_humidigy_handler();
 
@@ -518,7 +520,7 @@ void power_on_handler(void)
 		break;
 
 		case 3://2*20m = 40
-		  if(gpro_t.time_3s_f > 2){
+		  if(gpro_t.time_3s_f > 2 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 		    gpro_t.time_3s_f =0;	
 		    Fan_Ctrl_Process();	  // 风扇控制
 
@@ -527,7 +529,7 @@ void power_on_handler(void)
 		break;
 		
 		case 4:
-		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0){
+		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_power_on_handler();
          }
@@ -536,21 +538,23 @@ void power_on_handler(void)
 
 		
 		case 5:
-		if(key_net_config_f)
-		 {
-			
-			if(key_net_config_time>=130)
-			{
-				key_net_config_time = 0;
+			if(ptc_high_temperature_f == 0 && no_fan_load_f ==0){
+				if(key_net_config_f)
+				 {
+					
+					if(key_net_config_time>=130)
+					{
+						key_net_config_time = 0;
 
-				key_net_config_f = 0;
-				
-			}
-			else{ //conneting to wifi net 
-		        
-				link_wifi_net_handler();
-			}
-		 } 
+						key_net_config_f = 0;
+						
+					}
+					else{ //conneting to wifi net 
+				        
+						link_wifi_net_handler();
+					}
+				 } 
+		  }
 				
 		break;
 
@@ -558,7 +562,7 @@ void power_on_handler(void)
 		case 6:
 		if(gpro_t.time_5s_f > 2){
 	   	  gpro_t.time_5s_f=0;
-            Heat_Process(); 
+          //  Heat_Process(); 
 	      }
 				
 		break;
@@ -566,7 +570,7 @@ void power_on_handler(void)
 
 		case 7:
 
-		 if(gpro_t.time_6s_f > 2){
+		 if(gpro_t.time_6s_f > 2 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 		   gpro_t.time_6s_f =0;
       	   dht11_read_temp_humidity_value();
    	      }
@@ -576,7 +580,7 @@ void power_on_handler(void)
 
 		case 8:
 
-		   if(Is_countdown_timer_f ==1){
+		   if(Is_countdown_timer_f ==1 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
              Countdown_timer_Handler();
 	   	    }
 
@@ -584,13 +588,15 @@ void power_on_handler(void)
 
 
 		case 9:
-			 works_nomal_run_time_handler();
+			 if( ptc_high_temperature_f == 0 && no_fan_load_f ==0){
+			      works_nomal_run_time_handler();
+			 }
 
 		break;
 
 
 		case 10:
-	       if(gpro_t.time_7s_f > 6){
+	       if(gpro_t.time_7s_f > 6 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 
 		    gpro_t.time_7s_f =0 ;
 		    fan_counter ++ ;
@@ -603,7 +609,7 @@ void power_on_handler(void)
 
 
 		case 11:
-		  if(fan_counter > 150) {
+		  if(fan_counter > 150 && ptc_high_temperature_f == 0 && no_fan_load_f ==0) {
 	   	     fan_counter =0;
 	        Fan_Current_Det();		// 电流检测
 		   }
@@ -612,6 +618,7 @@ void power_on_handler(void)
 		break;
 
 		case 12:
+			if(ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 			 if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
 		   #if DEBUG_ENABLE
@@ -620,27 +627,24 @@ void power_on_handler(void)
 		   Reconnection_Wifi_Order();
 
 	 		}
+			}
 
 		break;
 
 		case 13:
            
 			wifi_check_counter++; //20ms * 100
-		    if(wifi_check_counter > 300){
+		    if(wifi_check_counter > 300 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 			  wifi_check_counter =0;
-              wifi_check_ifnot_link_net_handler();
+                wifi_check_ifnot_link_net_handler();
 		    }
 
 		break;
 
 		case 14:
- 
-		break;
 
-
-		case 15:
 		   ptc_counter++ ;
-		   if(ptc_counter > 20 ){
+		   if(ptc_counter > 20 && ptc_high_temperature_f == 0 && no_fan_load_f ==0 ){
 		   	   ptc_counter =0;
 			   switch_done=1;
 		      Adc_PTC_Channel_Sample();
@@ -654,9 +658,10 @@ void power_on_handler(void)
 
 		break;
 
-		case 16:
+		 case 15:
 		    if(switch_done==1){
 				switch_done =0;
+			
 				ptc_switch_temperature();
 						 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
 				 #if 1
@@ -668,13 +673,72 @@ void power_on_handler(void)
 
 		break;
 
+	    case 16:
+
+		   warning_counter++;
+			
+           if(warning_counter > 50){
+		        warning_counter =0;
+
+			if(read_ntc_temperature_value >162 && ptc_high_temperature_f == 0){
+
+		       high_tmep_counter++;
+
+		      if(high_tmep_counter > 3){
+
+                  LED_PTC_OFF();
+			      RELAY_OFF();  
+		           ptc_high_temperature_f = 1;
+		           SMG_Display_Err(01);
+			       beep_high_temperature_sound();
+		       }
+           }
+		   else if( ptc_high_temperature_f == 0){
+              high_tmep_counter =0;
+		       read_ntc_temperature_value =0;
+
+		   }
+
+		    	}
+		   
+               
+		break;
+
+		case 17:
+
+		  has_warning_counter++;
+
+		 if(has_warning_counter > 200){
+
+		   has_warning_counter=0;
+			
+		  if(ptc_high_temperature_f == 1){
+		  	  LED_PTC_OFF();
+			  RELAY_OFF(); 
+			  SMG_Display_Err(01);
+			  beep_high_temperature_sound();
+
+		  }
+
+		  if(no_fan_load_f ==1){
+		       LED_PTC_OFF();
+			    RELAY_OFF(); 
+				SMG_Display_Err(02);
+				beep_high_temperature_sound();
+
+           }
+
+
+		 	}
+		break;
+
 
 		
        }
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >16 ) time_slot = 0;  //14*10 = 260ms 
+           if (time_slot >17 ) time_slot = 0;  //14*10 = 260ms 
 
         
 }

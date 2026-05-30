@@ -62,6 +62,7 @@ extern uint8_t Cacl_time_sec;
 extern volatile uint8_t time_5ms_f;
 
 extern uint8_t disp_second_f ;
+extern uint8_t ptc_high_temperature_f;
 
 
 //WIFI TIMER

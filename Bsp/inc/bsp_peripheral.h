@@ -45,6 +45,9 @@ void BEEP_OFF(void);
 
 void BEEP_ON(void);
 
+void beep_high_temperature_sound(void);
+
+
 
 
 #endif 
