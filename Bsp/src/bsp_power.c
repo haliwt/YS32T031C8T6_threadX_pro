@@ -520,7 +520,7 @@ void power_on_handler(void)
 		break;
 
 		case 3://2*20m = 40
-		  if(gpro_t.time_3s_f > 2 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
+		  if(gpro_t.time_3s_f > 3 && ptc_high_temperature_f == 0 && no_fan_load_f ==0){
 		    gpro_t.time_3s_f =0;	
 		    Fan_Ctrl_Process();	  // 风扇控制
 
@@ -560,9 +560,9 @@ void power_on_handler(void)
 
 		
 		case 6:
-		if(gpro_t.time_5s_f > 2){
+		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
-          //  Heat_Process(); 
+            Heat_Process(); 
 	      }
 				
 		break;
@@ -684,7 +684,7 @@ void power_on_handler(void)
 
 		       high_tmep_counter++;
 
-		      if(high_tmep_counter > 3){
+		      if(high_tmep_counter > 1){
 
                   LED_PTC_OFF();
 			      RELAY_OFF();  
@@ -708,7 +708,7 @@ void power_on_handler(void)
 
 		  has_warning_counter++;
 
-		 if(has_warning_counter > 200){
+		 if(has_warning_counter > 100){
 
 		   has_warning_counter=0;
 			

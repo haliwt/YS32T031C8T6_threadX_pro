@@ -327,7 +327,10 @@ void beep_high_temperature_sound(void)
 	tx_thread_sleep(100);
 	BEEP_ON();
 	tx_thread_sleep(100);
-
+	BEEP_ON();
+	tx_thread_sleep(100);
+	BEEP_ON();
+	tx_thread_sleep(100);
 
 }
 

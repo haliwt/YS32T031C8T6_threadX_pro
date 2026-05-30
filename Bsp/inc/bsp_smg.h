@@ -2,6 +2,9 @@
 #define __BSP_SMG_H
 #include "main.h"
 
+
+#define DEC_POINT    0x08
+
 typedef enum {
     DISPLAY_TEMP = 0,
     DISPLAY_HUM = 1,
