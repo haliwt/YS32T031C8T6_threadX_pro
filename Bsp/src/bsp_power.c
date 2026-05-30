@@ -494,7 +494,7 @@ void power_on_handler(void)
 
 		case 0://1* 20ms
 		     per_counter++;
-		     if(per_counter > 100){ //10ms * 100
+		     if(per_counter > 40){ //10ms * 100
 			 	per_counter =0;
 		       peripheral_fun_handler();
 		     }
@@ -556,7 +556,7 @@ void power_on_handler(void)
 
 		
 		case 6:
-		if(gpro_t.time_5s_f > 3){
+		if(gpro_t.time_5s_f > 2){
 	   	  gpro_t.time_5s_f=0;
             Heat_Process(); 
 	      }
@@ -1067,6 +1067,7 @@ void Heat_Process(void)
 				// 当前是关闭状态 → 低于设定温度 - 2 才重新打开
 				if(temperature <  (target_temp - 2))
 				PTC_heat_open_f = 1;
+				
 				if(default_init!= PTC_heat_open_f || key_input_temp_f ==1 || key_input_temp_f==2 ){
 					default_init = PTC_heat_open_f;
 					key_input_temp_f++;
