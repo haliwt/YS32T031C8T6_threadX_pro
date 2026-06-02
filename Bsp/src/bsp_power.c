@@ -797,7 +797,7 @@ void power_on_handler(void)
             }
 		    else  if(fan_warning_f == 1){
 			       fan_counter=0;
-			       LED_PTC_OFF();
+			        LED_PTC_OFF();
 				    RELAY_OFF(); 
 					SMG_Display_Err(02);
 					beep_fan_default_sound();
