@@ -296,11 +296,24 @@ void BEEP_ERROR_ON(void)
 
 void BEEP_ON(void)
 {
+	      TIM_SetCompare1(TIM14, 374);
+		  TIM_Cmd(TIM14, ENABLE);
+		  TIM_CtrlPWMOutputs(TIM14, ENABLE);
+		  tx_thread_sleep(2);//open_beep_sound();
+		  TIM_SetCompare1(TIM14,0);
+	
+		  TIM_Cmd(TIM14, DISABLE);
+
+
+}
+
+void fan_err_beep_on(void)
+{
     
         TIM_SetCompare1(TIM14, 374);
         TIM_Cmd(TIM14, ENABLE);
         TIM_CtrlPWMOutputs(TIM14, ENABLE);
-		tx_thread_sleep(2);//open_beep_sound();
+		tx_thread_sleep(4);//open_beep_sound();
         TIM_SetCompare1(TIM14,0);
 
         TIM_Cmd(TIM14, DISABLE);
@@ -321,21 +334,37 @@ void BEEP_OFF(void)
 
 void beep_high_temperature_sound(void)
 {
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
-	BEEP_ON();
+	fan_err_beep_on();
 	tx_thread_sleep(20);
 
 }
 
+void beep_fan_default_sound(void)
+{
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+	fan_err_beep_on();
+	tx_thread_sleep(30);
+
+}
 
 /**
 *
@@ -508,7 +537,7 @@ void Fan_Current_Det(void)
 			if(fan_current_det_time>=2){
 				fan_current_det_time = 0;
 
-				if(!no_fan_load_f)
+				if(!fan_warning_f)
 				{
 					//Beep(BEEP_THREE);
 					beep_interval_time = 0;
@@ -516,7 +545,7 @@ void Fan_Current_Det(void)
 					fan_open_f = 0;
 				}
 
-				no_fan_load_f = 1;
+				fan_warning_f = 1;
 			}
 		}
 		else{

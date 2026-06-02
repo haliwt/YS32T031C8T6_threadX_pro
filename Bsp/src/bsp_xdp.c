@@ -356,7 +356,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			ptc_prohibit_off_f =1; //ptc_prohibit_off_f = 1;
 			 
 			 if(works_interval_f==0){//two hours have a rest ten minutes .
-	         if(no_fan_load_f  ==0){ //PTC warning flag
+	         if(fan_warning_f  ==0 && ptc_high_temperature_f ==0){ //PTC warning flag
 	             
 	              RELAY_ON();
             }

@@ -65,7 +65,7 @@ void ADC_Channel_Init(uint8_t CH)
     
     ADC_ClockModeConfig(ADC, ADC_ClockMode_HSI_Div2);  
     ADC_RegularSequencerLengthConfig(ADC, 1);
-    #if 0  
+    
     switch(CH)  //—°‘Ò≤‚ ‘Õ®µ¿
     {
         case 1:    ADC_RegularChannelConfig(ADC, ADC_Channel_1, 1, ADC_SampleTime_31_5Cycles);   break;          //CH1  PF4  
@@ -78,10 +78,10 @@ void ADC_Channel_Init(uint8_t CH)
         case 9:    ADC_RegularChannelConfig(ADC, ADC_Channel_9, 1, ADC_SampleTime_31_5Cycles);   break;          //CH9  PA7    
         default :  break;
     }
-   #endif 
+  
 	 // case 1:    ADC_RegularChannelConfig(ADC, ADC_Channel_1, 1, ADC_SampleTime_31_5Cycles);   break;          //CH1  PF4  
 	//ADC_RegularChannelConfig(ADC, ADC_Channel_2, 1, ADC_SampleTime_31_5Cycles);             //CH2  PA0
-	ADC_RegularChannelConfig(ADC, ADC_Channel_3, 1, ADC_SampleTime_31_5Cycles);             //CH3  PA1
+	//ADC_RegularChannelConfig(ADC, ADC_Channel_3, 1, ADC_SampleTime_31_5Cycles);             //CH3  PA1
         
     ADC_ClearFlag(ADC, ADC_FLAG_EOC);
     ADC_Cmd(ADC, ENABLE);

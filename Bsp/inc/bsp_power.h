@@ -69,7 +69,7 @@ extern uint16_t ptc_adc_numbers;
 //WIFI TIMER
 extern uint8_t time_wifi_10ms_f;
 
-extern uint16_t ad_value[1];
+extern uint16_t fan_adc_value[1];
 extern uint16_t ad_ptc_value[1];
 
 extern uint16_t fan_current;
@@ -154,7 +154,7 @@ extern uint8_t humidity;
 
 
 
-extern uint8_t no_fan_load_f;
+extern uint8_t fan_warning_f;
 extern uint16_t fan_current_det_time;
 #define _NO_FAN_LOAD_CURRENT       50      //0.06A*0.67*4096/3.3   
 

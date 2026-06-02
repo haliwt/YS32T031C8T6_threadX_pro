@@ -346,24 +346,24 @@ void tx_application_define(void *first_unused_memory)
 
              key_power_short_handler();
 		} 
-		else if(flags & KEY_POWER_LONG && ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+		else if(flags & KEY_POWER_LONG && ptc_high_temperature_f ==0 && fan_warning_f ==0){
 			    
              key_power_long_handler();
 		} 
-	    else if(flags & KEY_MODE_SHORT &&  ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+	    else if(flags & KEY_MODE_SHORT &&  ptc_high_temperature_f ==0 && fan_warning_f ==0){
              key_mode_short_handler();
 		} 
-		else if(flags & KEY_MODE_LONG && ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+		else if(flags & KEY_MODE_LONG && ptc_high_temperature_f ==0 && fan_warning_f ==0){
              key_mode_long_handler();
 		} 
-		else if(flags & KEY_UP_SHORT && ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+		else if(flags & KEY_UP_SHORT && ptc_high_temperature_f ==0 && fan_warning_f ==0){
 			 key_up_short_handler();
 		}
-	    else if(flags & KEY_DOWN_SHORT && ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+	    else if(flags & KEY_DOWN_SHORT && ptc_high_temperature_f ==0 && fan_warning_f ==0){
              key_down_short_handler();
 		}
 		
-		if(flags & KEY_DOWN_LONG && ptc_high_temperature_f ==0 && no_fan_load_f ==0){
+		if(flags & KEY_DOWN_LONG && ptc_high_temperature_f ==0 && fan_warning_f ==0){
 			if(down_cnt_long_f ==1){
 				down_cnt_long_f=2;
 			 key_down_long_handler();

@@ -78,7 +78,7 @@ void Process_Long_Key(uint16_t key) {
         case _MODE_KEY_DOWN://LONG KEY MODE ID 
             if (key_time >= KEY_TICKS_LONG_M) {
                 //key_long_f = 1;
-                if (discharge_f && !no_fan_load_f) {
+                if (discharge_f && !fan_warning_f) {
                     Is_time_setting_f = 1;
                    
                     time_set_hours_counter =0;
@@ -117,7 +117,7 @@ void Process_Short_Key(uint16_t key)
     }
 
     // 仅在开机且无负载故障时允许操作
-    if (!discharge_f || no_fan_load_f) return;
+    if (!discharge_f || fan_warning_f) return;
 
     switch (key) {
         case _MODE_KEY_DOWN:
@@ -254,7 +254,7 @@ void System_Status_PowerOn(void)
 	key_net_config_f =0;
     
     // 5. 清除异常标志
-    no_fan_load_f = 0;          // 清除负载异常
+    fan_warning_f = 0;          // 清除负载异常
 
     
     // 6. 执行开机提示音
@@ -311,7 +311,7 @@ void System_Status_PowerOff(void)
     
     
     // 4. 特殊逻辑处理
-    no_fan_load_f = 0;
+    fan_warning_f = 0;
 	power_off_peripheral_handler();
 
     
@@ -385,7 +385,7 @@ void key_mode_short_handler(void)
 void key_mode_long_handler(void)
 {
 	//key_long_f = 1;
-    if (discharge_f && !no_fan_load_f) {
+    if (discharge_f && !fan_warning_f) {
         Is_time_setting_f = 1;
        
         time_set_hours_counter =0;

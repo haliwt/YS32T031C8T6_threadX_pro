@@ -127,7 +127,7 @@ void display_digital_3_numbers(void)
 	 static uint8_t disp_temp_hum;//,switch_adc;
 
 	// If any warning is active, do nothing
-    if (no_fan_load_f ==1) return;
+    if (fan_warning_f ==1 || ptc_high_temperature_f ==1) return;
 
 	
     
@@ -241,7 +241,7 @@ void disp_key_input_handler(void)
 	
 	
 	   // If any warning is active, do nothing
-	   if (no_fan_load_f ==1) return;
+	   if (fan_warning_f ==1 || ptc_high_temperature_f ==1) return;
 	
 	   
 	   
