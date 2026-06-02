@@ -323,11 +323,30 @@ void Adc_Channel_Sample(void)
 //ADC  PTC 
 void Adc_PTC_Channel_Sample(void)
 {
-    volatile uint16_t ad_ptc_temp;
+    uint16_t time_out ;
+	#if 0
+	volatile uint16_t ad_ptc_temp;
 	
     ad_ptc_temp = ADC_GetValue(_PTCCUR_CH,VREFBUF_ADC_VCC);
 	
     ad_ptc_value[_AD_PTCCUR] = ad_ptc_temp;
+   #else
+     time_out =0  ;
+     while(!ADC_GetFlagStatus(ADC,ADC_FLAG_EOC)){  //等待转换完成
+
+	    time_out ++;
+		if(time_out > 5000){
+            return ;
+
+		}
+
+    }
+	  
+      ad_ptc_value[0] = ADC_GetConversionValue(ADC);
+
+   #endif 
+   
+	
 }
 
 
@@ -348,13 +367,14 @@ void AD_Filter(void)
 void AD_PTC_Filter(void)
 {
    // uint16_t tem_ptc;
-	ptc_adc=(ad_ptc_value[_AD_PTCCUR]*2+ptc_current*18)/20;
+	//ptc_adc=(ad_ptc_value[_AD_PTCCUR]*2+ptc_current*18)/20;
 
-	ptc_current = (ptc_adc * 3300 )/4095;
+	//ptc_current = (ptc_adc * 3300 )/4095;
 
+	ptc_current = (ad_ptc_value[0] * 3300 )/4095;
 
 }
-
+/****************************************************/
 void printf_ptc_adc_numbers(void)
 {
   printf("ptc_adc_numbers = %d \n\r",ptc_adc_numbers);
@@ -363,19 +383,38 @@ void printf_ptc_adc_numbers(void)
 
 void ptc_adc_detected_voltage(void)
 {
+   uint16_t time_out ;
+   ADC_Channel_Init(3);
    ADC_SoftwareStartConvCmd(ADC);
-   tx_thread_sleep(10);//while(!ADC_GetFlagStatus(ADC,ADC_FLAG_EOC));  //等待转换完成
-    ptc_adc = ADC_GetConversionValue(ADC);
+
+    time_out =0  ;
+     while(!ADC_GetFlagStatus(ADC,ADC_FLAG_EOC)){  //等待转换完成
+
+	    time_out ++;
+		if(time_out > 10000){
+            return ;
+
+		}
+
+    }
+  
+    ad_ptc_value[0] = ADC_GetConversionValue(ADC);
        // printf("VSense = %d\n",ptc_adc);
+       // printf_ptc_adc_numbers();
+       ptc_adc_numbers =  ad_ptc_value[0];
+       // ptc_current = (ptc_adc_numbers * 33000 )/4095;
+		//tx_thread_sleep(10);
         ADC_ClearFlag(ADC, ADC_FLAG_EOC);
-        ADC_SoftwareStartConvCmd(ADC);
-        tx_thread_sleep(5);//DelayMS(50);
+      //  ADC_SoftwareStartConvCmd(ADC);
+      //  tx_thread_sleep(5);//DelayMS(50);
 
 }
 
 void ptc_switch_temperature(void)
 {
-   ptc_current = (ptc_adc_numbers * 3300 )/4095;
+   ptc_current = (ad_ptc_value[0] * 3300 )/4095;
+   // ADC_ClearFlag(ADC, ADC_FLAG_EOC);
+  //  ADC_SoftwareStartConvCmd(ADC);
 
 }
 /**
@@ -648,9 +687,9 @@ void power_on_handler(void)
 		   if(ptc_counter > 20 && ptc_high_temperature_f == 0 && no_fan_load_f ==0 ){
 		   	   ptc_counter =0;
 			   switch_done=1;
-		      Adc_PTC_Channel_Sample();
-		      AD_PTC_Filter();
-		     //ptc_adc_detected_voltage();
+		      //Adc_PTC_Channel_Sample();
+		      //AD_PTC_Filter();
+		      ptc_adc_detected_voltage();
 
 			  printf_ptc_adc_numbers();
 			 
