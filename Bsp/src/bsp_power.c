@@ -684,7 +684,7 @@ void power_on_handler(void)
 		case 14:
 
 		   ptc_counter++ ;
-		   if(ptc_counter > 20 && ptc_high_temperature_f == 0 && no_fan_load_f ==0 ){
+		   if(ptc_counter > 20 && ptc_high_temperature_f == 0){
 		   	   ptc_counter =0;
 			   switch_done=1;
 		      //Adc_PTC_Channel_Sample();
@@ -717,7 +717,7 @@ void power_on_handler(void)
 
 		   warning_counter++;
 			
-           if(warning_counter > 50){
+           if(warning_counter > 40){
 		        warning_counter =0;
 
 			if(read_ntc_temperature_value >113 && ptc_high_temperature_f == 0){
@@ -733,7 +733,7 @@ void power_on_handler(void)
 			       beep_high_temperature_sound();
 		       }
            }
-		   else if( ptc_high_temperature_f == 0){
+		   else if(ptc_high_temperature_f == 0){
               high_tmep_counter =0;
 		       read_ntc_temperature_value =0;
 
