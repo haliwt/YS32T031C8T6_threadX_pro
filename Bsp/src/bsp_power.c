@@ -602,7 +602,7 @@ void power_on_handler(void)
 		case 6:
 		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
-            Heat_Process(); 
+           // Heat_Process(); //测试
 	      }
 				
 		break;
@@ -720,7 +720,7 @@ void power_on_handler(void)
            if(warning_counter > 50){
 		        warning_counter =0;
 
-			if(read_ntc_temperature_value >162 && ptc_high_temperature_f == 0){
+			if(read_ntc_temperature_value >113 && ptc_high_temperature_f == 0){
 
 		       high_tmep_counter++;
 
@@ -732,15 +732,6 @@ void power_on_handler(void)
 		           SMG_Display_Err(01);
 			       beep_high_temperature_sound();
 		       }
-           }
-		   else if(read_ntc_temperature_value ==0 && ptc_high_temperature_f == 0){
-
-                    LED_PTC_OFF();
-				    RELAY_OFF();  
-					ptc_high_temperature_f = 1;
-					SMG_Display_Err(01);
-					beep_high_temperature_sound();
-
            }
 		   else if( ptc_high_temperature_f == 0){
               high_tmep_counter =0;
