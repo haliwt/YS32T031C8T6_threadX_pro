@@ -64,6 +64,7 @@ extern volatile uint8_t time_5ms_f;
 extern uint8_t disp_second_f ;
 extern uint8_t ptc_high_temperature_f;
 
+extern uint16_t ptc_adc_numbers;
 
 //WIFI TIMER
 extern uint8_t time_wifi_10ms_f;

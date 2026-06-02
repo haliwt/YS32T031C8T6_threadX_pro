@@ -175,10 +175,12 @@ void fan_on(uint16_t fan_duty)
 //∑Á…»πÿ
 void fan_off(void)
 {
-    TIM_SetCompare1(TIM3,0);
+//    TIM_SetCompare1(TIM3,0);
 	
-	TIM_Cmd(TIM3, DISABLE);
-    TIM_CtrlPWMOutputs(TIM3, DISABLE);
+//	TIM_Cmd(TIM3, DISABLE);
+//    TIM_CtrlPWMOutputs(TIM3, DISABLE);
+	fan_on(40);
+
 }
 
 

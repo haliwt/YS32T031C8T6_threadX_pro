@@ -46,7 +46,7 @@ void Fan_Ctrl_Process(void)
 		else{
 		  fan_stop_f =2;
 		  FAN_RUN_OFF(); 
-		  fan_off();
+		  fan_on(40);//fan_off();
 		#if DEBUG_ENABLE 
 
 		printf("fan_stop !!! \n\r");
@@ -75,7 +75,7 @@ void fan_full_fun(void)
 void fan_stop(void)
 {
     FAN_RUN_OFF();
-	 fan_off();
+	fan_on(40);//fan_off();
 }
 
 

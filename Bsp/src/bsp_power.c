@@ -149,6 +149,7 @@ uint8_t  mqtt_status;
 //fan
 uint8_t  fan_one_minute_cuonter;
 uint8_t  time_10ms_f;
+uint16_t ptc_adc_numbers;
 
 
 
@@ -336,7 +337,7 @@ void Adc_PTC_Channel_Sample(void)
   * @param: 
   *
 **/
-uint16_t ptc_adc;
+
 //AD数据一阶滑动滤波
 void AD_Filter(void)
 {
@@ -356,7 +357,7 @@ void AD_PTC_Filter(void)
 
 void printf_ptc_adc_numbers(void)
 {
-  printf("ptc_adc_numbers = %d \n\r",ptc_adc);
+  printf("ptc_adc_numbers = %d \n\r",ptc_adc_numbers);
 
 }
 
@@ -374,7 +375,7 @@ void ptc_adc_detected_voltage(void)
 
 void ptc_switch_temperature(void)
 {
-   ptc_current = (ptc_adc * 3300 )/4095;
+   ptc_current = (ptc_adc_numbers * 3300 )/4095;
 
 }
 /**
@@ -693,6 +694,15 @@ void power_on_handler(void)
 			       beep_high_temperature_sound();
 		       }
            }
+		   else if(read_ntc_temperature_value ==0 && ptc_high_temperature_f == 0){
+
+                    LED_PTC_OFF();
+				    RELAY_OFF();  
+					ptc_high_temperature_f = 1;
+					SMG_Display_Err(01);
+					beep_high_temperature_sound();
+
+           }
 		   else if( ptc_high_temperature_f == 0){
               high_tmep_counter =0;
 		       read_ntc_temperature_value =0;
@@ -786,7 +796,8 @@ static void power_off_handler(void)
 			 	dc_on++;
 				fan_one_f =0;
 			    FAN_RUN_OFF();
-				 fan_off();
+				fan_on(40);
+				 //fan_off();
 				//FAN_PWM_GPIO_OFF();//WT.EDIT 2026-05-16
 			  }
 
@@ -801,7 +812,7 @@ static void power_off_handler(void)
 			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
 	                 FAN_RUN_OFF();
-                      fan_off();
+                     fan_on(40); //fan_off();
 					//#if DEBUG_ENABLE
                      // printf("power_off_fan_stop !!!\n\r");
 					//#endif 
