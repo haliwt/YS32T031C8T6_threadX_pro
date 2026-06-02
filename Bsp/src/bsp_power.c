@@ -783,18 +783,24 @@ void power_on_handler(void)
 
 		  }
 		  
-          if(fan_current < 10  &&  fan_warning_f == 0){
+           if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    fan_counter ++;
 
-			     if(fan_counter > 1){
+			     if(fan_counter > 5){
 				  fan_warning_f = 1;
 				       LED_PTC_OFF();
 					    RELAY_OFF(); 
 						SMG_Display_Err(02);
 						beep_high_temperature_sound();
 	            }
-				
-            }
+				 
+			}
+		    else if(fan_current  > 60  &&  fan_warning_f == 0 && works_interval_f==0){
+
+			    fan_counter  =0;
+
+
+			}
 		    else  if(fan_warning_f == 1){
 			       fan_counter=0;
 			        LED_PTC_OFF();
