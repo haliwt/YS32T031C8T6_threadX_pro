@@ -747,7 +747,7 @@ void power_on_handler(void)
 
 		       high_tmep_counter++;
 
-		      if(high_tmep_counter > 1){
+		      if(high_tmep_counter > 2){
 
                   LED_PTC_OFF();
 			      RELAY_OFF();  
