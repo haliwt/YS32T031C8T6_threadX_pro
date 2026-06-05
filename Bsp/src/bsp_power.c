@@ -743,7 +743,7 @@ void power_on_handler(void)
            if(warning_counter > 50){
 		        warning_counter =0;
 
-			if(read_ntc_temperature_value >113 && ptc_high_temperature_f == 0){
+			if(read_ntc_temperature_value >114 && ptc_high_temperature_f == 0){
 
 		       high_tmep_counter++;
 
