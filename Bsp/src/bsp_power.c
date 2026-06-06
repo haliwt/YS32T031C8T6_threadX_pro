@@ -743,7 +743,7 @@ void power_on_handler(void)
            if(warning_counter > 50){
 		        warning_counter =0;
 
-			if(read_ntc_temperature_value >114 && ptc_high_temperature_f == 0){
+			if(read_ntc_temperature_value >115 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
 
 		       high_tmep_counter++;
 
@@ -783,7 +783,7 @@ void power_on_handler(void)
 
 		  }
 		  
-           if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
+		  if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    fan_counter ++;
 
 			     if(fan_counter > 5){
