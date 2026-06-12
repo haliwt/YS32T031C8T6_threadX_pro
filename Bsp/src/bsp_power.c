@@ -518,7 +518,7 @@ static void power_on_initial(void)
    	 
        dht11_read_temp_humidity_value();
 	   display_digital_3_numbers();
-	   gon_t.on_step =0xfe;
+	   gon_t.on_step =0xfe;//if gon_t.on_step =0xff ( gon_t.on_step= -1)
 
    break;
 
@@ -743,11 +743,11 @@ void power_on_handler(void)
            if(warning_counter > 50){
 		        warning_counter =0;
 
-			if(read_ntc_temperature_value >115 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
+			if(read_ntc_temperature_value >127 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
 
 		       high_tmep_counter++;
 
-		      if(high_tmep_counter > 2){
+		      if(high_tmep_counter > 6){
 
                   LED_PTC_OFF();
 			      RELAY_OFF();  
