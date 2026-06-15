@@ -1260,11 +1260,10 @@ void power_on_off_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
-	     gpro_t.time_50ms_f=0;
-         wifi_parse_tencennt_hadler();//
+
+     wifi_parse_tencennt_hadler();//
        
-    }
+    
     
 	if(key_net_config_f==0 ){
       wifi_auto_detected_link_state();
