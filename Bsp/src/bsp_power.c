@@ -743,11 +743,11 @@ void power_on_handler(void)
            if(warning_counter > 50){
 		        warning_counter =0;
 
-			if(read_ntc_temperature_value >127 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
+			if(read_ntc_temperature_value >130 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
 
 		       high_tmep_counter++;
 
-		      if(high_tmep_counter > 6){
+		      if(high_tmep_counter > 7){
 
                   LED_PTC_OFF();
 			      RELAY_OFF();  
