@@ -47,6 +47,8 @@
 #include "bsp_threadx.h"
 #include "bsp_ntc.h"
 
+
+
 //wifi
 #include "bsp_usart_wifi.h"
 #include "bsp_mqtt_iot.h"
@@ -67,6 +69,8 @@
 
 
 typedef struct _main_ref{
+
+ uint8_t wifi_fast_lef_f ;
 
  
  volatile uint8_t time_10ms_f;

@@ -191,12 +191,13 @@ void TIM6_LPTIM_IRQHandler (void)
 					fan_one_minute_cuonter++;
 					key_net_config_time++;
 				
-					gpro_t.time_2s_f++;
+					
 					gpro_t.time_3s_f++;
 					gpro_t.time_4s_f++;
 					gpro_t.time_5s_f++;
 					gpro_t.time_6s_f++;
 				    gpro_t.time_7s_f++;
+					gpro_t.time_10s_f++;
 					
 				     if(++gpro_t.time_base_1s_counter > 59){//1s *60 =60s 
 					     gpro_t.time_base_1s_counter = 0;
