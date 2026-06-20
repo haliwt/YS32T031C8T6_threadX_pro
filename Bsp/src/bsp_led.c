@@ -69,6 +69,11 @@ void wifi_fast_led_state(void)
 
       }
    }
+   else if(wifi_connected_success_f==1 && discharge_f ==1){
+			
+	       LED_WIFI_ON();
+
+   	}
 }
 
 

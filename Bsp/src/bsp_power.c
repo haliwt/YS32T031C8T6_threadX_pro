@@ -212,7 +212,7 @@ void Clear_Ram(void)
 {
     time_5ms_f = 0;
 	
-	  gpro_t.time_100ms_f = 0;
+
 	  gpro_t.time_400ms_f =0;
 	  gpro_t.time_500ms_f =0;
 	  gpro_t.time_1s_f = 0;
@@ -561,6 +561,7 @@ void power_on_handler(void)
 		    time_10ms_f=0;
            
 		    disp_key_input_handler();
+		    
 
          }
 	     
@@ -576,12 +577,12 @@ void power_on_handler(void)
 
 		break;
 
+		//case 1:
+	        // wifi_led_state_handler();
+
+		//break;
+
 		case 1:
-	         wifi_led_state_handler();
-
-		break;
-
-		case 2:
 			 disp_counter ++;
 			 if(disp_counter > 30 && ptc_high_temperature_f == 0 && fan_warning_f ==0 ){
 			 disp_counter=0;	
@@ -592,7 +593,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 3://2*20m = 40
+		case 2://2*20m = 40
 		  if(gpro_t.time_3s_f > 3 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
 		    gpro_t.time_3s_f =0;	
 		    Fan_Ctrl_Process();	  // 风扇控制
@@ -601,7 +602,7 @@ void power_on_handler(void)
 
 		break;
 		
-		case 4:
+		case 3:
 		 if(wifi_connected_success_f==1 && gpro_t.time_4s_f > 0 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
 	  	   gpro_t.time_4s_f=0;
 		   wifi_power_on_handler();
@@ -610,7 +611,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 5:
+		case 4:
 			if(ptc_high_temperature_f == 0 && fan_warning_f ==0){
 				if(key_net_config_f)
 				 {
@@ -632,7 +633,7 @@ void power_on_handler(void)
 		break;
 
 		
-		case 6:
+		case 5:
 		if(gpro_t.time_5s_f > 1){
 	   	  gpro_t.time_5s_f=0;
            Heat_Process(); //
@@ -641,7 +642,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 7:
+		case 6:
 
 		 if(gpro_t.time_6s_f > 2 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
 		   gpro_t.time_6s_f =0;
@@ -651,7 +652,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 8:
+		case 7:
 
 		   if(Is_countdown_timer_f ==1 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
              Countdown_timer_Handler();
@@ -660,7 +661,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 9:
+		case 8:
 			 if( ptc_high_temperature_f == 0 && fan_warning_f ==0){
 			      works_nomal_run_time_handler();
 			 }
@@ -668,7 +669,7 @@ void power_on_handler(void)
 		break;
 
 
-		case 10:
+		case 9:
 	       if(gpro_t.time_7s_f > 4 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
 
 		    gpro_t.time_7s_f =0 ;
@@ -680,7 +681,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 11:
+		case 10:
 			if(ptc_high_temperature_f == 0 && fan_warning_f ==0){
 			 if(key_net_config_f==0 &&  wifi_linking_tencent_f ==0 && gpro_t.time_1m_wifi_f > 1){
 	   	   gpro_t.time_1m_wifi_f =0;
@@ -694,7 +695,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 12:
+		case 11:
            
 			wifi_check_counter++; //20ms * 100
 		    if(wifi_check_counter > 300 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
@@ -704,7 +705,7 @@ void power_on_handler(void)
 
 		break;
 
-		case 13:
+		case 12:
 
 		   ptc_counter++ ;
 		   if(ptc_counter > 50 && ptc_high_temperature_f == 0){
@@ -721,7 +722,7 @@ void power_on_handler(void)
 
 		break;
 
-		 case 14:
+		 case 13:
 		    if(switch_done==1){
 				switch_done ++;
 			
@@ -736,7 +737,7 @@ void power_on_handler(void)
 
 		break;
 
-	    case 15:
+	    case 14:
 
 		   
 			
@@ -767,7 +768,7 @@ void power_on_handler(void)
                
 		break;
 
-		case 16:
+		case 15:
 
 		  has_warning_counter++;
          
@@ -830,7 +831,7 @@ void power_on_handler(void)
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >16 ) time_slot = 0;  //10ms* 16 = 160ms 
+           if (time_slot >15 ) time_slot = 0;  //10ms* 16 = 160ms 
 
         
 }
@@ -1269,11 +1270,12 @@ void power_on_off_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
-	     gpro_t.time_50ms_f=0;
-         wifi_parse_tencennt_hadler();//
+//	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
+//	     gpro_t.time_50ms_f=0;
+//         wifi_parse_tencennt_hadler();//
        
-    }
+//    }
+	wifi_parse_tencennt_hadler();//
     
 	if(key_net_config_f==0 ){
       wifi_auto_detected_link_state();

@@ -215,6 +215,7 @@ void System_Status_PowerOn(void)
 {
     // 1. 开启核心工作标志位
     discharge_f = 1; 
+	fan_full_fun(); //WT.EDIT 2026-06-20
     if(wifi_app_timer_power_on_f==0){ //手机定时开机
 	    discharge_f = 1;            // 总输出使能
 	    PTC_heat_open_f = 1;        // 默认开启加热

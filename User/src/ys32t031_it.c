@@ -167,11 +167,7 @@ void TIM6_LPTIM_IRQHandler (void)
 			if(++cnt100 >=10){ //10* 10 = 100ms .
 				cnt100 =0;
 				
-				gpro_t.time_100ms_f ++;
-  
-				gpro_t.time_200ms_f++;
-	          
-				wifi_fast_led_state();
+			    wifi_fast_led_state();
 	            
                 
 			
