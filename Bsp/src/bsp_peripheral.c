@@ -67,8 +67,9 @@ void Fan_Ctrl_Process(void)
 void fan_full_fun(void)
 {
 
-	fan_on(40);
+	
 	FAN_RUN_ON();
+	fan_on(40);
 
 }
 
