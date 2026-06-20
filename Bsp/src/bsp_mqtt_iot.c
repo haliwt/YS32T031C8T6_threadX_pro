@@ -165,12 +165,8 @@ static void property_report_state(void)
    message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up01\\\"\\,\\\"params\\\":{\\\"open\\\":%d\\,\\\"Anion\\\":%d\\,\\\"ptc\\\":%d\\,\\\"sonic\\\":%d\\,\\\"state\\\":%d\\,\\\"find\\\":%d\\,\\\"temperature\\\":%d}}\"\r\n",
                              sg_info.open,sg_info.anion,sg_info.ptc,sg_info.sonic,sg_info.state,sg_info.find,sg_info.set_temperature);
                                
- 
-	//at_send_data((uint8_t *)message, message_len);
-	//delay_ms(100);
-	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((const uint8_t *)message, message_len);
-	//delay_ms(200);
+	 tx_thread_sleep(20);
    
 }
 
@@ -185,10 +181,8 @@ void property_report_update_data(void)
 								 sg_info.open,sg_info.anion,sg_info.ptc,sg_info.sonic,sg_info.state,sg_info.find,sg_info.set_temperature);
 								   
 	 
-	//at_send_data((uint8_t *)message, message_len);
-	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	///	delay_ms(200);
+	  tx_thread_sleep(20);
 
 
 }
@@ -209,7 +203,7 @@ static void property_report_power_off_state(void)
   
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	///	delay_ms(200);
+	 tx_thread_sleep(20);
 
 
 }
@@ -234,7 +228,7 @@ static void property_report_ReadTempHum(uint8_t tempvalue,uint8_t humvalue)
 		//at_send_data((uint8_t *)message, message_len);
 		//USART2_DMA_Send((uint8_t *)message, message_len);
 		 send_usart2_data((uint8_t *)message, message_len);
-		//delay_ms(200);
+		 tx_thread_sleep(20);
 
 }
 
@@ -248,7 +242,7 @@ static void property_report_SetState(uint8_t dat)
 
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-		//delay_ms(200);
+	 tx_thread_sleep(20);
 
 }
 /********************************************************************************
@@ -268,7 +262,7 @@ static void property_report_SetTemp(uint8_t temp)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	//delay_ms(200);
+	 tx_thread_sleep(20);
 
 
 }
@@ -285,7 +279,7 @@ static void property_report_SetOpen(uint8_t open)
 
     send_usart2_data((uint8_t *)message, message_len);
 	
-	//delay_ms(200);
+     tx_thread_sleep(20);
 
 }
 /********************************************************************************
@@ -307,7 +301,7 @@ static void property_report_SetSonic(uint8_t datsonic)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((uint8_t *)message, message_len);
-		//delay_ms(200);
+	 tx_thread_sleep(20);
 
 }
 /********************************************************************************
@@ -329,7 +323,7 @@ static void property_report_SetAnion(uint8_t datanion)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	 send_usart2_data((uint8_t *)message, message_len);
-	//	delay_ms(200);
+	 tx_thread_sleep(20);
 
 }
 /********************************************************************************
@@ -351,7 +345,7 @@ static void property_report_SetPtc(uint8_t datptc)
 	//at_send_data((uint8_t *)message, message_len);
 	//USART2_DMA_Send((uint8_t *)message, message_len);
 	send_usart2_data((uint8_t *)message, message_len);
-	//delay_ms(200);
+	 tx_thread_sleep(20);
 
 }
 
@@ -372,10 +366,9 @@ static void property_report_SetFan(uint8_t fan)
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up05\\\"\\,\\\"params\\\":{\\\"find\\\":%d}}\"\r\n",fan);
-	//at_send_data((uint8_t *)message, message_len);
-	//USART2_DMA_Send((uint8_t *)message, message_len);
+
 	 send_usart2_data((uint8_t *)message, message_len);
-		///delay_ms(200);
+	 tx_thread_sleep(20);
 
 }
 /********************************************************************************
@@ -395,10 +388,9 @@ static void property_report_SetTime(uint8_t time)
 	   
 	message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up05\\\"\\,\\\"params\\\":{\\\"find\\\":%d}}\"\r\n",
 								   time);
-	 // at_send_data((uint8_t *)message, message_len);
-	 //USART2_DMA_Send((uint8_t *)message, message_len);
+
 	  send_usart2_data((uint8_t *)message, message_len);
-	 //	delay_ms(200);
+	  tx_thread_sleep(20);
 }
 
 
@@ -425,7 +417,7 @@ void Subscriber_Data_FromCloud_Handler(void)
        
     
          send_usart2_data((const uint8_t *)message,message_len);
-       //  delay_ms(300);
+         tx_thread_sleep(20);
 }
 /*******************************************************************************
 **
@@ -459,7 +451,8 @@ static void property_report_fan_warning(uint8_t warning)
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"fan_warning\\\":%d}}\"\r\n",warning);
 								  
 	 send_usart2_data((const uint8_t *)message, message_len);
-	///delay_ms(200);
+	tx_thread_sleep(20);
+
 
 }
 
@@ -611,8 +604,8 @@ void link_wifi_net_handler(void)
 
               send_usart2_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
-              //delay_ms(200);//delay_ms(1000);
-               //tx_thread_sleep(300);//10ms * 100 = 1000s 
+            
+               tx_thread_sleep(20);//10ms * 100 = 1000s 
                wait_timeout = tx_time_get() + 300;
   				gpro_t.time_1m_wifi_f=0;
 			  	link_net_step  = 1;
@@ -623,7 +616,7 @@ void link_wifi_net_handler(void)
                // WIFI_IC_ENABLE();
               
                 send_usart2_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-               
+                tx_thread_sleep(20);
                 wait_timeout = tx_time_get() + 200;//tx_thread_sleep(200);
                 uid =Get_Unique_ID_32bit();
 			  
@@ -644,7 +637,7 @@ void link_wifi_net_handler(void)
             			
                        message_len = sprintf((char *)message, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,uid);
             		   send_usart2_data((const uint8_t *)message,message_len);
-            	  	
+            	  	   tx_thread_sleep(20);
                       
                         //tx_thread_sleep(300);//10ms * 100 
                         wait_timeout = tx_time_get() + 300;//10ms * 300 =3s
@@ -662,8 +655,8 @@ void link_wifi_net_handler(void)
                       time_link_net_counter  = 0;
                   
                 send_usart2_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
-
-			     //tx_thread_sleep(100);//10ms * 100 
+              
+			     tx_thread_sleep(20);//10ms * 100 
 
 				 wait_timeout = tx_time_get() + 100;
 
@@ -697,7 +690,7 @@ void link_wifi_net_handler(void)
             //  uid =Get_Unique_ID_32bit();
 	          message_len =  sprintf((char *)message, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",uid);
               send_usart2_data((const uint8_t *)message,message_len);
-	            //tx_thread_sleep(300);//10ms * 100 
+	            tx_thread_sleep(20);//10ms * 100 
 	            wait_timeout = tx_time_get() + 300;
 				link_net_step  = 6;
 			     gpro_t.time_1m_wifi_f=0;
@@ -717,7 +710,7 @@ void link_wifi_net_handler(void)
 
              send_usart2_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
 	
-			  // tx_thread_sleep(200);//10ms * 100 
+			  tx_thread_sleep(20);//10ms * 100 
 			  wait_timeout = tx_time_get() + 200;
 
 			  link_net_step  = 7;
@@ -771,9 +764,9 @@ void link_wifi_net_handler(void)
              
 			 
 				MqttData_Publish_SetOpen(0x01);
-		        wait_timeout = tx_time_get() + 20;
-		        //tx_thread_sleep(10);//10ms*10 =100ms
-		        
+		       
+		     
+		         wait_timeout = tx_time_get() + 20;
 				
 			  link_net_step = 9; // this is flag: link wifi times 119s is over.
 		    break;
@@ -790,8 +783,7 @@ void link_wifi_net_handler(void)
 			case 10:
 
 			Subscriber_Data_FromCloud_Handler();
-		
-	           //tx_thread_sleep(10);//  delay_ms(200);
+	
              wait_timeout = tx_time_get() + 20;
 			 link_net_step = 0xfe;
 			  gpro_t.time_1m_wifi_f=0;

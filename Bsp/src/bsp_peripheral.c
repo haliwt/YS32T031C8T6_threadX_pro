@@ -352,17 +352,17 @@ void beep_high_temperature_sound(void)
 void beep_fan_default_sound(void)
 {
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 	fan_err_beep_on();
-	tx_thread_sleep(60);
+	tx_thread_sleep(30);
 
 }
 

@@ -509,7 +509,7 @@ static void evt_ptc_on(void)
         }
 
         MqttData_Publish_SetPtc(1);
-		tx_thread_sleep(20);
+	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -534,7 +534,7 @@ static void evt_ptc_off(void)
         }
 
         MqttData_Publish_SetPtc(0);
-		tx_thread_sleep(20);
+	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -553,7 +553,7 @@ static void evt_anion_on(void)
         }
 
         MqttData_Publish_SetPlasma(1);
-		tx_thread_sleep(20);
+	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -573,7 +573,7 @@ static void evt_anion_off(void)
        }
 
         MqttData_Publish_SetPlasma(0);
-		tx_thread_sleep(20);
+	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -592,7 +592,7 @@ static void evt_sonic_on(void)
         }
 
         MqttData_Publish_SetUltrasonic(1);
-		tx_thread_sleep(20);
+		
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -636,7 +636,7 @@ static void evt_timer_mode(void)
         }
 
         MqttData_Publish_AitState(2);
-		tx_thread_sleep(20);
+	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -657,7 +657,7 @@ static void evt_ai_mode(void)
         }
 
         MqttData_Publish_AitState(1);
-		tx_thread_sleep(20);
+		
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -681,7 +681,7 @@ static void evt_temperature(void)
         }
 
         MqttData_Publis_SetTemp(setting_temperature);
-		tx_thread_sleep(20);
+		
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -694,7 +694,7 @@ static void evt_fan(void)
     {
         BEEP_ON();
         MqttData_Publis_SetFan(fan_speed_level);
-		tx_thread_sleep(20);
+		
 
 		#if 1
 

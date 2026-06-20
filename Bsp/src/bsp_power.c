@@ -431,11 +431,10 @@ void ptc_adc_detected_voltage(void)
 
     }
   
-    //ad_ptc_value[0] = ADC_GetConversionValue(ADC);
-    ptc_adc_numbers = ADC_GetConversionValue(ADC);
+    ad_ptc_value[0] = ADC_GetConversionValue(ADC);
        // printf("VSense = %d\n",ptc_adc);
        // printf_ptc_adc_numbers();
-      // ptc_adc_numbers =  ad_ptc_value[0];
+       ptc_adc_numbers =  ad_ptc_value[0];
        // ptc_current = (ptc_adc_numbers * 33000 )/4095;
 		//tx_thread_sleep(10);
         ADC_ClearFlag(ADC, ADC_FLAG_EOC);
@@ -446,7 +445,7 @@ void ptc_adc_detected_voltage(void)
 
 void ptc_switch_temperature(void)
 {
-   ptc_current = (ptc_adc_numbers * 3300 )/4095;
+   ptc_current = (ad_ptc_value[0] * 3300 )/4095;
    // ADC_ClearFlag(ADC, ADC_FLAG_EOC);
   //  ADC_SoftwareStartConvCmd(ADC);
 
@@ -519,7 +518,7 @@ static void power_on_initial(void)
    	 
        dht11_read_temp_humidity_value();
 	   display_digital_3_numbers();
-	   gon_t.on_step =0xfe;//if gon_t.on_step =0xff ( gon_t.on_step= -1)
+	   gon_t.on_step =0xfe;
 
    break;
 
@@ -533,15 +532,14 @@ static void power_on_initial(void)
 * 返回值:无
 *
 ************************************************************************/
-uint8_t high_tmep_counter ;
-
+uint16_t disp_counter;
 
 void power_on_handler(void)
 {
 
-  volatile  static uint8_t time_slot = 0,fan_counter=0;
+  volatile  static uint8_t time_slot = 0,ptc_counter=0,fan_counter=0,fan_error=0;
   volatile static uint8_t per_counter=0,switch_done =0,disp_counter=0;
-  volatile static uint8_t has_warning_counter=0,warning_fan_counter=0, switch_disp_f=0;
+  volatile static uint8_t high_tmep_counter = 0,warning_counter=0,has_warning_counter=0;
 
   volatile static uint16_t wifi_check_counter=0;
 
@@ -671,7 +669,7 @@ void power_on_handler(void)
 
 
 		case 10:
-	       if(gpro_t.time_7s_f > 8 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
+	       if(gpro_t.time_7s_f > 4 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
 
 		    gpro_t.time_7s_f =0 ;
 			fan_counter =1;
@@ -708,9 +706,9 @@ void power_on_handler(void)
 
 		case 13:
 
-		   
-		   if(gpro_t.time_10s_f > 5 && ptc_high_temperature_f == 0 && fan_warning_f == 0){
-		   	   gpro_t.time_10s_f =0;
+		   ptc_counter++ ;
+		   if(ptc_counter > 50 && ptc_high_temperature_f == 0){
+		   	   ptc_counter =0;
 			   switch_done=1;
 		    
 		      ptc_adc_detected_voltage();
@@ -728,44 +726,28 @@ void power_on_handler(void)
 				switch_done ++;
 			
 				ptc_switch_temperature();
-			 #if 1
-				    printf("ntc_temp_v = %d \n\r",ptc_current);
-				   // printf("temperature = %d \n\r",read_ntc_temperature_value);
-				 #endif 
-
-		    	}
-			
-		break;
-
-		case 15:
-			   if(switch_done==2){
-				switch_done ++;
-				Get_Ntc_Resistance_Temperature_Handler(ptc_current);
-				 #if 1
-				    //printf("ntc_temp_v = %d \n\r",ptc_current);
-				    printf("temperature = %d \n\r",read_ntc_temperature_value);
+						 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
+				 #if 0
+						  printf("ntc_temp_v = %d \n\r",ptc_current);
+						  printf("temperature = %d \n\r",read_ntc_temperature_value);
 				 #endif 
 						
 			}
 
 		break;
 
-	    case 16:
+	    case 15:
 
-		  // warning_counter++;
+		   
 			
-           if(switch_done ==3){
-		       
-			    switch_done ++;
+           if(switch_done==2){
+		       switch_done++;
 
-			if(read_ntc_temperature_value >122 && ptc_high_temperature_f == 0){ // original : 113 ->114->115
+			if(read_ntc_temperature_value >120 && ptc_high_temperature_f == 0){
 
 		       high_tmep_counter++;
-			   #if 1
-                 printf("high_counter = %d \r\n",high_tmep_counter);
-			   #endif 
 
-		      if(high_tmep_counter > 1){
+		      if(high_tmep_counter > 2){
 
                   LED_PTC_OFF();
 			      RELAY_OFF();  
@@ -777,7 +759,6 @@ void power_on_handler(void)
 		   else if(ptc_high_temperature_f == 0){
               high_tmep_counter =0;
 		       read_ntc_temperature_value =0;
-		      // ad_ptc_value[0] =0;
 
 		   }
 
@@ -786,67 +767,56 @@ void power_on_handler(void)
                
 		break;
 
-		case 17:
+		case 16:
 
 		  has_warning_counter++;
          
 		 if(has_warning_counter > 100){
 
 		   has_warning_counter=0;
-		   switch_disp_f = switch_disp_f ^ 0x01;
-		  if(switch_disp_f==1){
-			  if(ptc_high_temperature_f == 1){
-			  	  LED_PTC_OFF();
-				  RELAY_OFF(); 
-				  SMG_Display_Err(01);
-				  beep_high_temperature_sound();
+			
+		  if(ptc_high_temperature_f == 1){
+		  	  LED_PTC_OFF();
+			  RELAY_OFF(); 
+			  SMG_Display_Err(01);
+			  beep_high_temperature_sound();
 
-			  }
 		  }
-		  else {
-		  	if(fan_warning_f == 1){
-			    warning_fan_counter  =0;  
-			     LED_PTC_OFF();
-				 RELAY_OFF(); 
-			    SMG_Display_Err(02);
-				beep_fan_default_sound();
-          }
-		 }
-		 }
-		break;
 
-		case 18:
+		   if(fan_warning_f == 1){
+			       fan_counter=0;
+				   fan_error=0;
+			        LED_PTC_OFF();
+				    RELAY_OFF(); 
+					SMG_Display_Err(02);
+					beep_fan_default_sound();
+            }
 
-		  if(fan_counter ==1){
-		  	  fan_counter++;
+		 }
 		  
-		  if(fan_current < 70  &&  fan_warning_f == 0 && works_interval_f==0){
+		   if(fan_counter ==1){
+		   	  fan_counter ++; 
+           if(fan_current < 70  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    
-                 warning_fan_counter++;
-			     if(warning_fan_counter > 4){//10
+                 fan_error ++ ;
+			     if(fan_error > 3){
 				  fan_warning_f = 1;
 				       LED_PTC_OFF();
 					    RELAY_OFF(); 
 						SMG_Display_Err(02);
 						beep_high_temperature_sound();
 	            }
-
-			   #if 1
-                 printf("fan_current= %d,fan_counter = %d \r\n",fan_current,warning_fan_counter);
-			   #endif
 				 
 			}
-		    else if(fan_current  > 69  &&  fan_warning_f == 0 && works_interval_f==0){
-                #if 1
-                 printf("fan_current = %d \r\n",fan_current);
-			   #endif 
-			    warning_fan_counter  =0;
+		    else if(fan_current  >69   &&  fan_warning_f == 0 && works_interval_f==0){
+
+			   fan_error  =0;
 
 
 			}
-		   
-		 }
 
+		 	}
+		   
 		 
 		break;
 
@@ -860,7 +830,7 @@ void power_on_handler(void)
 
 	 // ==================== 4. 时间片轮转维护 ====================
            time_slot++;
-           if (time_slot >18 ) time_slot = 0;  //10ms* 18 = 180ms 
+           if (time_slot >16 ) time_slot = 0;  //10ms* 16 = 160ms 
 
         
 }
@@ -1299,10 +1269,11 @@ void power_on_off_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-
-     wifi_parse_tencennt_hadler();//
+	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
+	     gpro_t.time_50ms_f=0;
+         wifi_parse_tencennt_hadler();//
        
-    
+    }
     
 	if(key_net_config_f==0 ){
       wifi_auto_detected_link_state();
