@@ -727,7 +727,7 @@ void power_on_handler(void)
 				switch_done ++;
 			
 				ptc_switch_temperature();
-						 Get_Ntc_Resistance_Temperature_Handler(ptc_current);
+				Get_Ntc_Resistance_Temperature_Handler(ptc_current);
 				 #if 0
 						  printf("ntc_temp_v = %d \n\r",ptc_current);
 						  printf("temperature = %d \n\r",read_ntc_temperature_value);

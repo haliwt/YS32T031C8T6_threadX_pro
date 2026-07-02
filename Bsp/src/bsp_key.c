@@ -203,6 +203,7 @@ void Handle_Value_Adjustment(uint8_t is_up)
 
 		}
        TM1639_Display_Temperature(setting_temperature);
+	   direct_compare_set_temp_value();
     }
 }
 

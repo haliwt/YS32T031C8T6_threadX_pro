@@ -51,6 +51,7 @@ void beep_fan_default_sound(void);
 
 void fan_start_power_on(void);
 
+void direct_compare_set_temp_value(void);
 
 
 
