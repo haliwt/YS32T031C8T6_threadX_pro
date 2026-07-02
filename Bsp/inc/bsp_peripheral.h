@@ -49,6 +49,8 @@ void beep_high_temperature_sound(void);
 
 void beep_fan_default_sound(void);
 
+void fan_start_power_on(void);
+
 
 
 

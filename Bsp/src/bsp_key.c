@@ -202,7 +202,7 @@ void Handle_Value_Adjustment(uint8_t is_up)
 		     LED_AI_ON(); 
 
 		}
-      
+       TM1639_Display_Temperature(setting_temperature);
     }
 }
 
@@ -215,7 +215,10 @@ void System_Status_PowerOn(void)
 {
     // 1. 开启核心工作标志位
     discharge_f = 1; 
+	fan_start_power_on();
 	fan_full_fun(); //WT.EDIT 2026-06-20
+	
+
     if(wifi_app_timer_power_on_f==0){ //手机定时开机
 	    discharge_f = 1;            // 总输出使能
 	    PTC_heat_open_f = 1;        // 默认开启加热
@@ -403,8 +406,9 @@ void key_mode_long_handler(void)
 */
 void key_up_short_handler(void)
 {
+     BEEP_ON(); 
 	 Handle_Value_Adjustment(1);
-     BEEP_ON(); //Beep(BEEP_ONCE);  
+    //Beep(BEEP_ONCE);  
 
 }
 
@@ -416,8 +420,9 @@ void key_up_short_handler(void)
 */
 void key_down_short_handler(void)
 {
-  Handle_Value_Adjustment(0);
   BEEP_ON(); //Beep(BEEP_ONCE);
+  Handle_Value_Adjustment(0);
+  
 
 }
 

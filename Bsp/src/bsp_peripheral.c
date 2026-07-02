@@ -73,6 +73,19 @@ void fan_full_fun(void)
 
 }
 
+void fan_start_power_on(void)
+{
+	//FAN_RUN_OFF();
+	//fan_on(0);
+
+	FAN_RUN_ON();
+	fan_on(0);
+	
+}
+
+
+
+
 void fan_stop(void)
 {
     FAN_RUN_OFF();

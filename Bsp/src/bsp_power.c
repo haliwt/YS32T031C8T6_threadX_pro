@@ -880,7 +880,7 @@ static void power_off_handler(void)
 				fan_one_f =0;
 			    FAN_RUN_OFF();
 				fan_on(40);
-				 //fan_off();
+				// fan_off();
 				//FAN_PWM_GPIO_OFF();//WT.EDIT 2026-05-16
 			  }
 
@@ -895,7 +895,8 @@ static void power_off_handler(void)
 			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
 	                 FAN_RUN_OFF();
-                     fan_on(40); //fan_off();
+                     fan_on(40); 
+					
 					//#if DEBUG_ENABLE
                      // printf("power_off_fan_stop !!!\n\r");
 					//#endif 
@@ -909,7 +910,8 @@ static void power_off_handler(void)
 		    	   wait_timeout = tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 	    
 			      }
-			 
+			
+		
 	       gon_t.off_step = 3;
             	
 		break;
@@ -925,7 +927,7 @@ static void power_off_handler(void)
 				    ///#endif 
 			}
 
-       
+        
 		    gon_t.off_step = 4;
 
 		  break;
@@ -939,6 +941,7 @@ static void power_off_handler(void)
                      /// printf(" gon_t.off_step = %d \n\r", gon_t.off_step );
 				    //#endif 
 			}
+		
 		    gon_t.off_step =5;
 
 		  break;
@@ -954,6 +957,7 @@ static void power_off_handler(void)
 		    	   wait_timeout = tx_time_get() + 20 ;//tx_thread_sleep(20);//delay_ms(100);
 	    
 			     }
+		
 		  gon_t.off_step = 6;
 		break;
 
@@ -975,6 +979,7 @@ static void power_off_handler(void)
                MqttData_Publish_PowerOff_Ref(); 
 			   wait_timeout = tx_time_get()+ 20;   
 			}
+		
           gon_t.off_step = 2;
 		break;
 

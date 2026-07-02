@@ -197,7 +197,11 @@ void tx_application_define(void *first_unused_memory)
           decoder_handler() ;
 		    
        }
-	 }
+	   else{
+
+         tx_thread_sleep(10);
+	   }
+	}
       
  }
  /**
@@ -309,7 +313,6 @@ void tx_application_define(void *first_unused_memory)
 	        down_cnt_long_f =0;
 			down_cnt = 0;
 	}
-	
   
 	
 #if DEBUG_ENABLE
@@ -370,13 +373,18 @@ void tx_application_define(void *first_unused_memory)
 
 		   }
 		}   
-
-	    tx_thread_sleep(1);//WT.EDIT 2026-05-26
+       
+	   
 	 
 #if DEBUG_ENABLE
 		  debug_stack_key_event_check();
 #endif 
      }
+	 else{
+
+	    tx_thread_sleep(10);//WT.EDIT 2026-05-26
+
+	 }
      
 	   
 

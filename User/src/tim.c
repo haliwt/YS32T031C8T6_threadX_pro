@@ -179,7 +179,7 @@ void fan_off(void)
 	
 //	TIM_Cmd(TIM3, DISABLE);
 //    TIM_CtrlPWMOutputs(TIM3, DISABLE);
-	fan_on(40);
+	fan_on(0);
 
 }
 
