@@ -244,7 +244,15 @@ void wifi_power_on_handler(void)
      switch(wifi_run_step){
 
 	 case 0:
-	   if(wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0){
+
+	   if(wifi_app_timer_power_on_f ==1){
+
+	        smartphone_timer_power_on_handler();
+	        wifi_run_step =1;
+
+
+	   }
+	   else if(wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0){
     
 		     if(discharge_f){
 		         MqttData_Publish_SetOpen(1);  
@@ -260,7 +268,14 @@ void wifi_power_on_handler(void)
 	 break;
 
 	 case 1:
-		if(wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0){
+	 	if(wifi_app_timer_power_on_f ==1){
+
+	      // smartphone_timer_power_on_handler();
+	       wifi_run_step =2;
+
+
+	   }
+	   else if(wifi_connected_success_f ==1 && wifi_app_timer_power_on_f ==0){
 		    MqttData_Publish_Update_Data();  
 		    wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 	        wifi_run_step =2;
@@ -306,6 +321,7 @@ void wifi_power_on_handler(void)
 	 	
 			if(wifi_app_timer_power_on_f == 1 && discharge_f ==1 ){   
             //setting_temperature=40;
+            wifi_app_timer_power_on_f=0;
             MqttData_Publis_SetTemp(temperature);
 			wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 			    wifi_run_step = 5;
@@ -624,6 +640,7 @@ static void smartphone_timer_power_on_handler(void)
         return; 
     }
 
+   MqttData_Publish_Update_Data();
 	if(plasma_open_f==1){ //Anion
 
 
@@ -678,10 +695,6 @@ static void smartphone_timer_power_on_handler(void)
 
 	}
 
-    if(wifi_linking_tencent_f ==1){
-		MqttData_Publish_Update_Data();
-		tx_thread_sleep(20);//wait_timeout = tx_time_get() + 20;//tx_thread_sleep(20);//delay_ms(200);
-    }
 
 }
 			

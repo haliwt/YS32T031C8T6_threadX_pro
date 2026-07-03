@@ -849,7 +849,7 @@ void power_on_handler(void)
 static void power_off_handler(void)
 {
    static uint8_t dc_on=0,fan_one_f=0;
-   static uint16_t counter_1=0,counter_2=0,counter_0 =0;
+
    static uint32_t wait_timeout = 0;
 
    if(tx_time_get() < wait_timeout){
@@ -898,7 +898,7 @@ static void power_off_handler(void)
 
 		case 2:
 
-		    counter_0++;
+		  
 			
 			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
@@ -911,9 +911,11 @@ static void power_off_handler(void)
 
 				 }
 
-				 if(wifi_connected_success_f ==1 &&  counter_0 > 600){
-     
+				 if(wifi_connected_success_f ==1 && gpro_t.time_2s_f > 5){
+                     gpro_t.time_2s_f=0;
 				   MqttData_Publish_SetOpen(0);  
+				   	
+					
 		
 		    	   wait_timeout = tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 	    
@@ -956,11 +958,11 @@ static void power_off_handler(void)
 
 		  case 5:
 
-		    counter_1++; //10ms
+		 
 
-			 if(wifi_connected_success_f ==1 &&  counter_1 > 800 ){//10ms*800 =8000ms =8s
+			 if(wifi_connected_success_f ==1 &&  gpro_t.time_3s_f> 5 ){//10ms*800 =8000ms =8s
       
-			        counter_1=0;
+			       gpro_t.time_3s_f =0;
 				   Subscriber_Data_FromCloud_Handler();
 		    	   wait_timeout = tx_time_get() + 20 ;//tx_thread_sleep(20);//delay_ms(100);
 	    
@@ -970,10 +972,10 @@ static void power_off_handler(void)
 		break;
 
 		case 6:
-			counter_2++; 
+			
 
-		    if(wifi_connected_success_f ==1 &&  counter_2 > 700){
-				counter_2 =0;
+		    if(wifi_connected_success_f ==1 &&   gpro_t.time_4s_f> 8){
+				gpro_t.time_4s_f=0;
 			    Publish_Data_fan_Warning(0); //fan warning .
 				wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
 		    }
@@ -982,7 +984,7 @@ static void power_off_handler(void)
 		break;
 
 		case 7:
-			if(setting_timing_second > 4 && wifi_connected_success_f ==1 ){
+			if(setting_timing_second > 6 && wifi_connected_success_f ==1 ){
 				setting_timing_second =0;
                MqttData_Publish_PowerOff_Ref(); 
 			   wait_timeout = tx_time_get()+ 20;   
