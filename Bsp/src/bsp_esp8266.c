@@ -319,13 +319,13 @@ void wifi_power_on_handler(void)
 
 	 case 4:
 	 	
-			if(wifi_app_timer_power_on_f == 1 && discharge_f ==1 ){   
-            //setting_temperature=40;
-            wifi_app_timer_power_on_f=0;
+		 if(wifi_app_timer_power_on_f == 1 && discharge_f ==1 ){   
+            setting_temperature=40;
+           
             MqttData_Publis_SetTemp(temperature);
 			wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 			    wifi_run_step = 5;
-          
+            wifi_app_timer_power_on_f=0;
 	      }
 		  else{
 		   wifi_run_step = 5;

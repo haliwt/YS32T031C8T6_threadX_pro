@@ -501,6 +501,7 @@ static void power_on_initial(void)
 	  #endif 
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
+	  setting_temperature = 40;
       gon_t.on_step =1;
 	
 
