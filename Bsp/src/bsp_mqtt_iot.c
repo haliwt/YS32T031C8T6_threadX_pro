@@ -658,7 +658,7 @@ void link_wifi_net_handler(void)
               
 			     tx_thread_sleep(20);//10ms * 100 
 
-				 wait_timeout = tx_time_get() + 100;
+				 wait_timeout = tx_time_get() + 200;
 
 				 link_net_step  = 4;
 				  gpro_t.time_1m_wifi_f=0;
@@ -672,7 +672,7 @@ void link_wifi_net_handler(void)
 
             case 4:
 		
-                 if(time_link_net_counter   > 5){
+                 if(time_link_net_counter   > 9){//5
                    time_link_net_counter  = 0;
 
                    wifi_linking_tencent_f =1;
@@ -692,16 +692,26 @@ void link_wifi_net_handler(void)
               send_usart2_data((const uint8_t *)message,message_len);
 	            tx_thread_sleep(20);//10ms * 100 
 	            wait_timeout = tx_time_get() + 300;
-				link_net_step  = 6;
-			     gpro_t.time_1m_wifi_f=0;
-             
+				link_net_step  = 20;
+			    gpro_t.time_1m_wifi_f=0;
+                time_link_net_counter  = 0;
 
                     
 
             break;
 
+			case 20 :
 
-            case 6:
+			  if(time_link_net_counter  > 4){
+				   time_link_net_counter  = 0;
+				   gpro_t.time_1m_wifi_f=0;
+
+			       link_net_step  = 6;
+
+			  }
+            break;
+
+            case 6: 
                 
 
             if(wifi_cofig_success_f==1){
