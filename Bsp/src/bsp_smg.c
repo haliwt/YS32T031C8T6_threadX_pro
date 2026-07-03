@@ -184,7 +184,7 @@ void display_digital_3_numbers(void)
         }
       
      }
-	 else if((set_temperature_value_f == 1 && time_set_hours_counter < 3  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 4)){//set up temperature value 
+	 else if((set_temperature_value_f == 1 && time_set_hours_counter < 2  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 2)){//set up temperature value 
 
         
 	       TM1639_Display_Temperature(setting_temperature);
@@ -298,14 +298,16 @@ void disp_key_input_handler(void)
 		   }
 		 
 		}
-		else if((set_temperature_value_f == 1 && time_set_hours_counter < 3  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 4)){//set up temperature value 
+		#if 0
+		else if((set_temperature_value_f == 1 && time_set_hours_counter < 2  && key_input_temp_f != 4) || (set_temperature_value_f == 1 && key_input_temp_f == 4 && time_1s_counter  < 2)){//set up temperature value 
 	
 		   
 			  TM1639_Display_Temperature(setting_temperature);
 			  
 		}
-
-		if((set_temperature_value_f ==1 || set_temperature_value_f > 2)  && time_1s_counter > 5 )set_temperature_value_f =0;
+        #endif 
+		
+		if((set_temperature_value_f ==1 || set_temperature_value_f > 1)  && time_1s_counter > 1 )set_temperature_value_f =0;
 
         
 		if((Is_time_setting_f ==1 || disp_set_hours_time_f ==1) && time_set_hours_counter > 6 ){//display set timer timing hours.

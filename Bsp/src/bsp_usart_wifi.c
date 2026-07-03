@@ -679,9 +679,18 @@ static void evt_temperature(void)
             SendWifiData_To_Data(0x2A, setting_temperature);
 			tx_thread_sleep(10);
         }
+        TM1639_Display_Temperature(setting_temperature);
+		direct_compare_set_temp_value();
 
         MqttData_Publis_SetTemp(setting_temperature);
 		
+		if(PTC_heat_open_f==1){//WT.EDIT 2026-07-03
+			MqttData_Publish_SetPtc(1);
+		}
+		else{
+		    MqttData_Publish_SetPtc(0);
+
+		}
 
         wifi_t.wifi_rx_signal_f = 0xfe;
     }
@@ -693,6 +702,7 @@ static void evt_fan(void)
 	if (discharge_f == 1)
     {
         BEEP_ON();
+		wifiFan_Ctrl_Process();
         MqttData_Publis_SetFan(fan_speed_level);
 		
 

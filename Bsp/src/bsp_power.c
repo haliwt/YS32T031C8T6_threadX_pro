@@ -549,19 +549,21 @@ void power_on_handler(void)
         }
 	 // ✨【新增：紧急事件拦截响应】✨
         // 如果按键任务设置完温度，将 g_pro.g_immediate_heat_f 置为 1
-        if (heat_open_close_f == 1 && ptc_high_temperature_f == 0 && fan_warning_f ==0)
-        {
-           heat_open_close_f = 0; // 立即清除触发标志，防止重复执行
-            
-            // 强制、立刻执行一次加热控制函数
-            // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
-           compare_set_temp_value(); //set_temperature_value_handler(); 
-        }
+       
          if(time_10ms_f ==1 &&  ptc_high_temperature_f == 0 && fan_warning_f ==0){
 		    time_10ms_f=0;
            
 		    disp_key_input_handler();
-		    
+
+			if(heat_open_close_f == 1 && ptc_high_temperature_f == 0 && fan_warning_f ==0)
+	        {
+	           heat_open_close_f = 0; // 立即清除触发标志，防止重复执行
+	            
+	            // 强制、立刻执行一次加热控制函数
+	            // 确保底层硬件（如继电器、PWM、PTC）在 20ms 内得到响应
+	           compare_set_temp_value(); //set_temperature_value_handler(); 
+	        }
+			    
 
          }
 	     
@@ -1264,7 +1266,7 @@ void power_on_off_handler(void)
 
 	  case 0:
 	  	   power_off_handler();
-		  // wifi_power_off_handler();
+		 
 
 	  break;
       }

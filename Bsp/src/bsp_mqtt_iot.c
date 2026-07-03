@@ -700,7 +700,7 @@ void link_wifi_net_handler(void)
 
             break;
 
-			case 20 :
+			case 20 : //WT.EDIT 2026-07-03 add item
 
 			  if(time_link_net_counter  > 4){
 				   time_link_net_counter  = 0;

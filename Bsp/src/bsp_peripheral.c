@@ -61,7 +61,34 @@ void Fan_Ctrl_Process(void)
     }
  }
 
+void wifiFan_Ctrl_Process(void)
+{
+   
+	if(discharge_f){
+	   if(works_interval_f == 0 && fan_rx_stop_flag ==0){
+	      	
+	     
+		if((fan_open_f)){
+			if(fan_speed_level < 34)
+			{
+			fan_on(32);
+			}
+			else if(fan_speed_level > 33 && fan_speed_level < 67)
+			{
+			fan_on(36);
+			}
+			else if(fan_speed_level==100 && fan_speed_level > 66)
+			{
+			fan_on(40);
+			}
 
+			__NOP();__NOP();__NOP();__NOP();__NOP();
+
+			FAN_RUN_ON();
+		}
+    }
+	}
+}
 
 
 void fan_full_fun(void)
@@ -486,12 +513,12 @@ void workd_interval_turn_off_handle(void)
 ************************************************************************/
 void compare_set_temp_value(void)
 {
-	static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
+	//static uint32_t wait_timeout = 0; // 新增：用于非阻塞等待的时间戳
     
-    // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
-    if (tx_time_get() < wait_timeout) {
-        return; 
-    }
+//    // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
+//   if (tx_time_get() < wait_timeout) {
+//       return; 
+//   }
 
 	#if 0
 
@@ -530,10 +557,20 @@ void compare_set_temp_value(void)
 
 	}
 	#endif 
-	if(wifi_connected_success_f == 1 && key_input_temp_f == 1){
+	if(wifi_connected_success_f == 1 ){
 		MqttData_Publis_SetTemp(setting_temperature);
-		wait_timeout = tx_time_get()+20;
-		}
+		//wait_timeout = tx_time_get()+20;
+	}
+
+	if(PTC_heat_open_f == 1 && wifi_connected_success_f==1){
+     	MqttData_Publish_SetPtc(1);
+
+	}
+	else if(wifi_connected_success_f==1){
+
+	  MqttData_Publish_SetPtc(0);
+
+	}
 
 }
 
