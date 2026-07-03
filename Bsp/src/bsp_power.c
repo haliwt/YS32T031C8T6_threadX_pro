@@ -676,6 +676,7 @@ void power_on_handler(void)
 
 		    gpro_t.time_7s_f =0 ;
 			fan_counter =1;
+		    fan_on(40);
 		    Adc_Channel_Sample();
 		    AD_Filter();
 		 
@@ -886,6 +887,11 @@ static void power_off_handler(void)
 				//FAN_PWM_GPIO_OFF();//WT.EDIT 2026-05-16
 			  }
 
+			if(wifi_connected_success_f ==1 ){
+	
+               MqttData_Publish_PowerOff_Ref(); 
+			}
+
 			gon_t.off_step = 2;
 			 
         break;
@@ -976,7 +982,7 @@ static void power_off_handler(void)
 		break;
 
 		case 7:
-			if(setting_timing_second > 6 && wifi_connected_success_f ==1 ){
+			if(setting_timing_second > 4 && wifi_connected_success_f ==1 ){
 				setting_timing_second =0;
                MqttData_Publish_PowerOff_Ref(); 
 			   wait_timeout = tx_time_get()+ 20;   

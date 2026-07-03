@@ -551,8 +551,11 @@ static void evt_anion_on(void)
             SendWifiData_To_Cmd(0x03, 0x01);
 			tx_thread_sleep(10);
         }
+	   Plasma_Ctrl();
+      //Ultra_Sound_Ctrl();
 
         MqttData_Publish_SetPlasma(1);
+		
 	
 
         wifi_t.wifi_rx_signal_f = 0xfe;
@@ -571,7 +574,8 @@ static void evt_anion_off(void)
 
 		   tx_thread_sleep(10);
        }
-
+       Plasma_Ctrl();
+      //Ultra_Sound_Ctrl();
         MqttData_Publish_SetPlasma(0);
 	
 
@@ -590,7 +594,8 @@ static void evt_sonic_on(void)
             SendWifiData_To_Cmd(0x04, 0x01);
 			tx_thread_sleep(10);
         }
-
+            // Plasma_Ctrl();
+        Ultra_Sound_Ctrl();
         MqttData_Publish_SetUltrasonic(1);
 		
 
@@ -611,7 +616,8 @@ static void evt_sonic_off(void)
 		tx_thread_sleep(10);
 
         	}
-
+         //    Plasma_Ctrl();
+        Ultra_Sound_Ctrl();
         MqttData_Publish_SetUltrasonic(0);
 
         wifi_t.wifi_rx_signal_f = 0xfe;
