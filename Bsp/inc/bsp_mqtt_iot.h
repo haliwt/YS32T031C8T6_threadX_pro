@@ -69,5 +69,7 @@ void Publish_Data_ToTencent_Initial_Data(void);
 
 void link_wifi_net_handler(void);
 
+void Publish_Data_Ptc_Temp_Warning(uint8_t warning);
+
 
 #endif /* QCLOUD_IOT_EXPORT_MQTT_H_ */

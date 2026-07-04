@@ -756,6 +756,9 @@ void power_on_handler(void)
 		           ptc_high_temperature_f = 1;
 		           SMG_Display_Err(01);
 			       beep_high_temperature_sound();
+                   if(wifi_connected_success_f ==1){
+                     
+				     }
 		       }
            }
 		   else if(ptc_high_temperature_f == 0){
@@ -784,7 +787,7 @@ void power_on_handler(void)
 			  SMG_Display_Err(01);
 			  beep_high_temperature_sound();
 			  if(wifi_connected_success_f ==1){
-                    Publish_Data_fan_Warning(0x01);
+                    //PTC high temperature warning .
 				}
 
 		  }
@@ -796,7 +799,7 @@ void power_on_handler(void)
 				    RELAY_OFF(); 
 					SMG_Display_Err(02);
 					if(wifi_connected_success_f ==1){
-                       Publish_Data_fan_Warning(0x02);
+                        Publish_Data_fan_Warning(0x01);//fan warning
 					}
 					beep_fan_default_sound();
 					
@@ -823,7 +826,7 @@ void power_on_handler(void)
 					    RELAY_OFF(); 
 						SMG_Display_Err(02);
 						if(wifi_connected_success_f ==1){
-                          Publish_Data_fan_Warning(0x02);
+                            Publish_Data_fan_Warning(0x01);//fan warning
 						}
 						beep_high_temperature_sound();
 						

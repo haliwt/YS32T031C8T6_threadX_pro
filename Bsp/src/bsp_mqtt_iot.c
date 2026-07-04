@@ -456,6 +456,18 @@ static void property_report_fan_warning(uint8_t warning)
 
 }
 
+static void property_report_ptc_temp_wanrning(uint8_t warning)
+{
+    
+	message[0] = '\0';
+	
+	
+	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"ptc_temp_wanrning\\\":%d}}\"\r\n",warning);
+								  
+	send_usart2_data((const uint8_t *)message, message_len);
+	tx_thread_sleep(20);
+
+}
 
 
 /********************************************************************************
@@ -525,6 +537,21 @@ void MqttData_Publish_PowerOff_Ref(void) //
 
 }
 
+/*******************************************************************************
+**
+*Function Name:static void Publish_Data_Ptc_Temp_Warning_Handler(uint8_t warning)
+*Function: dy
+*Input Ref: 
+*Return Ref:NO
+*
+********************************************************************************/
+void Publish_Data_Ptc_Temp_Warning(uint8_t warning)
+{
+    property_topic_publish();
+	property_report_ptc_temp_wanrning(warning);
+	
+	
+}
 
 
 void Publish_Data_fan_Warning(uint8_t warning)
