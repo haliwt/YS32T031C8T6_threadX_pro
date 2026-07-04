@@ -501,7 +501,6 @@ static void power_on_initial(void)
 	  #endif 
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
-	  setting_temperature = 40;
       gon_t.on_step =1;
 	
 
@@ -578,12 +577,10 @@ void power_on_handler(void)
 		       peripheral_fun_handler();
 		     }
 
+			
 		break;
 
-		//case 1:
-	        // wifi_led_state_handler();
 
-		//break;
 
 		case 1:
 			 disp_counter ++;
@@ -775,6 +772,7 @@ void power_on_handler(void)
 		case 15:
 
 		  has_warning_counter++;
+
          
 		 if(has_warning_counter > 100){
 
@@ -785,6 +783,9 @@ void power_on_handler(void)
 			  RELAY_OFF(); 
 			  SMG_Display_Err(01);
 			  beep_high_temperature_sound();
+			  if(wifi_connected_success_f ==1){
+                    Publish_Data_fan_Warning(0x01);
+				}
 
 		  }
 
@@ -795,25 +796,39 @@ void power_on_handler(void)
 				    RELAY_OFF(); 
 					SMG_Display_Err(02);
 					beep_fan_default_sound();
+					if(wifi_connected_success_f ==1){
+                       Publish_Data_fan_Warning(0x02);
+					}
             }
 
 		 }
 		  
 		   if(fan_counter ==1){
 		   	  fan_counter ++; 
-           if(fan_current < 70  &&  fan_warning_f == 0 && works_interval_f==0){
+			  #if 1
+				  printf("fan_current  = %d \n\r",fan_current );
+				  printf("temperature = %d \n\r",read_ntc_temperature_value);
+			  #endif 
+           if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    
                  fan_error ++ ;
-			     if(fan_error > 3){
+				 #if 1
+				 
+				  printf("fan_error= %d \n\r",fan_error);
+			    #endif 
+			     if(fan_error > 6){
 				  fan_warning_f = 1;
 				       LED_PTC_OFF();
 					    RELAY_OFF(); 
 						SMG_Display_Err(02);
 						beep_high_temperature_sound();
+						if(wifi_connected_success_f ==1){
+                          Publish_Data_fan_Warning(0x02);
+						}
 	            }
 				 
 			}
-		    else if(fan_current  >69   &&  fan_warning_f == 0 && works_interval_f==0){
+		    else if(fan_current  >29   &&  fan_warning_f == 0 && works_interval_f==0){
 
 			   fan_error  =0;
 
@@ -1120,31 +1135,6 @@ void beep_power_sound(void)
     BEEP_OFF();
 
 }
-
-/**
-  * @brief  // 按键按下时调用
-  * @note  
-  * @param: 
-  *
-**/
-
-
-
-
-/**
-  * @brief 
-  * @note  // 10ms 任务
-  * @param: 
-  *
-**/
-
-
-//  if( beep_sound_f ==2){
-
-//	   BEEP_OFF();
-//	    beep_sound_f ++;
-
-//  }
 
 /**
 	*

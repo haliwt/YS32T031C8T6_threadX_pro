@@ -235,9 +235,9 @@ void wifi_power_on_handler(void)
     
     
     // 如果当前正处于“等待响应”的时间段内，直接跳出，让 UI 任务跑别的 Slot
-    if (tx_time_get() < wait_timeout) {
-        return; 
-    }
+//    if (tx_time_get() < wait_timeout) {
+//        return; 
+//    }
 
 	if(key_net_config_f == 1 || discharge_f == 0 || wifi_connected_success_f==0) return ;
 		
@@ -270,7 +270,9 @@ void wifi_power_on_handler(void)
 	 case 1:
 	 	if(wifi_app_timer_power_on_f ==1){
 
-	      // smartphone_timer_power_on_handler();
+	       //setting_temperature=40;
+           
+          // MqttData_Publis_SetTemp(setting_temperature);
 	       wifi_run_step =2;
 
 
@@ -289,9 +291,9 @@ void wifi_power_on_handler(void)
 	 case 2:
 			
 		if(wifi_app_timer_power_on_f ==1 && discharge_f == 1){
-		     	smartphone_timer_power_on_handler();
+		     	//smartphone_timer_power_on_handler();
 				 wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//Publish_Data_fan_Warning(2);//fan warning 
-			   //delay_ms(100);
+			
 			 	 wifi_run_step = 3;
 		 }
 		 else{
@@ -322,10 +324,15 @@ void wifi_power_on_handler(void)
 		 if(wifi_app_timer_power_on_f == 1 && discharge_f ==1 ){   
             setting_temperature=40;
            
-            MqttData_Publis_SetTemp(temperature);
-			wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
-			    wifi_run_step = 5;
-            wifi_app_timer_power_on_f=0;
+            MqttData_Publis_SetTemp(setting_temperature);
+			//wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
+			    
+		    wifi_app_timer_power_on_f++;
+			wifi_run_step = 5;
+           #if 1
+              printf("wifi_app_f = %d \r\n",wifi_app_timer_power_on_f);
+		   #endif 
+			
 	      }
 		  else{
 		   wifi_run_step = 5;
@@ -640,7 +647,7 @@ static void smartphone_timer_power_on_handler(void)
         return; 
     }
 
-   MqttData_Publish_Update_Data();
+   
 	if(plasma_open_f==1){ //Anion
 
 
@@ -695,6 +702,7 @@ static void smartphone_timer_power_on_handler(void)
 
 	}
 
+	MqttData_Publish_Update_Data();
 
 }
 			
