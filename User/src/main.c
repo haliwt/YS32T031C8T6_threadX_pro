@@ -71,7 +71,7 @@ int main(void)
 	
     TIM1_Configuration();          //TIM1-PWM输出配置
 	
-    TIM3_Configuration();          //TIM3-PWM输出配置
+    //TIM3_Configuration();          //TIM3-PWM输出配置
 	
     TIM6_Configuration();          //TIM6基本定时配置
 	

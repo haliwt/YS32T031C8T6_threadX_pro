@@ -21,32 +21,33 @@ void Fan_Ctrl_Process(void)
 		if((fan_open_f)){
 			if(fan_speed_level < 34)
 			{
-			fan_on(32);
+			fan_on(10);
 			}
 			else if(fan_speed_level > 33 && fan_speed_level < 67)
 			{
-			fan_on(36);
+			fan_on(20);
 			}
-			else if(fan_speed_level==100 && fan_speed_level > 66)
+			else if(fan_speed_level==100 || fan_speed_level > 66)
 			{
 			fan_on(40);
 			}
 
-			__NOP();__NOP();__NOP();__NOP();__NOP();
+			//__NOP();__NOP();__NOP();__NOP();__NOP();
 
-			FAN_RUN_ON();
+			//FAN_RUN_ON();
 		}
     }
 	else if(works_interval_f == 1){
        
 		if(fan_one_minute_cuonter < 61  && fan_stop_f ==0){
-		      FAN_RUN_ON(); 
+		   fan_on(40);  // FAN_RUN_ON(); 
 	     
 		}
 		else{
 		  fan_stop_f =2;
-		  FAN_RUN_OFF(); 
-		  fan_on(40);//fan_off();
+		  //FAN_RUN_OFF(); 
+		  //fan_on(40);
+		  fan_on(0); //fan_off();
 		#if DEBUG_ENABLE 
 
 		printf("fan_stop !!! \n\r");
@@ -71,20 +72,20 @@ void wifiFan_Ctrl_Process(void)
 		if((fan_open_f)){
 			if(fan_speed_level < 34)
 			{
-			fan_on(32);
+			fan_on(10);
 			}
 			else if(fan_speed_level > 33 && fan_speed_level < 67)
 			{
-			fan_on(36);
+			fan_on(20);
 			}
-			else if(fan_speed_level==100 && fan_speed_level > 66)
+			else if(fan_speed_level==100 || fan_speed_level > 66)
 			{
 			fan_on(40);
 			}
 
-			__NOP();__NOP();__NOP();__NOP();__NOP();
+			///__NOP();__NOP();__NOP();__NOP();__NOP();
 
-			FAN_RUN_ON();
+			//FAN_RUN_ON();
 		}
     }
 	}
@@ -95,7 +96,7 @@ void fan_full_fun(void)
 {
 
 	
-	FAN_RUN_ON();
+	//FAN_RUN_ON();
 	fan_on(40);
 
 }
@@ -105,8 +106,8 @@ void fan_start_power_on(void)
 	//FAN_RUN_OFF();
 	//fan_on(0);
 
-	FAN_RUN_ON();
-	fan_on(0);
+	//FAN_RUN_ON();
+	fan_on(40);
 	
 }
 
@@ -115,8 +116,9 @@ void fan_start_power_on(void)
 
 void fan_stop(void)
 {
-    FAN_RUN_OFF();
-	fan_on(40);//fan_off();
+    //FAN_RUN_OFF();
+	//fan_on(40);//
+    fan_on(0);//fan_off();
 }
 
 
@@ -305,7 +307,7 @@ void Ultra_Sound_Ctrl(void)
     {
 		    if(Ultra_Sound_open_f)
 				{
-				    ultra_sound_on(159); 
+				    ultra_sound_on(20); //
 					LED_MOUSE_ON();
 				}
 				else
@@ -718,7 +720,7 @@ void power_on_peripheral_handler(void)
 {
 
 	RELAY_ON();
-	 ultra_sound_on(159); 
+	 ultra_sound_on(20);//(159); 
 	PLASMA_ON();
 
 

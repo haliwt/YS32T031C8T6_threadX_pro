@@ -317,7 +317,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				   discharge_f  = 1;//gpro_t.gpower_on = power_on;
 				   fan_full_fun();//fan_full_run();//WT.EDIT 2026.01.26
 				   PLASMA_ON();//PLASMA_ON();;
-                   ultra_sound_on(159); //ultra_sound_on(uint16_t us_duty);   //ultra_sound_on(159);   //ultrasnoic ON 
+                   ultra_sound_on(20);//(159); //ultra_sound_on(uint16_t us_duty);   //ultra_sound_on(40);   //ultrasnoic ON 
                    RELAY_ON();//RELAY_ON();
 
 				}
@@ -425,7 +425,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			Ultra_Sound_open_f =1;
    
 			if(works_interval_f==0){
-				 ultra_sound_on(159);
+				 ultra_sound_on(20);//(159);
    
 			}
 			
@@ -486,7 +486,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		    fan_full_fun();//WT.EDIT 2026.01.26
 		    if(wifi_app_timer_power_on_f ==0){
 			    PLASMA_ON();;
-	             ultra_sound_on(159);   //ultrasnoic ON 
+	             ultra_sound_on(20);   //ultrasnoic ON 
 	             RELAY_ON();
 
 		    }
@@ -589,7 +589,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
              }
 			 if(plasma_open_f==1)PLASMA_ON();;
-			 if(Ultra_Sound_open_f==1) ultra_sound_on(159);
+			 if(Ultra_Sound_open_f==1) ultra_sound_on(20);
         }
 
 	 break;
@@ -618,7 +618,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
               }
 			  if(plasma_open_f==1)PLASMA_ON();;
-			  if(Ultra_Sound_open_f==1) ultra_sound_on(159);
+			  if(Ultra_Sound_open_f==1) ultra_sound_on(20);
 			 // Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
 			  
 		}

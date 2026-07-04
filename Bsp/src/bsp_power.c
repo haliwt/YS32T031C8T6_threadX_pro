@@ -674,7 +674,7 @@ void power_on_handler(void)
 
 		    gpro_t.time_7s_f =0 ;
 			fan_counter =1;
-		    fan_on(40);
+		
 		    Adc_Channel_Sample();
 		    AD_Filter();
 		 
@@ -897,9 +897,9 @@ static void power_off_handler(void)
 			 	beep_power_sound();
 			 	dc_on++;
 				fan_one_f =0;
-			    FAN_RUN_OFF();
-				fan_on(40);
-				// fan_off();
+			    //FAN_RUN_OFF();
+				//fan_on(40);
+				fan_on(0);
 				//FAN_PWM_GPIO_OFF();//WT.EDIT 2026-05-16
 			  }
 
@@ -918,9 +918,9 @@ static void power_off_handler(void)
 			
 			   if(fan_one_f == 1  && fan_one_minute_cuonter>59){
 				     fan_one_f ++;
-	                 FAN_RUN_OFF();
-                     fan_on(40); 
-					
+	                // FAN_RUN_OFF();
+                     //fan_on(40); 
+					fan_on(0);
 					//#if DEBUG_ENABLE
                      // printf("power_off_fan_stop !!!\n\r");
 					//#endif 
@@ -1290,18 +1290,4 @@ void power_on_off_handler(void)
 
 	
 }
-/**
-  * @brief  
-  * @note  
-  * @param: 
-  *
-**/
-
-/**
-  * @brief  
-  * @note  
-  * @param: 
-  *
-**/
-
 

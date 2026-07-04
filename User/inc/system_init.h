@@ -39,8 +39,8 @@ extern "C" {
 #define FAN_RUN_PIN             GPIO_Pin_5            
 #define FAN_RUN_GPIO_PORT       GPIOA
 
-#define FAN_RUN_ON()            do{FAN_RUN_GPIO_PORT->BSRR = FAN_RUN_PIN;}while(0)//{GPIO_SetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
-#define FAN_RUN_OFF()           do{FAN_RUN_GPIO_PORT->BSRR =(uint32_t)FAN_RUN_PIN << 16;}while(0)//{GPIO_ResetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
+//#define FAN_RUN_ON()            do{FAN_RUN_GPIO_PORT->BSRR = FAN_RUN_PIN;}while(0)//{GPIO_SetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
+//#define FAN_RUN_OFF()           do{FAN_RUN_GPIO_PORT->BSRR =(uint32_t)FAN_RUN_PIN << 16;}while(0)//{GPIO_ResetBits(FAN_RUN_GPIO_PORT, FAN_RUN_PIN);}
 
 
 #define RELAY_PIN               GPIO_Pin_10

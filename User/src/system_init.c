@@ -120,15 +120,15 @@ void GPIO_Configuration(void)
 	  GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_SET);
 
     // GPIO_Output
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_15;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_High;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
-	  GPIO_WriteBit(GPIOA, GPIO_Pin_5, Bit_RESET);
-	  GPIO_WriteBit(GPIOA, GPIO_Pin_7, Bit_RESET);
+
+	GPIO_WriteBit(GPIOA, GPIO_Pin_7, Bit_RESET);
     GPIO_WriteBit(GPIOA, GPIO_Pin_11, Bit_SET);
     GPIO_WriteBit(GPIOA, GPIO_Pin_12, Bit_SET);
     GPIO_WriteBit(GPIOA, GPIO_Pin_15, Bit_SET);
@@ -154,6 +154,16 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	 // TIM1_CH1
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_2);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_VeryHigh;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    #if 0
     // TIM3_CH1
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_1);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -162,6 +172,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_VeryHigh;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;//NOPULL; WT.EDIT 2026-05-16
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+	#endif 
 
     // UART1_TX
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);
@@ -218,6 +229,7 @@ void GPIO_Configuration(void)
     GPIO_WriteBit(GPIOB, GPIO_Pin_13, Bit_RESET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_14, Bit_RESET);
     GPIO_WriteBit(GPIOB, GPIO_Pin_15, Bit_RESET);
+		//GPIO_WriteBit(GPIOA, GPIO_Pin_5, Bit_RESET);
 
     #if 0
     // TSC_IO7
