@@ -50,9 +50,9 @@ void TIM1_Configuration(void)
     TIM_OCInitStructure.TIM_Pulse = 0;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
     TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-    TIM_OC3Init(TIM1, &TIM_OCInitStructure);
+    TIM_OC3Init(TIM1, &TIM_OCInitStructure); //通道 3
 
-	TIM_OC1Init(TIM1, &TIM_OCInitStructure);
+	TIM_OC1Init(TIM1, &TIM_OCInitStructure);//通道 1 
 
     TIM_Cmd(TIM1, ENABLE);
     TIM_CtrlPWMOutputs(TIM1, ENABLE);

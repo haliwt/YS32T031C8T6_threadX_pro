@@ -795,24 +795,25 @@ void power_on_handler(void)
 			        LED_PTC_OFF();
 				    RELAY_OFF(); 
 					SMG_Display_Err(02);
-					beep_fan_default_sound();
 					if(wifi_connected_success_f ==1){
                        Publish_Data_fan_Warning(0x02);
 					}
+					beep_fan_default_sound();
+					
             }
 
 		 }
 		  
 		   if(fan_counter ==1){
 		   	  fan_counter ++; 
-			  #if 1
+			  #if 0
 				  printf("fan_current  = %d \n\r",fan_current );
 				  printf("temperature = %d \n\r",read_ntc_temperature_value);
 			  #endif 
            if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    
                  fan_error ++ ;
-				 #if 1
+				 #if 0
 				 
 				  printf("fan_error= %d \n\r",fan_error);
 			    #endif 
@@ -821,10 +822,11 @@ void power_on_handler(void)
 				       LED_PTC_OFF();
 					    RELAY_OFF(); 
 						SMG_Display_Err(02);
-						beep_high_temperature_sound();
 						if(wifi_connected_success_f ==1){
                           Publish_Data_fan_Warning(0x02);
 						}
+						beep_high_temperature_sound();
+						
 	            }
 				 
 			}
