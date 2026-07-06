@@ -31,10 +31,10 @@
 #define STACK_SIZE_EVENT  512
 //#define  TX_TIMER_THREAD_STACK_SIZE   128
 
-static TX_THREAD thread_decoder;
-static TX_THREAD thread_key;
-static TX_THREAD thread_ui;
-static TX_THREAD thread_event;
+static TX_THREAD s_decoder_thread;
+static TX_THREAD s_key_thread;
+static TX_THREAD s_ui_thread; //thread_ui
+static TX_THREAD s_key_event_thread; //s-> static 
 /* 定义信号量 */
 TX_SEMAPHORE wifi_semaphore;
 
@@ -49,23 +49,23 @@ TX_EVENT_FLAGS_GROUP key_event;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
 
 
-///static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
-///static UCHAR stack_key_pro[STACK_SIZE_KEY];
-///static UCHAR stack_ui_pro[STACK_SIZE_UI];
+///static UCHAR s_decoder_stack[STACK_SIZE_DECODER];
+///static UCHAR s_key_stack[STACK_SIZE_KEY];
+///static UCHAR s_ui_stack[STACK_SIZE_UI];
 //static UCHAR stack_event_pro[STACK_SIZE_EVENT];
 
-__attribute__((aligned(8))) static UCHAR stack_ui_pro[STACK_SIZE_UI];
-__attribute__((aligned(8))) static UCHAR stack_decoder_pro[STACK_SIZE_DECODER];
-__attribute__((aligned(8))) static UCHAR stack_key_pro[STACK_SIZE_KEY];
-__attribute__((aligned(8))) static UCHAR stack_key_event[STACK_SIZE_EVENT];
+__attribute__((aligned(8))) static UCHAR s_ui_stack[STACK_SIZE_UI];
+__attribute__((aligned(8))) static UCHAR s_decoder_stack[STACK_SIZE_DECODER];
+__attribute__((aligned(8))) static UCHAR s_key_stack[STACK_SIZE_KEY];
+__attribute__((aligned(8))) static UCHAR s_key_event_stack[STACK_SIZE_EVENT];
 
 
 
 
-static void vTaskDecoderPro(ULONG thread_input);
-static void vTaskKeyPro(ULONG thread_input);
-static void vTaskUiPro(ULONG thread_input);
-static void vTaskKeyEvent(ULONG thread_input);
+static void decoder_thread_entry(ULONG thread_input);
+static void key_thread_entry(ULONG thread_input);
+static void ui_thread_entry(ULONG thread_input);
+static void key_event_thread_entry(ULONG thread_input);
 /* 定时器回调函数 */
 //void my_timer_callback(ULONG input);
 	
@@ -101,10 +101,10 @@ void tx_application_define(void *first_unused_memory)
 
      #if DEBUG_ENABLE
     /* 2. 只有当 stack_msg_pro 是全局定义的静态数组时，这样写才有效 */
-    memset(stack_ui_pro, 0xEF, sizeof(stack_ui_pro));
-    memset(stack_key_pro, 0xEF, sizeof(stack_key_pro));
-	memset(stack_decoder_pro, 0xEF, sizeof(stack_decoder_pro));
-	memset(stack_key_event, 0xEF, sizeof(stack_key_event));
+    memset(s_ui_stack, 0xEF, sizeof(stack_ui_pro));
+    memset(s_key_stack, 0xEF, sizeof(stack_key_pro));
+	memset(s_decoder_stack, 0xEF, sizeof(stack_decoder_pro));
+	memset(s_key_event_stack, 0xEF, sizeof(stack_key_event));
     #endif 
 
     /* 3. 注册堆栈错误回调（推荐保持） */
@@ -117,11 +117,11 @@ void tx_application_define(void *first_unused_memory)
 	   tx_event_flags_create(&key_event, "key_event");
 	   
 	/**************创建启动任务*********************/
-    tx_thread_create(&thread_key,                     /* 任务控制块地址 */   
+    tx_thread_create(&s_key_thread,                     /* 任务控制块地址 */   
                        "KeyPro",                      /* 任务名 */
-                       vTaskKeyPro,                   /* 启动任务函数地址 */
+                       key_thread_entry,                   /* 启动任务函数地址 */
                        0,                             /* 传递给任务的参数 */
-                       stack_key_pro,                 /* 堆栈基地址 */
+                       s_key_stack,                 /* 堆栈基地址 */
                        STACK_SIZE_KEY,                /* 堆栈空间大小 */  
                        0,                             /* 任务优先级*/
                        0,                             /* 任务抢占阀值 */
@@ -129,11 +129,11 @@ void tx_application_define(void *first_unused_memory)
                        TX_AUTO_START);                /* 创建后立即启动 */
    	   
 	/**************创建统计任务*********************/
-    tx_thread_create(&thread_decoder,                       /* 任务控制块地址 */    
+    tx_thread_create(&s_decoder_thread,                       /* 任务控制块地址 */    
                        "DecoderPro",                        /* 任务名 */
-                       vTaskDecoderPro,                    /* 启动任务函数地址 */
+                       decoder_thread_entry,                    /* 启动任务函数地址 */
                        0,                               /* 传递给任务的参数 */
-                       stack_decoder_pro,                   /* 堆栈基地址 */
+                       s_decoder_stack,                   /* 堆栈基地址 */
                        STACK_SIZE_DECODER,                  /* 堆栈空间大小 */  
                        2,                               /* 任务优先级*/
                        2,                               /* 任务抢占阀值 */
@@ -143,11 +143,11 @@ void tx_application_define(void *first_unused_memory)
 
 				   
 
-    tx_thread_create(&thread_ui,                    /* 任务控制块地址 */    
+    tx_thread_create(&s_ui_thread,                    /* 任务控制块地址 */    
                        "UiPro",                     /* 任务名 */
-                       vTaskUiPro,                  /* 启动任务函数地址 */
+                       ui_thread_entry,                  /* 启动任务函数地址 */
                        0,                           /* 传递给任务的参数 */
-                       stack_ui_pro,                /* 堆栈基地址 */
+                       s_ui_stack,                /* 堆栈基地址 */
                        STACK_SIZE_UI,            /* 堆栈空间大小 */  
                        3,                           /* 任务优先级*/
                        3,                           /* 任务抢占阀值 */
@@ -155,11 +155,11 @@ void tx_application_define(void *first_unused_memory)
                        TX_AUTO_START);              /* 创建后立即启动 */
 
 					   
-    tx_thread_create(&thread_event,                    /* 任务控制块地址 */    
+    tx_thread_create(&s_key_event_thread,                    /* 任务控制块地址 */    
                        "EventPro",                     /* 任务名 */
-                       vTaskKeyEvent,                  /* 启动任务函数地址 */
+                       key_event_thread_entry,                  /* 启动任务函数地址 */
                        0,                           /* 传递给任务的参数 */
-                       stack_key_event,                /* 堆栈基地址 */
+                       s_key_event_stack,                /* 堆栈基地址 */
                        STACK_SIZE_EVENT,            /* 堆栈空间大小 */  
                        1,                           /* 任务优先级*/
                        1,                           /* 任务抢占阀值 */
@@ -184,7 +184,7 @@ void tx_application_define(void *first_unused_memory)
  * @param   None
  * @retval  None
  */
- static void vTaskDecoderPro(ULONG thread_input)
+ static void decoder_thread_entry(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
@@ -210,7 +210,7 @@ void tx_application_define(void *first_unused_memory)
   * @param	 None
   * @retval  None
   */
- static void vTaskUiPro(ULONG thread_input)
+ static void ui_thread_entry(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
@@ -236,7 +236,7 @@ void tx_application_define(void *first_unused_memory)
   * @param	 None
   * @retval  None
   */
- static void vTaskKeyPro(ULONG thread_input)
+ static void key_thread_entry(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
 
@@ -329,7 +329,7 @@ void tx_application_define(void *first_unused_memory)
  * @param   None
  * @retval  None
  */
- static void vTaskKeyEvent(ULONG thread_input)
+ static void key_event_thread_entry(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
     ULONG flags;
@@ -435,7 +435,7 @@ static void debug_stack_ui_check(void)
     // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
     for (i = 0; i < STACK_SIZE_UI; i++)
     {
-        if (stack_ui_pro[i] == 0xEF)
+        if (s_ui_stack[i] == 0xEF)
             temp_unused++;
         else
             break; 
@@ -454,7 +454,7 @@ static void debug_stack_key_check(void)
     // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
     for (i = 0; i < STACK_SIZE_KEY; i++)
     {
-        if (stack_key_pro[i] == 0xEF)
+        if (s_key_stack[i] == 0xEF)
             temp_unused++;
         else
             break; 
@@ -474,7 +474,7 @@ static void debug_stack_decoder_check(void)
     // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
     for (i = 0; i < STACK_SIZE_DECODER; i++)
     {
-        if (stack_decoder_pro[i] == 0xEF)
+        if (s_decoder_stack[i] == 0xEF)
             temp_unused++;
         else
             break; 

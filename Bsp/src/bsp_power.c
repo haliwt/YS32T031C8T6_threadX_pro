@@ -1122,7 +1122,7 @@ void works_nomal_run_time_handler(void)
 		#if 0
 		  else if(works_interval_f==1 && gpro_t.time_1m_f >9){
 		#else 
-		  else if(works_interval_f==1 && gpro_t.time_1m_f >9){
+		  else if(works_interval_f==1 && gpro_t.time_1m_f >10){
 
 		#endif 
 				gpro_t.time_1m_f = 0;  
