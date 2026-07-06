@@ -670,7 +670,7 @@ void power_on_handler(void)
 
 
 		case 9:
-	       if(gpro_t.time_7s_f > 4 && ptc_high_temperature_f == 0 && fan_warning_f ==0){
+	       if(gpro_t.time_7s_f > 4 && ptc_high_temperature_f == 0 && fan_warning_f ==0 && works_interval_f==0){
 
 		    gpro_t.time_7s_f =0 ;
 			fan_counter =1;
@@ -757,6 +757,7 @@ void power_on_handler(void)
 		           SMG_Display_Err(01);
 			       beep_high_temperature_sound();
                    if(wifi_connected_success_f ==1){
+				   	 Publish_Data_Ptc_Temp_Warning(0x01);
                      
 				     }
 		       }
@@ -787,8 +788,9 @@ void power_on_handler(void)
 			  SMG_Display_Err(01);
 			  beep_high_temperature_sound();
 			  if(wifi_connected_success_f ==1){
-                    //PTC high temperature warning .
-				}
+			  	 Publish_Data_Ptc_Temp_Warning(0x01);
+                    
+			  }
 
 		  }
 
@@ -917,7 +919,26 @@ static void power_off_handler(void)
 			 
         break;
 
+
 		case 2:
+        if(wifi_connected_success_f ==1){
+			     gon_t.off_step = 3;
+			
+				fan_warning_f = 0;
+			    ptc_high_temperature_f =0;
+			    Publish_Data_fan_Warning(0); //fan warning .
+
+				Publish_Data_Ptc_Temp_Warning(0);
+				//wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
+		    }
+            else{
+
+                gon_t.off_step = 3;
+			}
+
+		break;
+
+		case 3:
 
 		  
 			
@@ -934,7 +955,7 @@ static void power_off_handler(void)
 
 				 if(wifi_connected_success_f ==1 && gpro_t.time_2s_f > 5){
                      gpro_t.time_2s_f=0;
-				   MqttData_Publish_SetOpen(0);  
+				     MqttData_Publish_SetOpen(0);  
 				   	
 					
 		
@@ -943,11 +964,11 @@ static void power_off_handler(void)
 			      }
 			
 		
-	       gon_t.off_step = 3;
+	       gon_t.off_step = 4;
             	
 		break;
 
-		 case 3 :
+		 case 4 :
 
 		    
 		   if(time_1s_counter > 1){
@@ -959,11 +980,11 @@ static void power_off_handler(void)
 			}
 
         
-		    gon_t.off_step = 4;
+		    gon_t.off_step = 5;
 
 		  break;
 
-		  case 4:
+		  case 5:
 
 		     if(time_1s_counter > 2){
 				 	time_1s_counter =0;
@@ -973,11 +994,11 @@ static void power_off_handler(void)
 				    //#endif 
 			}
 		
-		    gon_t.off_step =5;
+		    gon_t.off_step =6;
 
 		  break;
 
-		  case 5:
+		  case 6:
 
 		 
 
@@ -989,29 +1010,33 @@ static void power_off_handler(void)
 	    
 			     }
 		
-		  gon_t.off_step = 6;
+		  gon_t.off_step = 7;
 		break;
 
-		case 6:
+		case 7:
 			
 
 		    if(wifi_connected_success_f ==1 &&   gpro_t.time_4s_f> 8){
 				gpro_t.time_4s_f=0;
+				fan_warning_f = 0;
+			    ptc_high_temperature_f =0;
 			    Publish_Data_fan_Warning(0); //fan warning .
-				wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
+
+				Publish_Data_Ptc_Temp_Warning(0);
+				//wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);///delay_ms(200);
 		    }
-		    gon_t.off_step = 7;
+		    gon_t.off_step = 8;
 
 		break;
 
-		case 7:
+		case 8:
 			if(setting_timing_second > 6 && wifi_connected_success_f ==1 ){
 				setting_timing_second =0;
                MqttData_Publish_PowerOff_Ref(); 
 			   wait_timeout = tx_time_get()+ 20;   
 			}
 		
-          gon_t.off_step = 2;
+          gon_t.off_step = 3;
 		break;
 
    }

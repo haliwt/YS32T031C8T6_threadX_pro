@@ -364,7 +364,7 @@ void wifi_power_on_handler(void)
          if(wifi_connected_success_f ==1 &&  wifi_app_timer_power_on_f ==0 && wifi_first_connectoed_cloud_f==0){
           
 	      if(discharge_f){
-		      
+		        fan_warning_f = 0;
 			 	Publish_Data_fan_Warning(0); //fan warning .
 			    wait_timeout=tx_time_get()+20;//tx_thread_sleep(20);//delay_ms(100);
 			 }
@@ -522,6 +522,7 @@ void wifi_power_off_handler(void)
 			if(wifi_connected_success_f ==1 && gpro_t.time_7s_f > 1){
 			 
 			    gpro_t.time_7s_f=0;
+				fan_warning_f = 0;
 				 Publish_Data_fan_Warning(0); //fan warning .
 			    wait_timeout = tx_time_get()+ 20;//tx_thread_sleep(200);
 				gpro_t.time_7s_f=0;
