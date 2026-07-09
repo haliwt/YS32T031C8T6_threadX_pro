@@ -815,7 +815,7 @@ void power_on_handler(void)
 				  printf("fan_current  = %d \n\r",fan_current );
 				  printf("temperature = %d \n\r",read_ntc_temperature_value);
 			  #endif 
-           if(fan_current < 30  &&  fan_warning_f == 0 && works_interval_f==0){
+           if(fan_current < 20  &&  fan_warning_f == 0 && works_interval_f==0){
 		  	    
                  fan_error ++ ;
 				 #if 0
@@ -835,7 +835,7 @@ void power_on_handler(void)
 	            }
 				 
 			}
-		    else if(fan_current  >29   &&  fan_warning_f == 0 && works_interval_f==0){
+		    else if(fan_current  >19   &&  fan_warning_f == 0 && works_interval_f==0){
 
 			   fan_error  =0;
 
