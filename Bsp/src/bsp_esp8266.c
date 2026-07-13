@@ -329,7 +329,7 @@ void wifi_power_on_handler(void)
 			    
 		    wifi_app_timer_power_on_f++;
 			wifi_run_step = 5;
-           #if 1
+           #if 0
               printf("wifi_app_f = %d \r\n",wifi_app_timer_power_on_f);
 		   #endif 
 			

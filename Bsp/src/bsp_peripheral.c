@@ -720,7 +720,7 @@ void power_on_peripheral_handler(void)
 {
 
 	RELAY_ON();
-	 ultra_sound_on(20);//(159); 
+	ultra_sound_on(20);//(159); 
 	PLASMA_ON();
 
 

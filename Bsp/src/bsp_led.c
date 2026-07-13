@@ -29,16 +29,21 @@ void power_on_led_open_handler(void)
 		 LED_TAPE_ON();
 		 LED_TEMP_ON();
 		 LED_HUMI_ON(); 
+		PTC_heat_open_f = 1;        // 默认开启加热
+	    Ultra_Sound_open_f = 1;     // 默认开启超声波
+	    plasma_open_f = 1;          // 默认开启等离子
+	    LED_PTC_ON();
 
 
 	  }
 	  else{
-		  LED_AI_ON();
-		  LED_WIFI_ON();
+		 LED_AI_ON();
+		 LED_WIFI_ON();
 		 LED_POWER_ON();
 		 LED_TAPE_ON();
 		 LED_TEMP_ON();
 		 LED_HUMI_ON(); 
+	    
 
 
 	  }

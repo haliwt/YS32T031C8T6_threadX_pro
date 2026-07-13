@@ -218,9 +218,9 @@ void Clear_Ram(void)
 	  gpro_t.time_1s_f = 0;
 	  gpro_t.time_1m_f=0;
 	
-	 // Times5msCnt = 0;
+
 	  Times10msCnt = 0;
-	 // Times100msCnt = 0;
+
 	  Times1minute = 0;
 	  Times1minCnt = 0;
 	  Cacl_time_sec = 0;
@@ -228,7 +228,7 @@ void Clear_Ram(void)
 	
 	
 	  key_worked_f = 0;
-	  //key_long_f = 0;
+	 
 	  key_data = 0;
 	  key_time = 0;
 	
@@ -473,34 +473,10 @@ static void power_on_initial(void)
    	  gon_t.off_step = 0;
       wifi_off_step =0; //WT.EDT 2026.05.15
       
-     #if 0
-      if(wifi_app_timer_power_on_f==0){
-
-	     LED_AI_ON();
-		 LED_PTC_ON();
-		 LED_PLASMA_ON();
-		 LED_MOUSE_ON();
-		 LED_WIFI_ON();
-		 LED_POWER_ON();
-		 LED_TAPE_ON();
-		 LED_TEMP_ON();
-		 LED_HUMI_ON(); 
-
-
-	  }
-	  else{
-		  LED_AI_ON();
-		  LED_WIFI_ON();
-		 LED_POWER_ON();
-		 LED_TAPE_ON();
-		 LED_TEMP_ON();
-		 LED_HUMI_ON(); 
-
-
-	  }
-	  #endif 
+ 
 	  dht11_read_temp_humidity_value();
 	  display_digital_3_numbers();
+	
       gon_t.on_step =1;
 	
 
@@ -1306,11 +1282,6 @@ void power_on_off_handler(void)
 	   Wifi_Rx_InputInfo_Handler();
 	}
 
-//	if(key_net_config_f==0 && gpro_t.time_50ms_f > 2){// 处理腾讯连连通信
-//	     gpro_t.time_50ms_f=0;
-//         wifi_parse_tencennt_hadler();//
-       
-//    }
 	wifi_parse_tencennt_hadler();//
     
 	if(key_net_config_f==0 ){
